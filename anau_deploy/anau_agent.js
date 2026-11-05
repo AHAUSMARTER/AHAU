@@ -155,6 +155,37 @@
   // ----------------------------------------------------------------------------
   // 3. 原创多轮意图识别、数学计算与高情商语义推理引擎
   // ----------------------------------------------------------------------------
+  function parseChineseNum(str) {
+    const digits = {'零':0, '一':1, '二':2, '两':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9};
+    const units = {'十':10, '百':100, '千':1000, '万':10000, '亿':100000000};
+    return str.replace(/[零一二两三四五六七八九十百千万亿]+/g, function(match) {
+      if (match.length === 1 && digits[match] !== undefined) {
+        return digits[match].toString();
+      }
+      let total = 0;
+      let section = 0;
+      let number = 0;
+      for (let i = 0; i < match.length; i++) {
+        let char = match[i];
+        if (digits[char] !== undefined) {
+          number = digits[char];
+        } else if (units[char] !== undefined) {
+          let unit = units[char];
+          if (unit >= 10000) {
+            section = (section + number) * unit;
+            total += section;
+            section = 0;
+          } else {
+            section += (number || (char === '十' && i === 0 ? 1 : 1)) * unit;
+          }
+          number = 0;
+        }
+      }
+      let res = total + section + number;
+      return res.toString();
+    });
+  }
+
   function solveMath(text) {
     let s = (text || '').trim();
     if (!s) return null;
@@ -162,26 +193,23 @@
     // 智能识别针对算术能力的对话质问或探讨
     if (/算术题都做不了|不会做算术|不会算术|能做算术吗|你会算术吗|能做数学题吗|你会算吗|做数学题|做道算术题/.test(s)) {
       return {
-        text: '哈哈，谁说安农智办不会做算术题呀！😎 瞧好啦：\n\n不管是四则混合运算（加减乘除）、还是开根号（√）、乘方（x²）、或者中文大写数字计算，我全部都能秒出答案，而且还附带详细解题步骤！\n\n比如你可以发给我试试：\n- `1+1等于几`\n- `25 * 4 + 100 / 2`\n- `根号144`\n- `三乘五加八是多少`\n- `(100 - 35) / 5`\n\n快出几道高数或四则运算题考考我吧！'
+        text: '哈哈，谁说安农智办不会做算术题呀！😎 瞧好啦：\n\n不管是四则混合运算（加减乘除）、还是开根号（√）、乘方（x²）、或者中文大写数字计算，我全部都能秒出答案，而且还附带详细解题步骤！\n\n比如你可以发给我试试：\n- `五千加五千等于多少`\n- `1+1等于几`\n- `25 * 4 + 100 / 2`\n- `根号144`\n- `三乘五加八是多少`\n- `(100 - 35) / 5`\n\n快出几道高数或四则运算题考考我吧！'
       };
     }
 
     // 预清理常见口语化问句前后缀
     let clean = s.replace(/帮我算一下|帮我算算|帮我计算|算一下|做道算术题|做个算术|算算看|计算一下|等于几|等于多少|是多少|求解/g, ' ');
 
-    // 中文复合数字转换
-    clean = clean.replace(/二十/g, '20').replace(/三十/g, '30').replace(/四十/g, '40').replace(/五十/g, '50')
-                 .replace(/十/g, '10').replace(/一百/g, '100');
+    // 中文数字（包含十、百、千、万、亿）智能转阿拉伯数字
+    clean = parseChineseNum(clean);
 
-    // 基础中文数字与运算符映射
-    const cnMap = {
-      '一': '1', '二': '2', '两': '2', '三': '3', '四': '4',
-      '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '零': '0',
+    // 基础运算符映射
+    const opMap = {
       '加': '+', '加上': '+', '减': '-', '减去': '-', '乘以': '*', '乘': '*',
       '除以': '/', '除': '/', '×': '*', '÷': '/', 'x': '*'
     };
-    for (let k in cnMap) {
-      clean = clean.split(k).join(cnMap[k]);
+    for (let k in opMap) {
+      clean = clean.split(k).join(opMap[k]);
     }
 
     // 处理开根号
