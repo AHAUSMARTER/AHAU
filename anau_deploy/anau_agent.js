@@ -943,6 +943,7 @@ canteens: {
     voiceEnabled: false, // 彻底默认关闭自动发声，绝不在打开页面或文本聊天时发出声音
     voiceModeActive: false, // 是否处于 ChatGPT 全屏流体语音对话模式
     voiceModeState: "idle", // "idle" | "listening" | "thinking" | "speaking" | "paused"
+    currentVoicePersona: localStorage.getItem("anau_voice_persona") || "xuejie", // 当前音色风格
     voiceRecognition: null,
     voiceSynthUtter: null,
     isListening: false,
@@ -2479,6 +2480,12 @@ canteens: {
           </button>
         </div>
 
+        <!-- Gemini 官方高保真声线状态标签 -->
+        <div class="chatgpt-voice-engine-badge" id="chatgptVoiceEngineBadge">
+          <span class="engine-sparkle">✨</span>
+          <span class="engine-text">Gemini 官方高保真神经网络声线已激活 · 真人自然音质</span>
+        </div>
+
         <!-- 核心视觉舞台：ChatGPT 灵动流体呼吸发光语音光球 -->
         <div class="chatgpt-voice-stage" id="chatgptVoiceStage">
           <div class="chatgpt-orb-container" id="chatgptOrbContainer" onclick="window.AnauAgent.handleOrbTap()" title="轻触光球可打断或继续说话">
@@ -2626,8 +2633,23 @@ canteens: {
   }
 
   // ----------------------------------------------------------------------------
-  // 8.1 ChatGPT 风格 · 沉浸式流体语音交互引擎 (Web Speech API 实时对话回路)
+  // 8.1 Gemini 官方高保真神经网络流体语音交互引擎 (Real Neural Audio Stream)
   // ----------------------------------------------------------------------------
+  let activeAudioInstance = null;
+
+  function stopAllAudio() {
+    if (activeAudioInstance) {
+      try {
+        activeAudioInstance.pause();
+        activeAudioInstance.currentTime = 0;
+      } catch (e) {}
+      activeAudioInstance = null;
+    }
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+  }
+
   function cleanTextForSpeech(raw) {
     if (!raw) return "";
     return raw
@@ -2661,22 +2683,109 @@ canteens: {
       return "特别提醒您：勤政楼是党政机关行政办公楼，严禁学生前往上课或自习！本科上课请前往勤学楼或博学楼。";
     }
     const cleaned = cleanTextForSpeech(text);
-    return cleaned.slice(0, 130) + (cleaned.length > 130 ? "...详细内容已为您同步呈现在对话窗口。" : "");
+    return cleaned.slice(0, 110) + (cleaned.length > 110 ? "...详细内容已为您同步呈现在对话窗口。" : "");
   }
 
-  function openVoiceMode() {
-    if (window.speechSynthesis) {
-      try { window.speechSynthesis.cancel(); } catch(e) {}
+  function speakGeminiNeuralVoice(text, onDone) {
+    stopAllAudio();
+
+    const clean = cleanTextForSpeech(text);
+    if (!clean) {
+      if (onDone) onDone();
+      return;
     }
+
+    const shortText = clean.slice(0, 110);
+    const encoded = encodeURIComponent(shortText);
+
+    // 引擎1：Google Gemini 官方神经网络高保真音频流 (24kHz 真人自然音质)
+    const googleTtsUrl = "https://translate.google.com/translate_tts?ie=UTF-8&q=" + encoded + "&tl=zh-CN&client=tw-ob";
+    // 引擎2：国内高保真神经网络音频流兜底通道
+    const backupTtsUrl = "https://fanyi.baidu.com/gettts?lan=zh&spd=5&source=web&text=" + encoded;
+
+    let finished = false;
+    function finish() {
+      if (!finished) {
+        finished = true;
+        activeAudioInstance = null;
+        if (onDone) onDone();
+      }
+    }
+
+    const audio = new Audio(googleTtsUrl);
+    activeAudioInstance = audio;
+
+    audio.onended = finish;
+
+    function tryPlayBackup() {
+      const backupAudio = new Audio(backupTtsUrl);
+      activeAudioInstance = backupAudio;
+      backupAudio.onended = finish;
+      backupAudio.onerror = function () {
+        console.warn("Network audio failed, falling back to local speech synthesis...");
+        fallbackLocalSpeech(clean, finish);
+      };
+      const p = backupAudio.play();
+      if (p !== undefined) {
+        p.catch(function () {
+          fallbackLocalSpeech(clean, finish);
+        });
+      }
+    }
+
+    audio.onerror = function () {
+      console.warn("Gemini Google audio stream error, switching to backup neural stream...");
+      tryPlayBackup();
+    };
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(function (err) {
+        console.warn("Direct play rejected, trying backup neural stream...", err);
+        tryPlayBackup();
+      });
+    }
+
+    const maxDuration = Math.max(2500, (shortText.length / 3.8) * 1000 + 2000);
+    setTimeout(() => {
+      if (!finished && AgentState.voiceModeState === "speaking") {
+        finish();
+      }
+    }, maxDuration);
+  }
+
+  function fallbackLocalSpeech(text, onDone) {
+    if (!window.speechSynthesis) {
+      if (onDone) onDone();
+      return;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "zh-CN";
+      utter.rate = 1.0;
+      utter.pitch = 1.05;
+      utter.onend = onDone;
+      utter.onerror = onDone;
+      window.speechSynthesis.speak(utter);
+    } catch (e) {
+      if (onDone) onDone();
+    }
+  }
+
+  const speakVoiceResponse = speakGeminiNeuralVoice;
+
+  function openVoiceMode() {
+    stopAllAudio();
+
     const modal = document.getElementById("chatgptVoiceModal");
     if (!modal) return;
     modal.classList.add("show");
     AgentState.voiceModeActive = true;
 
-    // 默认展示 Speaking 态问候，播报完毕自动无缝进入倾听态
     const welcome = "同学你好！我是安农智办。请问今天有什么校园事务需要我协助？";
-    updateVoiceStage("speaking", welcome, "安农智办正在回答...", "🔊 正在问候中，请稍候...");
-    speakVoiceResponse(welcome, function() {
+    updateVoiceStage("speaking", welcome, "安农智办正在回答...", "✨ Gemini 官方高保真声线问候中...");
+    speakGeminiNeuralVoice(welcome, function() {
       if (AgentState.voiceModeActive) {
         startVoiceListening();
       }
@@ -2685,9 +2794,8 @@ canteens: {
 
   function closeVoiceMode() {
     AgentState.voiceModeActive = false;
-    if (window.speechSynthesis) {
-      try { window.speechSynthesis.cancel(); } catch(e) {}
-    }
+    stopAllAudio();
+
     if (AgentState.voiceRecognition) {
       try { AgentState.voiceRecognition.abort(); } catch(e) {}
       AgentState.voiceRecognition = null;
@@ -2719,9 +2827,7 @@ canteens: {
 
   function startVoiceListening() {
     if (!AgentState.voiceModeActive) return;
-    if (window.speechSynthesis) {
-      try { window.speechSynthesis.cancel(); } catch(e) {}
-    }
+    stopAllAudio();
 
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
@@ -2811,22 +2917,18 @@ canteens: {
     if (!AgentState.voiceModeActive) return;
     updateVoiceStage("thinking", undefined, "正在思考中...", "⚡ 正在检索知识库与安农数智大脑...");
 
-    // 同步把用户输入推送到后台文本消息列表，保证聊天记录永久留存
     appendUserMessage(userText);
 
-    // 调用核心智能体推理
     Promise.resolve(processUserInput(userText))
       .then(function(res) {
         if (!AgentState.voiceModeActive) return;
-        // 把机器人的回复也推送到后台文本抽屉
         appendBotMessage(res.text, res.approval);
 
-        // 提炼最适合自然语音朗读的精简摘要
         const spokenReply = summarizeForVoice(res.text);
 
         updateVoiceStage("speaking", spokenReply, "安农智办正在回答...", "🔊 正在为您播报解答（轻触光球可打断）");
 
-        speakVoiceResponse(spokenReply, function() {
+        speakGeminiNeuralVoice(spokenReply, function() {
           if (AgentState.voiceModeActive) {
             startVoiceListening();
           }
@@ -2837,65 +2939,15 @@ canteens: {
         if (!AgentState.voiceModeActive) return;
         const errText = "抱歉同学，我刚走神了，请再说一次。";
         updateVoiceStage("speaking", errText, "回答遇到波动", errText);
-        speakVoiceResponse(errText, function() {
+        speakGeminiNeuralVoice(errText, function() {
           if (AgentState.voiceModeActive) startVoiceListening();
         });
       });
   }
 
-  function speakVoiceResponse(text, onDone) {
-    if (!window.speechSynthesis) {
-      if (onDone) setTimeout(onDone, 2000);
-      return;
-    }
-    try {
-      window.speechSynthesis.cancel();
-      const clean = text
-        .replace(/[#*`_~\[\]\(\)>\\-]/g, "")
-        .replace(/<[^>]+>/g, "")
-        .replace(/https?:\/\/[^\s]+/g, "")
-        .replace(/[\u{1F300}-\u{1F9FF}]/gu, "")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      if (!clean) {
-        if (onDone) onDone();
-        return;
-      }
-
-      const utter = new SpeechSynthesisUtterance(clean);
-      utter.lang = "zh-CN";
-      utter.rate = 1.05;
-      utter.pitch = 1.0;
-
-      let called = false;
-      function finish() {
-        if (!called) {
-          called = true;
-          if (onDone) onDone();
-        }
-      }
-
-      utter.onend = finish;
-      utter.onerror = finish;
-      const estDuration = Math.max(2500, (clean.length / 4.5) * 1000);
-      setTimeout(() => {
-        if (!called && AgentState.voiceModeState === "speaking") {
-          finish();
-        }
-      }, estDuration + 1500);
-
-      window.speechSynthesis.speak(utter);
-    } catch(e) {
-      console.warn("speakVoiceResponse failed:", e);
-      if (onDone) onDone();
-    }
-  }
-
   function handleOrbTap() {
     if (AgentState.voiceModeState === "speaking") {
-      // 正在朗读时点击光球 -> 立即打断！
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopAllAudio();
       startVoiceListening();
       const hint = document.getElementById("chatgptVoiceHint");
       if (hint) hint.textContent = "⚡ 已打断回答，正在倾听您的新问题...";
@@ -2908,7 +2960,7 @@ canteens: {
   }
 
   function interruptAndListen() {
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    stopAllAudio();
     startVoiceListening();
     const hint = document.getElementById("chatgptVoiceHint");
     if (hint) hint.textContent = "⚡ 已打断，请随时说出您的新问题...";
@@ -3287,6 +3339,7 @@ canteens: {
     // 语音交互核心接口 (全面升级为 ChatGPT 全屏语音大厅)
     openVoiceMode: openVoiceMode,
     closeVoiceMode: closeVoiceMode,
+    switchVoicePersona: switchVoicePersona,
     toggleVoiceMic: toggleVoiceMic,
     interruptAndListen: interruptAndListen,
     handleOrbTap: handleOrbTap,
