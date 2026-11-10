@@ -3336,10 +3336,9 @@ canteens: {
       alert('✅ 智能体内核配置已成功更新！');
     },
 
-    // 语音交互核心接口 (全面升级为 ChatGPT 全屏语音大厅)
+    // 语音交互核心接口 (全面升级为 ChatGPT 全屏语音大厅 · 接入真实 Gemini 神经网络自然声线)
     openVoiceMode: openVoiceMode,
     closeVoiceMode: closeVoiceMode,
-    switchVoicePersona: switchVoicePersona,
     toggleVoiceMic: toggleVoiceMic,
     interruptAndListen: interruptAndListen,
     handleOrbTap: handleOrbTap,
