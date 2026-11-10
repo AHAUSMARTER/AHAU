@@ -940,8 +940,12 @@ canteens: {
     messages: [], // 存储真实多轮会话上下文: [{ role: 'user'|'assistant', content: string }]
     lastTopic: null, // 'cats' | 'canteens' | 'buildings' | 'classroom' | 'leave' | 'math' | 'faculty' | 'zongce' | 'kaoyan' | null
     lastLocation: null, // 最近提及的校园实体或地点，如 '猫坡', '东门', '勤学楼'
-    voiceEnabled: true, // 原生语音播报TTS开关
-    isListening: false, // 原生语音识别录音状态
+    voiceEnabled: false, // 彻底默认关闭自动发声，绝不在打开页面或文本聊天时发出声音
+    voiceModeActive: false, // 是否处于 ChatGPT 全屏流体语音对话模式
+    voiceModeState: "idle", // "idle" | "listening" | "thinking" | "speaking" | "paused"
+    voiceRecognition: null,
+    voiceSynthUtter: null,
+    isListening: false,
     // 🌾 安徽农业大学官方算力平台直连配置
     apiUrl: 'https://llmv1.ahau.edu.cn/v1/chat/completions',
     apiKey: 'sk-FqJuk3X-X7J7hn20ks3RvQ',
@@ -2372,7 +2376,7 @@ canteens: {
             </div>
           </div>
           <div class="native-chat-header-actions">
-            <button class="header-icon-btn" id="voiceToggleBtn" onclick="window.AnauAgent.toggleTts()" title="语音播报已开启（点击静音）">🔊</button>
+            <button class="header-icon-btn" onclick="window.AnauAgent.openVoiceMode()" title="开启 ChatGPT 实时语音对话模式" style="background:rgba(16,185,129,0.18); border-color:rgba(52,211,153,0.35); font-weight:700; color:#10b981;">🎙️ 语音模式</button>
             <button class="header-icon-btn" onclick="window.AnauAgent.openSettings()" title="设置 / 切换引擎">⚙️</button>
             <button class="header-icon-btn" onclick="window.AnauAgent.resetChat()" title="清空对话">🔄</button>
             <button class="header-icon-btn" onclick="window.AnauAgent.toggleChat()" title="最小化">✖</button>
@@ -2381,6 +2385,7 @@ canteens: {
 
         <!-- 顶部快捷胶囊栏 -->
         <div class="chat-quick-bar">
+          <div class="chat-quick-pill" onclick="window.AnauAgent.openVoiceMode()" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46; font-weight:700;">🎙️ 实时语音对话 (ChatGPT模式)</div>
           <div class="chat-quick-pill" onclick="window.AnauAgent.sendUserMsg('我想咨询考研，请根据不同专业科目、四六级基础和读博/就业意向给出择校方案和复习时间线')">🎓 考研择校规划</div>
           <div class="chat-quick-pill" onclick="window.AnauAgent.sendUserMsg('请启动安农大综测与奖学金测算器，我绩点3.65、六级520、有农芯智省赛获奖和志愿时长')">🏆 综测奖学金测算</div>
           <div class="chat-quick-pill" onclick="window.AnauAgent.sendUserMsg('请查询安徽农业大学茶业学院、人工智能学院和农学院的官方师资队伍与研究课题方向')">👨‍🏫 官网师资查导师</div>
@@ -2406,7 +2411,7 @@ canteens: {
           <div class="chat-input-tools">
             <input type="file" id="agentImageInput" accept="image/*" style="display: none;" onchange="window.AnauAgent.handleFileSelect(event)">
             <button class="input-tool-btn" onclick="document.getElementById('agentImageInput').click()" title="上传照片识楼/识树/识猫">📷</button>
-            <button class="input-tool-btn" id="agentVoiceBtn" onclick="window.AnauAgent.toggleVoiceInput()" title="点击开始语音输入（对麦克风说话）">🎙️</button>
+            <button class="input-tool-btn" id="agentVoiceBtn" onclick="window.AnauAgent.openVoiceMode()" title="开启 ChatGPT 实时语音对话大厅">🎙️</button>
           </div>
           <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="提问办事、借教室、考研、综测或点击语音说话..." onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
           <button class="chat-send-btn" id="agentSendBtn" onclick="window.AnauAgent.submitInput()" title="发送消息">✈️</button>
@@ -2454,9 +2459,79 @@ canteens: {
       </div>
     `;
 
+    // 5. ChatGPT 全屏沉浸式实时语音对话大厅
+    const voiceModalHtml = `
+      <div class="chatgpt-voice-overlay" id="chatgptVoiceModal">
+        <!-- 顶部状态栏 -->
+        <div class="chatgpt-voice-topbar">
+          <div class="chatgpt-voice-brand">
+            <img src="anau_ai_logo.png" alt="徽农智" class="chatgpt-voice-logo">
+            <div class="chatgpt-voice-title-box">
+              <div class="chatgpt-voice-title">徽农智 · 安农智办</div>
+              <div class="chatgpt-voice-status-pill" id="voiceStatusPill">
+                <span class="voice-pulse-dot"></span>
+                <span id="voiceStatusLabel">实时语音模式已就绪</span>
+              </div>
+            </div>
+          </div>
+          <button class="chatgpt-voice-close-btn" onclick="window.AnauAgent.closeVoiceMode()" title="退出语音对话返回文字聊天">
+            <span>✕ 退出语音</span>
+          </button>
+        </div>
+
+        <!-- 核心视觉舞台：ChatGPT 灵动流体呼吸发光语音光球 -->
+        <div class="chatgpt-voice-stage" id="chatgptVoiceStage">
+          <div class="chatgpt-orb-container" id="chatgptOrbContainer" onclick="window.AnauAgent.handleOrbTap()" title="轻触光球可打断或继续说话">
+            <!-- 多层动态流体光波 -->
+            <div class="chatgpt-orb-wave wave-3"></div>
+            <div class="chatgpt-orb-wave wave-2"></div>
+            <div class="chatgpt-orb-wave wave-1"></div>
+            <!-- 核心光球 -->
+            <div class="chatgpt-orb-core" id="chatgptOrbCore"></div>
+          </div>
+
+          <!-- 动态提示语 -->
+          <div class="chatgpt-voice-hint" id="chatgptVoiceHint">
+            正在聆听中... 请随时对我说出您的需求
+          </div>
+
+          <!-- 实时双向对话转写字幕卡片 -->
+          <div class="chatgpt-transcript-card" id="chatgptTranscriptCard">
+            <div class="transcript-line transcript-user" id="transcriptUserText" style="display: none;">
+              <span class="transcript-role">我：</span>
+              <span class="transcript-content">正在倾听...</span>
+            </div>
+            <div class="transcript-line transcript-bot" id="transcriptBotText">
+              <span class="transcript-role">安农智办：</span>
+              <span class="transcript-content">同学你好！我是安农智办，请问今天有什么校园事务需要我协助？（请直接说话）</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部控制栏 -->
+        <div class="chatgpt-voice-footer">
+          <div class="chatgpt-voice-controls">
+            <button class="voice-ctrl-btn voice-ctrl-mic" id="voiceMicToggleBtn" onclick="window.AnauAgent.toggleVoiceMic()" title="静音/恢复聆听">
+              <span class="mic-icon">🎙️</span>
+              <span class="btn-text" id="voiceMicBtnText">正在倾听</span>
+            </button>
+            <button class="voice-ctrl-btn voice-ctrl-tap" onclick="window.AnauAgent.interruptAndListen()" title="打断AI说话并立即表达">
+              <span>⚡ 轻触插话</span>
+            </button>
+            <button class="voice-ctrl-btn voice-ctrl-hangup" onclick="window.AnauAgent.closeVoiceMode()" title="挂断并返回文字聊天大厅">
+              <span>📞 挂断返回</span>
+            </button>
+          </div>
+          <div class="chatgpt-voice-footer-sub">
+            <span>支持多轮连续语音对话 · 智能断句实时应答 · 原生端侧低延迟</span>
+          </div>
+        </div>
+      </div>
+    `;
+
     const container = document.createElement('div');
     container.id = 'nativeAgentRoot';
-    container.innerHTML = fabHtml + windowHtml + printModalHtml + settingsModalHtml;
+    container.innerHTML = fabHtml + windowHtml + printModalHtml + settingsModalHtml + voiceModalHtml;
     document.body.appendChild(container);
 
     // 初始欢迎语
@@ -2547,131 +2622,320 @@ canteens: {
     `;
     list.appendChild(msgDiv);
     list.scrollTop = list.scrollHeight;
-    speakBotReply(markdownText);
+    // 文本消息绝对保持静音，绝不在打开页面或文本交互时自动出声
   }
 
   // ----------------------------------------------------------------------------
-  // 8.1 纯原生端侧语音交互引擎 (Web Speech API - 录音识别与语音朗读)
+  // 8.1 ChatGPT 风格 · 沉浸式流体语音交互引擎 (Web Speech API 实时对话回路)
   // ----------------------------------------------------------------------------
-  let recognitionInstance = null;
+  function cleanTextForSpeech(raw) {
+    if (!raw) return "";
+    return raw
+      .replace(/[#*`_~\[\]\(\)>\\-]/g, "")
+      .replace(/<[^>]+>/g, "")
+      .replace(/https?:\/\/[^\s]+/g, "")
+      .replace(/[\u{1F300}-\u{1F9FF}]/gu, "")
+      .replace(/【.*?】/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
-  function toggleVoiceInput() {
-    const btn = document.getElementById('agentVoiceBtn');
-    const inputEl = document.getElementById('agentInputText');
+  function summarizeForVoice(text) {
+    if (!text) return "我已为您办理完毕。";
+    if (text.includes("考研") || text.includes("择校")) {
+      return "已为您生成考研复习时间线与择校规划方案。针对您的四六级基础与学术就业方向，详细分科目备考与梯队院校建议已同步呈现在主对话界面中。";
+    }
+    if (text.includes("综合素质") || text.includes("综测") || text.includes("奖学金")) {
+      return "已为您智能测算综测得分与奖学金申报档位。详细分值拆解与所需证明材料清单已为您同步生成在主对话界面中！";
+    }
+    if (text.includes("研究课题") || text.includes("教授") || text.includes("师资队伍")) {
+      return "已为您查询到官方权威师资信息与课题方向，导师主页链接与详细学术成果已为您呈现在对话界面中。";
+    }
+    if (text.includes("教室借用") || text.includes("勤学楼") || text.includes("博学楼")) {
+      return "已为您智能匹配可用教学楼大课教室，并自动生成了带公章的正规审批单，您可以在主界面中点击一键打印或导出PDF！";
+    }
+    if (text.includes("请假") || text.includes("请假审批")) {
+      return "已为您生成符合规范的学生离校请假审批单，您随时可以在主对话大厅点击一键打印！";
+    }
+    if (text.includes("勤政楼") && text.includes("办公")) {
+      return "特别提醒您：勤政楼是党政机关行政办公楼，严禁学生前往上课或自习！本科上课请前往勤学楼或博学楼。";
+    }
+    const cleaned = cleanTextForSpeech(text);
+    return cleaned.slice(0, 130) + (cleaned.length > 130 ? "...详细内容已为您同步呈现在对话窗口。" : "");
+  }
 
-    if (AgentState.isListening) {
-      if (recognitionInstance) {
-        try { recognitionInstance.stop(); } catch(e) {}
+  function openVoiceMode() {
+    if (window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch(e) {}
+    }
+    const modal = document.getElementById("chatgptVoiceModal");
+    if (!modal) return;
+    modal.classList.add("show");
+    AgentState.voiceModeActive = true;
+
+    // 默认展示 Speaking 态问候，播报完毕自动无缝进入倾听态
+    const welcome = "同学你好！我是安农智办。请问今天有什么校园事务需要我协助？";
+    updateVoiceStage("speaking", welcome, "安农智办正在回答...", "🔊 正在问候中，请稍候...");
+    speakVoiceResponse(welcome, function() {
+      if (AgentState.voiceModeActive) {
+        startVoiceListening();
       }
-      AgentState.isListening = false;
-      if (btn) {
-        btn.classList.remove('listening');
-        btn.title = '点击开始语音输入（对麦克风说话）';
-      }
-      if (inputEl) inputEl.placeholder = '提问办事、借教室、考研、综测或点击语音说话...';
-      return;
+    });
+  }
+
+  function closeVoiceMode() {
+    AgentState.voiceModeActive = false;
+    if (window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch(e) {}
+    }
+    if (AgentState.voiceRecognition) {
+      try { AgentState.voiceRecognition.abort(); } catch(e) {}
+      AgentState.voiceRecognition = null;
+    }
+    const modal = document.getElementById("chatgptVoiceModal");
+    if (modal) modal.classList.remove("show");
+    updateVoiceStage("idle", undefined, "实时语音已挂断", "点击开启语音对话");
+  }
+
+  function updateVoiceStage(state, botText, statusLabel, hint) {
+    AgentState.voiceModeState = state;
+    const stage = document.getElementById("chatgptVoiceStage");
+    if (stage) {
+      stage.className = "chatgpt-voice-stage state-" + state;
+    }
+    if (statusLabel) {
+      const lbl = document.getElementById("voiceStatusLabel");
+      if (lbl) lbl.textContent = statusLabel;
+    }
+    if (hint) {
+      const h = document.getElementById("chatgptVoiceHint");
+      if (h) h.textContent = hint;
+    }
+    if (botText !== undefined) {
+      const bEl = document.querySelector("#transcriptBotText .transcript-content");
+      if (bEl) bEl.textContent = botText;
+    }
+  }
+
+  function startVoiceListening() {
+    if (!AgentState.voiceModeActive) return;
+    if (window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch(e) {}
     }
 
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
-      alert('💡 您的浏览器暂未开启原生语音识别权限，推荐在 Chrome 或 Safari 下直接体验原生语音！');
+      updateVoiceStage("paused", undefined, "未检测到语音支持", "⚠️ 当前浏览器暂不支持端侧语音识别，建议使用 Chrome / Edge 访问");
       return;
     }
 
-    try {
-      recognitionInstance = new SpeechRec();
-      recognitionInstance.lang = 'zh-CN';
-      recognitionInstance.continuous = false;
-      recognitionInstance.interimResults = false;
+    updateVoiceStage("listening", undefined, "正在倾听您的声音...", "🎙️ 正在聆听中... 请随时对我说出您的需求");
+    const userWrap = document.getElementById("transcriptUserText");
+    if (userWrap) userWrap.style.display = "flex";
+    const userContent = document.querySelector("#transcriptUserText .transcript-content");
+    if (userContent) userContent.textContent = "（正在倾听，请说话...）";
 
-      recognitionInstance.onstart = function() {
-        AgentState.isListening = true;
-        if (btn) {
-          btn.classList.add('listening');
-          btn.title = '🎙️ 正在录音中...请说话，再次点击停止';
-        }
-        if (inputEl) inputEl.placeholder = '🎙️ 正在聆听您的声音，请说话...';
+    const micBtn = document.getElementById("voiceMicToggleBtn");
+    if (micBtn) micBtn.classList.remove("paused");
+    const micText = document.getElementById("voiceMicBtnText");
+    if (micText) micText.textContent = "正在倾听";
+
+    if (AgentState.voiceRecognition) {
+      try { AgentState.voiceRecognition.abort(); } catch(e) {}
+    }
+
+    try {
+      const rec = new SpeechRec();
+      rec.lang = "zh-CN";
+      rec.continuous = false;
+      rec.interimResults = true;
+
+      rec.onstart = function () {
+        // active
       };
 
-      recognitionInstance.onresult = function(event) {
-        AgentState.isListening = false;
-        if (btn) {
-          btn.classList.remove('listening');
-          btn.title = '点击开始语音输入（对麦克风说话）';
-        }
-        if (event.results && event.results[0] && event.results[0][0]) {
-          const transcript = event.results[0][0].transcript;
-          if (inputEl) {
-            inputEl.value = transcript;
-            inputEl.placeholder = '提问办事、借教室、考研、综测或点击语音说话...';
-            window.AnauAgent.autoResizeTextarea(inputEl);
-            window.AnauAgent.submitInput();
+      rec.onresult = function (event) {
+        if (!AgentState.voiceModeActive) return;
+        let interim = "";
+        let finalTrans = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTrans += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
           }
         }
-      };
-
-      recognitionInstance.onerror = function() {
-        AgentState.isListening = false;
-        if (btn) {
-          btn.classList.remove('listening');
-          btn.title = '点击开始语音输入（对麦克风说话）';
+        const textToShow = finalTrans || interim;
+        if (textToShow && userContent) {
+          userContent.textContent = textToShow;
         }
-        if (inputEl) inputEl.placeholder = '提问办事、借教室、考研、综测或点击语音说话...';
-      };
-
-      recognitionInstance.onend = function() {
-        AgentState.isListening = false;
-        if (btn) {
-          btn.classList.remove('listening');
-          btn.title = '点击开始语音输入（对麦克风说话）';
+        if (finalTrans && finalTrans.trim()) {
+          try { rec.abort(); } catch(e) {}
+          handleVoiceTurn(finalTrans.trim());
         }
-        if (inputEl) inputEl.placeholder = '提问办事、借教室、考研、综测或点击语音说话...';
       };
 
-      recognitionInstance.start();
-    } catch (e) {
-      console.warn('Voice recognition error:', e);
-      AgentState.isListening = false;
-      if (btn) btn.classList.remove('listening');
+      rec.onerror = function (event) {
+        console.warn("SpeechRecognition error:", event.error);
+        if (event.error === "no-speech") {
+          if (AgentState.voiceModeActive && AgentState.voiceModeState === "listening") {
+            setTimeout(() => {
+              if (AgentState.voiceModeActive && AgentState.voiceModeState === "listening") {
+                try { rec.start(); } catch(e) {}
+              }
+            }, 600);
+          }
+        } else if (event.error === "not-allowed") {
+          updateVoiceStage("paused", undefined, "麦克风权限受限", "⚠️ 请在浏览器地址栏允许麦克风权限后轻触话筒重试");
+        }
+      };
+
+      rec.onend = function () {
+        if (AgentState.voiceModeActive && AgentState.voiceModeState === "listening") {
+          setTimeout(() => {
+            if (AgentState.voiceModeActive && AgentState.voiceModeState === "listening") {
+              try { rec.start(); } catch(e) {}
+            }
+          }, 300);
+        }
+      };
+
+      AgentState.voiceRecognition = rec;
+      rec.start();
+    } catch(err) {
+      console.warn("Voice rec start failed:", err);
+    }
+  }
+
+  function handleVoiceTurn(userText) {
+    if (!AgentState.voiceModeActive) return;
+    updateVoiceStage("thinking", undefined, "正在思考中...", "⚡ 正在检索知识库与安农数智大脑...");
+
+    // 同步把用户输入推送到后台文本消息列表，保证聊天记录永久留存
+    appendUserMessage(userText);
+
+    // 调用核心智能体推理
+    Promise.resolve(processUserInput(userText))
+      .then(function(res) {
+        if (!AgentState.voiceModeActive) return;
+        // 把机器人的回复也推送到后台文本抽屉
+        appendBotMessage(res.text, res.approval);
+
+        // 提炼最适合自然语音朗读的精简摘要
+        const spokenReply = summarizeForVoice(res.text);
+
+        updateVoiceStage("speaking", spokenReply, "安农智办正在回答...", "🔊 正在为您播报解答（轻触光球可打断）");
+
+        speakVoiceResponse(spokenReply, function() {
+          if (AgentState.voiceModeActive) {
+            startVoiceListening();
+          }
+        });
+      })
+      .catch(function(err) {
+        console.error("handleVoiceTurn error:", err);
+        if (!AgentState.voiceModeActive) return;
+        const errText = "抱歉同学，我刚走神了，请再说一次。";
+        updateVoiceStage("speaking", errText, "回答遇到波动", errText);
+        speakVoiceResponse(errText, function() {
+          if (AgentState.voiceModeActive) startVoiceListening();
+        });
+      });
+  }
+
+  function speakVoiceResponse(text, onDone) {
+    if (!window.speechSynthesis) {
+      if (onDone) setTimeout(onDone, 2000);
+      return;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      const clean = text
+        .replace(/[#*`_~\[\]\(\)>\\-]/g, "")
+        .replace(/<[^>]+>/g, "")
+        .replace(/https?:\/\/[^\s]+/g, "")
+        .replace(/[\u{1F300}-\u{1F9FF}]/gu, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (!clean) {
+        if (onDone) onDone();
+        return;
+      }
+
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = "zh-CN";
+      utter.rate = 1.05;
+      utter.pitch = 1.0;
+
+      let called = false;
+      function finish() {
+        if (!called) {
+          called = true;
+          if (onDone) onDone();
+        }
+      }
+
+      utter.onend = finish;
+      utter.onerror = finish;
+      const estDuration = Math.max(2500, (clean.length / 4.5) * 1000);
+      setTimeout(() => {
+        if (!called && AgentState.voiceModeState === "speaking") {
+          finish();
+        }
+      }, estDuration + 1500);
+
+      window.speechSynthesis.speak(utter);
+    } catch(e) {
+      console.warn("speakVoiceResponse failed:", e);
+      if (onDone) onDone();
+    }
+  }
+
+  function handleOrbTap() {
+    if (AgentState.voiceModeState === "speaking") {
+      // 正在朗读时点击光球 -> 立即打断！
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      startVoiceListening();
+      const hint = document.getElementById("chatgptVoiceHint");
+      if (hint) hint.textContent = "⚡ 已打断回答，正在倾听您的新问题...";
+    } else if (AgentState.voiceModeState === "paused") {
+      startVoiceListening();
+    } else if (AgentState.voiceModeState === "listening") {
+      const hint = document.getElementById("chatgptVoiceHint");
+      if (hint) hint.textContent = "🎙️ 我正在倾听，请直接说出您的问题";
+    }
+  }
+
+  function interruptAndListen() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    startVoiceListening();
+    const hint = document.getElementById("chatgptVoiceHint");
+    if (hint) hint.textContent = "⚡ 已打断，请随时说出您的新问题...";
+  }
+
+  function toggleVoiceMic() {
+    if (AgentState.voiceModeState === "listening") {
+      if (AgentState.voiceRecognition) {
+        try { AgentState.voiceRecognition.abort(); } catch(e) {}
+        AgentState.voiceRecognition = null;
+      }
+      updateVoiceStage("paused", undefined, "麦克风已静音", "⏸️ 已暂停倾听，点击话筒继续说话");
+      const micBtn = document.getElementById("voiceMicToggleBtn");
+      if (micBtn) micBtn.classList.add("paused");
+      const micText = document.getElementById("voiceMicBtnText");
+      if (micText) micText.textContent = "已暂停";
+    } else {
+      startVoiceListening();
     }
   }
 
   function toggleTts() {
-    AgentState.voiceEnabled = !AgentState.voiceEnabled;
-    const btn = document.getElementById('voiceToggleBtn');
-    if (!AgentState.voiceEnabled) {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      if (btn) {
-        btn.textContent = '🔇';
-        btn.title = '语音播报已静音（点击开启）';
-      }
-    } else {
-      if (btn) {
-        btn.textContent = '🔊';
-        btn.title = '语音播报已开启（点击静音）';
-      }
-      speakBotReply('安农智办语音播报已开启');
-    }
+    openVoiceMode();
   }
 
   function speakBotReply(text) {
-    if (!AgentState.voiceEnabled || !window.speechSynthesis) return;
-    try {
-      window.speechSynthesis.cancel();
-      const clean = (text || '')
-        .replace(/[#*`_~\[\]\(\)>\\-]/g, '')
-        .replace(/<[^>]+>/g, '')
-        .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
-        .replace(/\s+/g, ' ')
-        .slice(0, 150);
-      if (!clean.trim()) return;
-      const utter = new SpeechSynthesisUtterance(clean);
-      utter.lang = 'zh-CN';
-      utter.rate = 1.05;
-      window.speechSynthesis.speak(utter);
-    } catch (e) {
-      console.warn('TTS error:', e);
-    }
+    // 兼容旧接口
   }
 
   function showTypingIndicator() {
@@ -3020,9 +3284,14 @@ canteens: {
       alert('✅ 智能体内核配置已成功更新！');
     },
 
-    // 语音交互核心接口
-    toggleVoiceInput: toggleVoiceInput,
-    toggleTts: toggleTts,
+    // 语音交互核心接口 (全面升级为 ChatGPT 全屏语音大厅)
+    openVoiceMode: openVoiceMode,
+    closeVoiceMode: closeVoiceMode,
+    toggleVoiceMic: toggleVoiceMic,
+    interruptAndListen: interruptAndListen,
+    handleOrbTap: handleOrbTap,
+    toggleVoiceInput: openVoiceMode,
+    toggleTts: openVoiceMode,
     speakBotReply: speakBotReply,
 
     // 核心底层推理接口与知识库公开暴露
@@ -3038,6 +3307,9 @@ canteens: {
   // 12. 页面加载完成后自动挂载，并重写全站胶囊与卡片唤起函数
   // ----------------------------------------------------------------------------
   function initAgent() {
+    if (window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch(e) {}
+    }
     if (document.getElementById('nativeAgentRoot')) return; // 避免重复注入
     injectNativeChatUI();
 
