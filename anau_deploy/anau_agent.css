@@ -1,5 +1,5 @@
 /* ==========================================================================
-   徽农智 · 安农智办 (AnAU Smart Agent) - 原创全栈原生智能体样式表
+   徽农智 · 安农智办 (AHAU Smart Agent) - 原创全栈原生智能体样式表
    2026年首届“农芯智”AI智能体创新大赛 · 原创代码类作品核心组件
    ========================================================================== */
 
@@ -757,6 +757,20 @@
   .print-sheet-header-actions {
     display: none !important;
   }
+}
+
+/* 语音录音脉冲动效 */
+.input-tool-btn.listening {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-color: #ef4444 !important;
+  animation: voicePulse 1.2s infinite;
+}
+
+@keyframes voicePulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { transform: scale(1.12); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 /* 移动端适配 */
