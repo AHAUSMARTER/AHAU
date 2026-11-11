@@ -812,11 +812,13 @@
    Apple iOS 26 嵌入式工作台模式 (主流 IDE 布局 · 占据大部分屏幕)
    ========================================================================== */
 .chat-mount-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
 }
 
 .native-chat-window.embedded-mode {
@@ -826,8 +828,13 @@
   left: auto !important;
   right: auto !important;
   width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
   height: 100% !important;
-  max-height: none !important;
+  max-height: 100% !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
   border-radius: 0 !important;
   opacity: 1 !important;
   visibility: visible !important;
@@ -880,6 +887,8 @@ body.embedded-active .ai-callout-bubble {
 
 .chat-stage-body {
   flex: 1;
+  width: 100% !important;
+  min-width: 0 !important;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1480,4 +1489,52 @@ body.embedded-active .ai-callout-bubble {
 
 .askb__bar {
   max-width: 800px !important;
+}
+
+/* 移动端与桌面端嵌入视窗彻底消除遮挡 */
+.native-chat-window.embedded-mode {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  bottom: auto !important;
+  right: auto !important;
+  left: auto !important;
+  top: auto !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .native-chat-window.embedded-mode {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .chat-messages {
+    padding: 14px 12px 100px 12px !important;
+  }
+  .askb__dock {
+    padding: 10px 12px 14px 12px !important;
+  }
+}
+
+/* ==========================================================================
+   彻底解决底部打字框遮挡消息回答的问题 (Bottom Clearance Fix)
+   ========================================================================== */
+.chat-messages,
+.native-chat-window .chat-messages,
+.native-chat-window.embedded-mode .chat-messages {
+  padding-bottom: 180px !important;
+  scroll-padding-bottom: 180px !important;
+}
+
+@media (max-width: 768px) {
+  .chat-messages,
+  .native-chat-window .chat-messages,
+  .native-chat-window.embedded-mode .chat-messages {
+    padding-bottom: 170px !important;
+    scroll-padding-bottom: 170px !important;
+  }
 }
