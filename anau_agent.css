@@ -1510,3 +1510,22 @@ body.embedded-active .ai-callout-bubble {
     padding: 10px 12px 14px 12px !important;
   }
 }
+
+/* ==========================================================================
+   彻底解决底部打字框遮挡消息回答的问题 (Bottom Clearance Fix)
+   ========================================================================== */
+.chat-messages,
+.native-chat-window .chat-messages,
+.native-chat-window.embedded-mode .chat-messages {
+  padding-bottom: 180px !important;
+  scroll-padding-bottom: 180px !important;
+}
+
+@media (max-width: 768px) {
+  .chat-messages,
+  .native-chat-window .chat-messages,
+  .native-chat-window.embedded-mode .chat-messages {
+    padding-bottom: 170px !important;
+    scroll-padding-bottom: 170px !important;
+  }
+}
