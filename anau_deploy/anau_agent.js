@@ -2017,98 +2017,178 @@ canteens: {
   }
 
   // ----------------------------------------------------------------------------
-  // 5.1 多轮工作流：安农综测加分与奖学金测算器
+  // ----------------------------------------------------------------------------
+  // 5.1 多轮工作流：安农综测加分与奖学金测算器（多轮交互状态机）
   // ----------------------------------------------------------------------------
   function handleZongceWorkflow(input) {
     AgentState.lastTopic = 'zongce';
     const q = (input || '').trim();
 
-    // 尝试提取用户输入中的数值信息 (绩点/均分、四六级、志愿时长、竞赛等)
-    let gpa = 3.5;
-    let cet = 425;
-    let volunteer = 10;
-    let hasComp = false;
-
-    const gpaMatch = q.match(/([234]\.\d{1,2})/);
-    if (gpaMatch) gpa = parseFloat(gpaMatch[1]);
-    const scoreMatch = q.match(/(\d{2})分/);
-    if (scoreMatch && !gpaMatch) gpa = Math.min(4.5, (parseFloat(scoreMatch[1]) / 20) - 0.5);
-
-    const cetMatch = q.match(/(四级|六级|4级|6级|cet)\D*(\d{3})/i) || q.match(/(\d{3})分/);
-    if (cetMatch) cet = parseInt(cetMatch[2] || cetMatch[1], 10);
-
-    const volMatch = q.match(/(\d+)\s*(小时|h|时长)/i) || q.match(/志愿\D*(\d+)/);
-    if (volMatch) volunteer = parseInt(volMatch[1] || volMatch[2], 10);
-
-    if (q.includes('农芯智') || q.includes('互联网+') || q.includes('挑战杯') || q.includes('省一') || q.includes('省二') || q.includes('国一') || q.includes('国二') || q.includes('奖') || q.includes('竞赛')) {
-      hasComp = true;
+    // 1. 精确检测用户是否提供了真实的学业成绩或绩点数据
+    const gpaMatch = q.match(/(?:绩点|gpa)\s*[:：=为]?\s*([234]\.\d{1,2})/i) || q.match(/([234]\.\d{1,2})/);
+    let scoreMatch = q.match(/(\d{2,3}(?:\.\d+)?)\s*(?:分|均分|平均分)/);
+    // 排除“加分”、“满分”、“分值”等中文字符带来的误判
+    if (scoreMatch) {
+      const idx = q.indexOf(scoreMatch[0]);
+      const prefix = q.substring(Math.max(0, idx - 2), idx);
+      const suffix = q.substring(idx + scoreMatch[0].length, Math.min(q.length, idx + scoreMatch[0].length + 2));
+      if (/加|满|得|总|折|算/.test(prefix) || /值|析|配/.test(suffix)) {
+        scoreMatch = null;
+      }
     }
 
-    if (gpaMatch || cetMatch || volMatch || hasComp || q.includes('绩点') || q.includes('分')) {
-      // 依照《安徽农业大学本科生综合素质测评实施办法》精密核算
-      const studyScore = Math.min(70, Math.round((gpa / 4.5) * 70 * 10) / 10);
-      const volBonus = Math.min(5, Math.round((volunteer / 10) * 1.5 * 10) / 10);
-      const deyuScore = 10 + volBonus;
-      let compBonus = 0;
-      if (q.includes('国一') || q.includes('国家级一等')) compBonus += 8;
-      else if (q.includes('国二') || q.includes('国三')) compBonus += 6;
-      else if (q.includes('省一') || q.includes('省级一等')) compBonus += 5;
-      else if (q.includes('省二') || q.includes('农芯智') || hasComp) compBonus += 4;
-      else compBonus += 1.5;
-      compBonus = Math.min(10, compBonus);
-      const langBonus = cet >= 500 ? 3 : (cet >= 425 ? 1.5 : 0);
-      const totalScore = Math.round((studyScore + deyuScore + compBonus + langBonus) * 10) / 10;
+    const hasRealScores = Boolean(gpaMatch || scoreMatch);
 
-      let scholarshipTier = '校三等奖学金';
-      let tierColor = '🔵';
-      let rankEstimate = '专业前 15%~20%';
-      if (totalScore >= 88) {
-        scholarshipTier = '国家奖学金 / 校特等奖学金（重点推荐冲刺）';
-        tierColor = '🏆';
-        rankEstimate = '专业前 2%~5%';
-      } else if (totalScore >= 80) {
-        scholarshipTier = '校一等奖学金（或国家励志奖学金）';
-        tierColor = '🥇';
-        rankEstimate = '专业前 5%~8%';
-      } else if (totalScore >= 73) {
-        scholarshipTier = '校二等奖学金';
-        tierColor = '🥈';
-        rankEstimate = '专业前 8%~15%';
-      }
+    // 2. 如果用户只是刚进入该功能或仅进行泛泛的咨询（尚未告知具体成绩），先友好引导提问收集信息！
+    if (AgentState.workflow !== 'zongce' && !hasRealScores) {
+      AgentState.workflow = 'zongce';
+      AgentState.workflowStep = 1;
+      AgentState.workflowData = {};
 
       return {
-        text: `🏆 **「安农智办 · 本科生综合素质测评与奖学金测算报告」**\n\n` +
-          `依据《安徽农业大学本科生综合素质测评实施办法》，为您智能测算得分拆解如下：\n\n` +
-          `### 📊 一、各项模块得分精密测算\n` +
-          `- 📚 **学业成绩模块（权重 70%）**：GPA ${gpa} 折算得分 **${studyScore} 分**；\n` +
-          `- 🎖️ **德育表现模块（满分 15%）**：德育基准 10 分 + 志愿汇 ${volunteer} 小时加分 ${volBonus} 分，合计 **${deyuScore} 分**；\n` +
-          `- 💡 **创新创业与学科竞赛模块（满分 10%）**：${hasComp ? '认定高水平竞赛（含“农芯智”/“互联网+”等学科竞赛）' : '常规学术实践'}，核定 **+${compBonus} 分**；\n` +
-          `- 🔤 **外语特长模块（满分 5%）**：CET 成绩（${cet}分）核定 **+${langBonus} 分**；\n` +
-          `---\n` +
-          `📈 **综合素质测评预估总分**：**${totalScore} 分**（满分 100 分）\n` +
-          `🎯 **预估班级/专业排名段位**：**${rankEstimate}**\n\n` +
-          `### ${tierColor} 二、匹配申报奖学金档位建议\n` +
-          `- **强烈推荐申报档位**：**【${scholarshipTier}】**！\n` +
-          `- **佐证材料备忘录（请提前准备好）**：\n` +
-          `  1. 教务系统盖章成绩单原件（勤政楼一楼自助打印机打印）；\n` +
-          `  2. 志愿服务“志愿汇”App 官方工时流水截图与证明；\n` +
-          `  3. 学科竞赛获奖证书原件及复印件（需学院教学办审核盖章）；\n` +
-          `  4. CET-4/6 成绩单扫描件。\n\n` +
-          `*(注：最终评定结果请以所在学院当学期综合测评评定小组官方公示为准)*`
+        text: `🏆 **收到！正在为您启动「安农智办 · 本科生综合素质测评与奖学金测算器」**\n\n` +
+          `依据《安徽农业大学本科生综合素质测评实施办法》，综测成绩严格按照**学业成绩(70%) + 德育表现(15%) + 创新创业与学科竞赛(10%) + 外语特长(5%)**精确核算。\n\n` +
+          `为了给您进行准确的分值测算与奖学金档位匹配，请告诉我您的具体成绩数据：\n\n` +
+          `1️⃣ **学业成绩**：您的学年绩点（GPA）或综合均分是多少？（如：GPA 3.68 或 均分 86分）\n` +
+          `2️⃣ **外语成绩**：英语四级或六级成绩是多少分？（如：六级520、四级435、或四级暂未通过）\n` +
+          `3️⃣ **志愿服务**：“志愿汇”App 记录的工时有多少小时？（如：25小时）\n` +
+          `4️⃣ **学科竞赛与成果**：本学年是否有竞赛获奖或科研项目？（如：“农芯智大赛省二等奖”、“互联网+校金奖”、“国家级大创”或“暂无竞赛”）\n` +
+          `5️⃣ **学生干部与表彰**：是否担任班委/学生会干部，或获评校级三好学生/优秀团员？\n\n` +
+          `💡 *（您可以直接一段话发送给我，例如：“我绩点3.72，六级530分，志愿汇有20小时，参加农芯智AI大赛拿了省二，担任班级学委”，我将即刻为您生成精准的综测得分与奖学金申报报告！）*`
       };
     }
 
+    // 3. 用户已提供具体成绩数据，启动精密测算
+    let gpa = 3.5;
+    if (gpaMatch) {
+      gpa = parseFloat(gpaMatch[1]);
+    } else if (scoreMatch) {
+      const rawScore = parseFloat(scoreMatch[1]);
+      gpa = Math.min(4.5, Math.max(2.0, (rawScore / 20) - 0.5));
+    }
+
+    // 提取四六级
+    let cet = 0;
+    const cetMatch = q.match(/(?:四级|六级|4级|6级|cet)\D*([4567]\d{2})/i) || q.match(/([4567]\d{2})\s*分/);
+    if (cetMatch) {
+      cet = parseInt(cetMatch[1] || cetMatch[2], 10);
+    } else if (/六级.*?(?:过|通过)|过六级/.test(q)) {
+      cet = 460;
+    } else if (/四级.*?(?:过|通过)|过四级/.test(q)) {
+      cet = 450;
+    }
+
+    // 提取志愿时长
+    let volunteer = 0;
+    const volMatch = q.match(/(\d+)\s*(?:小时|h|时长)/i) || q.match(/志愿\D*(\d+)/);
+    if (volMatch) {
+      volunteer = parseInt(volMatch[1], 10);
+    }
+
+    // 提取学生干部与先进荣誉
+    const isCadre = /班长|团支书|支书|委员|学委|班委|部长|干事|学生会|自律会|党支部|三好学生|优秀团员|优秀学生干部/.test(q);
+
+    // 提取竞赛成果
+    let compBonus = 0;
+    let compDesc = '暂无竞赛加分';
+    if (/国一|国家级一等|国金/.test(q)) {
+      compBonus = 8;
+      compDesc = '认定国家级一等奖/金奖（+8.0分）';
+    } else if (/国二|国三|国家级二等|国家级三等|国银|国铜/.test(q)) {
+      compBonus = 6;
+      compDesc = '认定国家级二/三等奖（+6.0分）';
+    } else if (/省一|省级一等|省金/.test(q)) {
+      compBonus = 5;
+      compDesc = '认定省级一等奖（+5.0分）';
+    } else if (/省二|农芯智|省级二等|省银/.test(q)) {
+      compBonus = 4;
+      compDesc = '认定省级二等奖（含首届“农芯智”大赛等重点赛事，+4.0分）';
+    } else if (/省三|校一|校金|省级三等|校级一等/.test(q)) {
+      compBonus = 3;
+      compDesc = '认定省级三等奖/校级一等奖（+3.0分）';
+    } else if (/竞赛|获奖|大创|校二|校三|互联网\+|挑战杯/.test(q)) {
+      compBonus = 2;
+      compDesc = '认定校级竞赛/大创项目（+2.0分）';
+    }
+
+    // 4. 精密折算四大模块分值
+    // 学业成绩 (70%)
+    const studyScore = Math.min(70, Math.round((gpa / 4.5) * 70 * 10) / 10);
+
+    // 德育表现 (15%): 基准10分 + 干部荣誉加分 + 志愿时长加分 (每10小时1分，上限3分)
+    const cadreBonus = isCadre ? 1.5 : 0;
+    const volBonus = Math.min(3.5, Math.round((volunteer / 10) * 1.0 * 10) / 10);
+    const deyuScore = Math.min(15, Math.round((10 + cadreBonus + volBonus) * 10) / 10);
+
+    // 外语特长 (5%)
+    let langBonus = 1.0;
+    let langDesc = '外语常规学分基础分 (+1.0分)';
+    if (cet >= 520) {
+      langBonus = 5.0;
+      langDesc = `CET-6 高分（${cet}分，+5.0分满分）`;
+    } else if (cet >= 425 && (q.includes('六级') || q.includes('6级'))) {
+      langBonus = 4.0;
+      langDesc = `CET-6 通过（${cet}分，+4.0分）`;
+    } else if (cet >= 500) {
+      langBonus = 3.5;
+      langDesc = `CET-4 优异（${cet}分，+3.5分）`;
+    } else if (cet >= 425) {
+      langBonus = 2.5;
+      langDesc = `CET-4 通过（${cet}分，+2.5分）`;
+    }
+
+    // 综合测评分数合计
+    const totalScore = Math.round((studyScore + deyuScore + compBonus + langBonus) * 10) / 10;
+
+    // 奖学金档位与排名研判
+    let scholarshipTier = '校三等奖学金';
+    let tierColor = '🔵';
+    let rankEstimate = '专业前 15%~20%';
+    let scholarshipBonus = '800 元/学年';
+
+    if (totalScore >= 88 && compBonus >= 4) {
+      scholarshipTier = '国家奖学金 / 校特等奖学金（重点冲击推荐）';
+      tierColor = '🏆';
+      rankEstimate = '专业前 1%~3%';
+      scholarshipBonus = '8000 元/学年';
+    } else if (totalScore >= 80) {
+      scholarshipTier = '校一等奖学金（或国家励志奖学金）';
+      tierColor = '🥇';
+      rankEstimate = '专业前 5%~8%';
+      scholarshipBonus = '2000 元 / 5000 元（励志）';
+    } else if (totalScore >= 73) {
+      scholarshipTier = '校二等奖学金';
+      tierColor = '🥈';
+      rankEstimate = '专业前 8%~15%';
+      scholarshipBonus = '1200 元/学年';
+    }
+
+    // 测算完成，重置工作流
+    AgentState.workflow = null;
+
     return {
-      text: `🏆 **欢迎使用「安农智办 · 综合素质测评与奖学金智能测算器」！**\n\n` +
-        `依照安徽农业大学官方综测评定标准（学业成绩 70% + 德育表现 15% + 创新创业与竞赛 10% + 外语特长 5%），我能为您精准核算综测分值与匹配奖学金档位。\n\n` +
-        `👉 **您可以直接发送一句话**，例如：\n` +
-        `- *“我绩点3.65，六级520分，参加首届农芯智大赛拿了省二，志愿汇有20小时，能拿什么奖学金？”*\n` +
-        `- *“GPA 3.82，过了四级，有挑战杯校赛奖项，算下我的综测得分”*\n\n` +
-        `收到后，我将为您实时输出分值雷达拆解与国家奖学金/校一二三等奖学金申报建议！`
+      text: `🏆 **「安农智办 · 本科生综合素质测评与奖学金测算报告」**\n\n` +
+        `依据《安徽农业大学本科生综合素质测评实施办法》，结合您提供的实际学业与综合表现，精密折算如下：\n\n` +
+        `### 📊 一、各项模块得分精密测算\n` +
+        `- 📚 **学业成绩模块（权重 70%）**：GPA ${gpa}，按 70% 权重精确折算为 **${studyScore} 分**；\n` +
+        `- 🎖️ **德育表现模块（满分 15%）**：德育基准 10 分 + ${isCadre ? '学生干部/优秀表彰 +1.5分 + ' : ''}志愿汇 ${volunteer} 小时加分 ${volBonus} 分，合计 **${deyuScore} 分**；\n` +
+        `- 💡 **创新创业与学科竞赛模块（满分 10%）**：${compDesc}，核定 **+${compBonus} 分**；\n` +
+        `- 🔤 **外语特长模块（满分 5%）**：${langDesc}；\n` +
+        `---\n` +
+        `📈 **综合素质测评最终得分**：**${totalScore} 分**（满分 100 分）\n` +
+        `🎯 **预估班级/专业排名段位**：**${rankEstimate}**\n\n` +
+        `### ${tierColor} 二、匹配申报奖学金档位建议\n` +
+        `- **强烈推荐申报档位**：**【${scholarshipTier}】**（奖励标准：${scholarshipBonus}）！\n` +
+        `- **申报材料备忘清单（请提前准备）**：\n` +
+        `  1. 教务系统盖章成绩单原件（勤政楼一楼自助打印机打印）；\n` +
+        `  2. “志愿汇”App 官方工时流水截图及学院团委认定表；\n` +
+        `  3. 学科竞赛获奖证书原件及复印件（学院教学科研办审核盖章）；\n` +
+        `  4. CET-4/6 成绩单原件与扫描件。\n\n` +
+        `*(注：最终评定结果请以所在学院综合素质测评评定小组官方公示为准)*`
     };
   }
 
-  // ----------------------------------------------------------------------------
+
   // ----------------------------------------------------------------------------
   // 5.2 多轮工作流：考研全周期智能导航与择校规划专家（多轮交互状态机）
   // ----------------------------------------------------------------------------
