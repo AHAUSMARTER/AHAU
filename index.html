@@ -6,7 +6,7 @@
   <title>安徽农业大学 · 数智安农综合服务大厅</title>
   <link rel="icon" type="image/png" href="anau_ai_logo.png">
   <link rel="apple-touch-icon" href="anau_ai_logo.png">
-  <link rel="stylesheet" href="anau_agent.css?v=15.0">
+  <link rel="stylesheet" href="anau_agent.css?v=22.0">
   <style>
     :root {
       /* Apple + AHAU 经典雅致安农绿 */
@@ -40,7 +40,15 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
-      background-color: var(--apple-canvas);
+      background-color: #f4f7f5;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(35, 115, 70, 0.10) 0%, transparent 65%),
+        linear-gradient(180deg, rgba(246, 248, 246, 0.88) 0%, rgba(242, 247, 244, 0.93) 480px, rgba(245, 248, 246, 0.97) 100%),
+        url('ahau_library.jpg');
+      background-position: center top, center top, center 20%;
+      background-repeat: no-repeat;
+      background-size: 100% 700px, 100% 100%, cover;
+      background-attachment: scroll, scroll, fixed;
       color: var(--text-primary);
       line-height: 1.5;
       min-height: 100%;
@@ -48,17 +56,17 @@
 
     /* 1. 顶栏：Apple 风格磨砂玻璃 + 安农缎面深绿 */
     header {
-      background: rgba(31, 94, 57, 0.94);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      background: rgba(27, 77, 46, 0.84);
+      backdrop-filter: blur(32px) saturate(190%);
+      -webkit-backdrop-filter: blur(32px) saturate(190%);
       color: white;
-      height: 64px;
+      height: 66px;
       padding: 0 36px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 2px 14px rgba(20, 62, 38, 0.28);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 4px 20px rgba(15, 45, 27, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.1);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -138,10 +146,13 @@
       gap: 6px;
     }
 
-    /* 2. 校园即时通知条：无缝平滑横向滚动，鼠标悬停时停止滚动，离开时继续滚动 */
+    /* 2. 校园即时通知条：Apple 毛玻璃超通透胶囊条 */
     .campus-ticker-bar {
-      background: #ffffff;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.76);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
       padding: 0 36px;
       height: 44px;
       display: flex;
@@ -159,7 +170,7 @@
       flex-shrink: 0;
       z-index: 2;
       padding-right: 16px;
-      background: #ffffff;
+      background: transparent;
     }
 
     .ticker-tag {
@@ -253,16 +264,21 @@
       text-decoration: none;
       font-weight: 600;
       margin-left: 18px;
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
       transition: all 0.2s;
       z-index: 2;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     }
 
     .ticker-more:hover {
-      background: var(--ahau-green-tint);
-      color: var(--ahau-green-deep);
+      background: var(--ahau-green);
+      color: #ffffff;
+      border-color: var(--ahau-green);
     }
 
     /* 3. 主体内容区：Apple 风格极简高级留白与大圆角 */
@@ -272,17 +288,19 @@
       padding: 0 28px;
     }
 
-    /* Apple 风格高质感智能体通告卡片 */
+    /* Apple 风格高质感智能体通告卡片 - iOS 26 超清透 Liquid Glass */
     .hero-banner {
-      background: #ffffff;
-      border: 1px solid var(--apple-border);
-      border-radius: 22px;
-      padding: 26px 32px;
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 24px;
+      padding: 28px 34px;
       margin-bottom: 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 10px 30px rgba(20, 50, 30, 0.05), inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
       gap: 24px;
       transition: all 0.3s var(--ease-apple);
       position: relative;
@@ -300,8 +318,10 @@
     }
 
     .hero-banner:hover {
-      box-shadow: var(--shadow-md);
-      border-color: rgba(31, 94, 57, 0.2);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 16px 40px rgba(20, 50, 30, 0.09), inset 0 1px 1.5px rgba(255, 255, 255, 1);
+      border-color: rgba(31, 94, 57, 0.25);
+      transform: translateY(-2px);
     }
 
     .hero-banner-content h2 {
@@ -368,15 +388,19 @@
 
     .segmented-control {
       background: rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       padding: 4px;
-      border-radius: 12px;
+      border-radius: 14px;
       display: inline-flex;
       gap: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     .segment-item {
       padding: 6px 18px;
-      border-radius: 9px;
+      border-radius: 10px;
       font-size: 13px;
       font-weight: 500;
       color: var(--text-tertiary);
@@ -386,10 +410,12 @@
     }
 
     .segment-item.active {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       color: var(--ahau-green-deep);
       font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     .section-hint {
@@ -406,24 +432,27 @@
     }
 
     .app-card {
-      background: var(--apple-card);
-      border-radius: 18px;
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(26px) saturate(190%);
+      -webkit-backdrop-filter: blur(26px) saturate(190%);
+      border-radius: 20px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--apple-border);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.035), inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.85);
       cursor: pointer;
-      transition: all 0.26s var(--ease-apple);
+      transition: all 0.28s var(--ease-apple);
       position: relative;
-      min-height: 148px;
+      min-height: 152px;
     }
 
     .app-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: rgba(31, 94, 57, 0.25);
+      transform: translateY(-5px) scale(1.01);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 18px 38px rgba(31, 94, 57, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
+      border-color: rgba(31, 94, 57, 0.3);
     }
 
     .app-card:active {
@@ -504,28 +533,33 @@
       font-size: 11.5px;
       font-weight: 600;
       color: var(--ahau-green);
-      background: #f5f5f7;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       padding: 4px 12px;
       border-radius: 9999px;
       display: flex;
       align-items: center;
       gap: 3px;
       transition: all 0.2s ease;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
     }
 
     .app-card:hover .card-action-pill {
       background: var(--ahau-green);
       color: #ffffff;
       transform: translateX(2px);
+      box-shadow: 0 3px 10px rgba(31, 94, 57, 0.3);
     }
 
     /* 6. 模态弹窗：Apple 质感毛玻璃 */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(15, 23, 42, 0.35);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       z-index: 9999999;
       display: none;
       align-items: center;
@@ -541,13 +575,15 @@
     }
 
     .modal-box {
-      background: #ffffff;
-      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(36px) saturate(200%);
+      -webkit-backdrop-filter: blur(36px) saturate(200%);
+      border-radius: 24px;
       width: 100%;
-      max-width: 480px;
-      padding: 26px 28px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--apple-border);
+      max-width: 490px;
+      padding: 28px 30px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       animation: modalPop 0.28s var(--ease-apple);
     }
 
@@ -676,21 +712,21 @@
       transform: translateY(-1px);
     }
 
-    /* 7. 右下角 AI 智能体专属呼唤卡 */
+    /* 7. 右下角 AI 智能体专属呼唤卡 - Apple 毛玻璃浮窗 */
     .ai-callout-bubble {
       position: fixed;
       bottom: 96px;
       right: 28px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(31, 94, 57, 0.22);
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
       padding: 10px 14px;
       display: flex;
       align-items: center;
       gap: 10px;
-      box-shadow: 0 8px 24px rgba(31, 94, 57, 0.15), var(--shadow-sm);
+      box-shadow: 0 10px 28px rgba(31, 94, 57, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.95);
       z-index: 9999;
       cursor: pointer;
       user-select: none;
@@ -797,14 +833,16 @@
       border-top: 7px solid #ffffff;
     }
 
-    /* 8. 底部版权：Apple 极简浅灰 */
+    /* 8. 底部版权：Apple 极简浅灰毛玻璃 */
     footer {
       text-align: center;
       padding: 40px 20px 100px 20px;
       color: var(--text-tertiary);
       font-size: 12px;
-      border-top: 1px solid var(--apple-border);
-      background: #ffffff;
+      border-top: 1px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
 
     @media (max-width: 768px) {
@@ -1180,7 +1218,7 @@
   </footer>
 
   <!-- 徽农智 · 安农智办 原创全栈智能体引擎 -->
-  <script src="anau_agent.js?v=21.0"></script>
+  <script src="anau_agent.js?v=22.0"></script>
 
   <script>
     function openJwxtModal() {
