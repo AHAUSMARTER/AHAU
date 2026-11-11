@@ -839,12 +839,27 @@ canteens: {
     // ------------------------------------------------------------------------
     faculty: [
       {
+        college: '农学院',
+        officialPortal: 'http://agri.ahau.edu.cn/szdw/zrjs/nxx.htm',
+        contactOffice: '农学院教务科研办 / 电话: 0551-65786205',
+        teachers: [
+          { name: '姜东', title: '教授 / 博士生导师', role: '安徽农业大学学术副校长，长江学者特聘教授，国家杰出青年科学基金获得者', research: '小麦栽培生理生态、小麦品质形成机理与智慧调优技术', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2023908' },
+          { name: '武立权', title: '教授 / 博士生导师', role: '农学院院长', research: '水稻高产优质高效栽培生理、稻作生态与智慧稻作技术', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2004013' },
+          { name: '黄正来', title: '教授 / 博士生导师', role: '作物栽培与耕作学专家', research: '作物栽培学与耕作学、小麦抗逆栽培、防灾减灾农艺技术', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1985015' },
+          { name: '李金才', title: '教授 / 博士生导师', role: '作物生理学资深教授', research: '作物抗逆生理生态、小麦高产优质栽培机理', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1984019' },
+          { name: '宋贺', title: '教授 / 博士生导师', role: '作物逆境生理专家', research: '作物生理与分子生物学、农田资源高效利用', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2012004' },
+          { name: '张文静', title: '教授 / 博士生导师', role: '玉米育种与耕作专家', research: '玉米遗传育种与高产栽培、粮饲兼用玉米选育', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2007035' },
+          { name: '杜祥备', title: '教授 / 硕士生导师', role: '大豆栽培与生理专家', research: '大豆高产高效栽培理论与技术、大豆玉米带状复合种植', link: 'http://agri.ahau.edu.cn/szdw/zrjs/nxx.htm' },
+          { name: '郑文寅', title: '教授 / 硕士生导师', role: '作物遗传育种专家', research: '油菜遗传改良与分子育种、耐逆基因挖掘与功能解析', link: 'http://agri.ahau.edu.cn/szdw/zrjs/nxx.htm' }
+        ]
+      },
+      {
         college: '茶业学院 / 全国重点实验室',
         officialPortal: 'http://cysp.ahau.edu.cn/szdw/cyx.htm',
         contactOffice: '茶业楼研究生办公室 / 电话: 0551-65786002',
         teachers: [
-          { name: '宛晓春', title: '教授 / 博士生导师', role: '原校长、全国茶学学科带头人', research: '茶叶生物化学、食品化学、茶树次生代谢', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1985008' },
-          { name: '夏恩华', title: '教授 / 博士生导师', role: '国家重点实验室副主任、国家领军人才', research: '茶叶品质形成与逆境调控、代谢基因组学、茶树基因组学', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2017078' },
+          { name: '宛晓春', title: '二级教授 / 博士生导师', role: '原安徽农业大学党委书记、校长，茶树生物学与资源利用国家重点实验室主任，全国茶学学科带头人', research: '茶叶生物化学、食品化学、茶树次生代谢', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1985008' },
+          { name: '夏恩华', title: '教授 / 博士生导师', role: '茶树生物学与资源利用国家重点实验室常务副主任、国家级领军人才', research: '茶叶品质形成与逆境调控、代谢基因组学、茶树基因组学', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2017078' },
           { name: '宁井铭', title: '教授 / 博士生导师', role: '茶业学院副院长', research: '茶叶加工工程、光谱图像技术在茶叶品质分析中的应用、数字化品控', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1998009' },
           { name: '宋传奎', title: '教授 / 博士生导师', role: '国家杰出学术带头人', research: '茶树香气物质代谢与生物工程、茶树细胞分子生物学', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2016045' },
           { name: '李大祥', title: '教授 / 博士生导师', role: '茶业学院院长', research: '茶叶营养品质与健康、茶叶生物化学与综合利用、茶叶标准', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2004019' },
@@ -859,7 +874,7 @@ canteens: {
         contactOffice: '信息智造楼研究生办公室 / 电话: 0551-65786193',
         teachers: [
           { name: '辜丽川', title: '教授 / 博士生导师', role: '人工智能学院院长', research: '农业空间信息技术、智能信息处理、大模型农业应用、图像智能识别', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2005065' },
-          { name: '张友华', title: '教授 / 博士生导师', role: '原信息与计算机学院院长、智慧农业学科带头人', research: '农业物联网、农业大数据与智慧农业、人工智能在农业中的应用', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1995051' },
+          { name: '张友华', title: '教授 / 博士生导师', role: '安徽省智慧农业研究院院长、原信息与计算机学院院长，智慧农业学科带头人', research: '农业物联网、农业大数据与智慧农业、人工智能在农业中的应用', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1995051' },
           { name: '张武', title: '教授 / 博士生导师', role: '人工智能学院副院长', research: '农业信息化、生物信息学与智能计算、大数据分析', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2003009' },
           { name: '王凯', title: '教授 / 硕士生导师', role: '计算机系资深教授', research: '计算机视觉、多媒体信息处理、数字图像处理', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1998025' },
           { name: '王永梅', title: '教授 / 硕士生导师', role: '软件工程系主任', research: '软件工程、智能信息处理、系统可靠性分析', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2000038' },
@@ -869,28 +884,57 @@ canteens: {
         ]
       },
       {
-        college: '农学院',
-        officialPortal: 'http://agri.ahau.edu.cn/szdw/zrjs/nxx.htm',
-        contactOffice: '农学院教务科研办 / 电话: 0551-65786205',
+        college: '园艺学院',
+        officialPortal: 'http://yyxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '园艺楼教研与研管办 / 电话: 0551-65786220',
         teachers: [
-          { name: '姜东', title: '教授 / 博士生导师', role: '校党委常委、副校长、长江学者特聘教授', research: '小麦栽培生理生态、小麦品质形成机理与智慧调优技术', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2023908' },
-          { name: '武立权', title: '教授 / 博士生导师', role: '农学院院长', research: '水稻高产优质高效栽培生理、稻作生态与智慧稻作技术', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2004013' },
-          { name: '黄正来', title: '教授 / 博士生导师', role: '作物栽培与耕作学专家', research: '作物栽培学与耕作学、小麦抗逆栽培、防灾减灾农艺技术', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1985015' },
-          { name: '李金才', title: '教授 / 博士生导师', role: '作物生理学资深教授', research: '作物抗逆生理生态、小麦高产优质栽培机理', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1984019' },
-          { name: '宋贺', title: '教授 / 博士生导师', role: '作物逆境生理专家', research: '作物生理与分子生物学、农田资源高效利用', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2012004' },
-          { name: '张文静', title: '教授 / 博士生导师', role: '玉米育种与耕作专家', research: '玉米遗传育种与高产栽培、粮饲兼用玉米选育', link: 'http://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2007035' }
+          { name: '吴俊', title: '教授 / 博士生导师', role: '园艺学院院长、国家级人才', research: '果树种质资源与分子育种、梨基因组与遗传变异、重要品质性状功能基因挖掘', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2020901' },
+          { name: '朱晓彪', title: '教授 / 博士生导师', role: '蔬菜分子生物学专家', research: '植物分子遗传学、马铃薯与蔬菜表观遗传调控机制、分子育种', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2019035' },
+          { name: '方从兵', title: '教授 / 博士生导师', role: '果树生理生态带头人', research: '果树栽培生理、草莓特色果树种质资源利用与优质高效栽培技术', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1993021' },
+          { name: '衡伟', title: '教授 / 硕士生导师', role: '果树遗传育种专家', research: '梨树遗传育种、果皮外观性状（果锈、褐变）分子机制与生产技术', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2005012' },
+          { name: '郑朋朋', title: '教授 / 博士生导师', role: '逆境分子生物学专家', research: '猕猴桃逆境分子生物学、冷冻胁迫耐受调控与抗涝分子机制', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2018042' },
+          { name: '陈友根', title: '教授 / 硕士生导师', role: '设施农业工程专家', research: '蔬菜与食用菌遗传育种、设施环境智慧调控、绿色高效栽培技术', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1999018' }
         ]
       },
       {
-        college: '生物制造学院、生命科学学院',
-        officialPortal: 'http://smkx.ahau.edu.cn/szdw/js.htm',
-        contactOffice: '生命科学楼研究生办公室 / 电话: 0551-65786139',
+        college: '林学与园林学院',
+        officialPortal: 'http://lyyxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '林学楼研究生办公室 / 电话: 0551-65786530',
         teachers: [
-          { name: '程备久', title: '教授 / 博士生导师', role: '原校长、全国知名农作物遗传育种泰斗', research: '农作物基因工程、表观遗传学与作物精准分子改良', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1982008' },
-          { name: '江海洋', title: '教授 / 博士生导师', role: '校党委常委、副校长', research: '玉米功能基因组学与分子育种、耐旱抗逆分子机制', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2008025' },
-          { name: '薛挺', title: '教授 / 博士生导师', role: '生命科学学院院长', research: '微生物合成生物学、天然药物生物制造、代谢工程', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2013023' },
-          { name: '张应烙', title: '教授 / 博士生导师', role: '天然药物化学带头人', research: '药用植物活性成分代谢、微生物药物合成与农用抗生素研发', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2017001' },
-          { name: '李培金', title: '教授 / 博士生导师', role: '植物发育生物学骨干', research: '植物生长发育与光信号转导、作物抗逆生理', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1999026' }
+          { name: '夏志超', title: '教授 / 博士生导师', role: '林学与园林学院骨干教授', research: '森林培育与土壤生态学、雌雄异株植物资源获取利用策略、根叶-微生物互作', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2019088' },
+          { name: '尹冬梅', title: '教授 / 博士生导师', role: '风景园林学学科带头人', research: '园林植物种质资源创新与遗传育种、功能花卉逆境生理、园林康养与人居生态', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2008016' },
+          { name: '刘盛全', title: '教授 / 博士生导师', role: '木材科学与技术专家、国际教育学院院长', research: '木材解剖与材质改良、材性与森林培育及高效利用关系', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1986012' },
+          { name: '林英任', title: '教授 / 博士生导师', role: '森林保护与微生物泰斗', research: '真菌学系统发育、斑痣盘菌目分类、林木病理与食药用菌资源开发', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1983015' },
+          { name: '胡丰林', title: '教授 / 博士生导师', role: '微生物与经济林专家', research: '真菌代谢组学及生物活性物质高通量筛选、昆虫病原真菌生物防治利用', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1995018' },
+          { name: '徐小牛', title: '教授 / 博士生导师', role: '森林生态学资深专家', research: '森林生态系统养分循环、全球变化与森林碳汇、退化生态系统修复', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2002015' }
+        ]
+      },
+      {
+        college: '资源与环境学院',
+        officialPortal: 'http://zhxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '资环楼科研教务办 / 电话: 0551-65786131',
+        teachers: [
+          { name: '吴祥为', title: '教授 / 博士生导师', role: '校党委常委、副校长，农药残留与农业环境安全专家', research: '环境微污染物迁移转化机制、农药环境残留分析与控制技术、农产品产地安全', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html' },
+          { name: '胡宏祥', title: '教授 / 博士生导师', role: '农业资源利用知名专家', research: '土壤质量提升、农业面源与重金属污染控制、农业废弃物综合利用', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2003018' },
+          { name: '马超', title: '教授 / 博士生导师', role: '土壤生物学带头人', research: '土壤微生物生态和土壤肥力、秸秆有机废弃物肥料化技术、低产田土壤生物障碍消减', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2014022' },
+          { name: '王毅', title: '教授 / 博士生导师', role: '农药学系主任、神农学者', research: '农药环境毒理、纳米农药研发、农药环境残留与农产品质量安全', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2015033' },
+          { name: '蒋跃林', title: '教授 / 硕士生导师', role: '气象教研室主任', research: '应用气象学、气候变化响应、陆地生态系统碳循环与农业气候资源利用', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1987019' },
+          { name: '方恒', title: '特任教授 / 博士生导师', role: '农业节水与水肥高效专家', research: '土壤碳氮循环、农作物水肥高效利用机理、农业节水灌溉理论与技术', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2021055' },
+          { name: '郜红建', title: '教授 / 博士生导师', role: '植物营养学科带头人', research: '养分资源高效利用、新型绿色肥料研制与退化土壤养分调控', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2001015' }
+        ]
+      },
+      {
+        college: '工学院 (机械与车辆工程 / 智能制造)',
+        officialPortal: 'http://gxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '工科楼研究生办公室 / 电话: 0551-65786153',
+        teachers: [
+          { name: '陈黎卿', title: '教授 / 博士生导师', role: '校党委常委、副校长，车辆与智能网联工程专家', research: '智能车辆动力学与线控底盘技术、农业作业智能移动装备研制与控制', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html' },
+          { name: '朱德泉', title: '教授 / 博士生导师', role: '机械与车辆工程学院院长、智能制造学院院长', research: '农业机械设计理论与方法、农机信息感知与智能控制、农业生物力学', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2002026' },
+          { name: '李兵', title: '教授 / 博士生导师', role: '农业装备领军专家、学术带头人', research: '农业机械化及智能化装备研制、小麦免耕播种机、茶叶清洁化生产线装备', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1997015' },
+          { name: '刘素梅', title: '教授 / 硕士生导师', role: '现代测控与模式识别专家', research: '机械参数化有限元分析、电子测控技术、物联网技术及工程装备结构分析', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2000028' },
+          { name: '王明峰', title: '特任教授 / 博士生导师', role: '生物质能源装备专家', research: '农林废弃物热解装备及电控系统、生物质能源转化、生物炭基炭肥工艺', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2019062' },
+          { name: '秦宽', title: '副教授 / 硕士生导师', role: '农林智能装备系主任', research: '丘陵山区特色农机具研发、现代农业装备数字化设计与仿真', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2016018' },
+          { name: '王笑乐', title: '讲师 / 硕士生导师', role: '农业机器人青年骨干', research: '农业机器人多模态信息采集、自主导航与路径规划、智能农机装备控制', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2021033' }
         ]
       },
       {
@@ -898,10 +942,23 @@ canteens: {
         officialPortal: 'http://ahauplant.ahau.edu.cn/szdw/zzjs/spys.htm',
         contactOffice: '植保楼科研办 / 电话: 0551-65786221',
         teachers: [
-          { name: '操海群', title: '教授 / 博士生导师', role: '校党委常委、副校长', research: '农药学、绿色农药创制与农产品质量安全控制、农药残留检测与毒理', link: 'http://ahauplant.ahau.edu.cn' },
+          { name: '操海群', title: '二级教授 / 博士生导师', role: '安徽农业大学校长、校党委副书记，国家重点研发计划首席科学家，农业农村部“神农领军英才”', research: '农药学、绿色农药创制与农产品质量安全控制、农药残留检测与毒理', link: 'http://ahauplant.ahau.edu.cn' },
           { name: '潘月敏', title: '教授 / 博士生导师', role: '植物保护学院院长', research: '植物真菌病害发病机理、农作物重要病害绿色综合防控', link: 'http://ahauplant.ahau.edu.cn' },
           { name: '丁婷', title: '教授 / 博士生导师', role: '植物保护学院副院长', research: '植物病理学、生防微生物资源挖掘与利用、作物抗病性诱导', link: 'http://ahauplant.ahau.edu.cn' },
-          { name: '廖敏', title: '教授 / 博士生导师', role: '农药毒理学专家', research: '农药毒理学、重大农业害虫抗药性监测与抗性治理技术', link: 'http://ahauplant.ahau.edu.cn' }
+          { name: '廖敏', title: '教授 / 博士生导师', role: '农药毒理学专家', research: '农药毒理学、重大农业害虫抗药性监测与抗性治理技术', link: 'http://ahauplant.ahau.edu.cn' },
+          { name: '唐庆峰', title: '教授 / 博士生导师', role: '农业昆虫与害虫防治专家', research: '昆虫化学生态学、害虫绿色无公害防控技术与生物农药', link: 'http://ahauplant.ahau.edu.cn' }
+        ]
+      },
+      {
+        college: '生命科学学院 / 生物制造学院',
+        officialPortal: 'http://smkx.ahau.edu.cn/szdw/js.htm',
+        contactOffice: '生命科学楼研究生办公室 / 电话: 0551-65786139',
+        teachers: [
+          { name: '程备久', title: '教授 / 博士生导师', role: '原安徽农业大学校长、国家级教学名师、农作物遗传育种泰斗', research: '农作物基因工程、表观遗传学与作物精准分子改良', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1982008' },
+          { name: '江海洋', title: '教授 / 博士生导师', role: '校党委常委、副校长', research: '玉米功能基因组学与分子育种、耐旱抗逆分子机制', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2008025' },
+          { name: '薛挺', title: '教授 / 博士生导师', role: '生命科学学院院长', research: '微生物合成生物学、天然药物生物制造、代谢工程', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2013023' },
+          { name: '张应烙', title: '教授 / 博士生导师', role: '天然药物化学带头人', research: '药用植物活性成分代谢、微生物药物合成与农用抗生素研发', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=2017001' },
+          { name: '李培金', title: '教授 / 博士生导师', role: '植物发育生物学骨干', research: '植物生长发育与光信号转导、作物抗逆生理', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html?zgh=1999026' }
         ]
       },
       {
@@ -912,18 +969,67 @@ canteens: {
           { name: '栾敬东', title: '教授 / 博士生导师', role: '知名农业经济管理学科带头人', research: '农业经济理论与政策、农产品市场营销与国际贸易、乡村振兴战略', link: 'http://jgxy.ahau.edu.cn' },
           { name: '孟令杰', title: '教授 / 博士生导师', role: '农业技术经济资深学者', research: '农业技术经济与生产率分析、农业资源配置与绿色发展', link: 'http://jgxy.ahau.edu.cn' },
           { name: '张德元', title: '教授 / 知名三农问题学者', role: '中国合作社研究院院长', research: '农村社会学、三农政策与农村集体经济发展', link: 'http://jgxy.ahau.edu.cn' },
-          { name: '田涛', title: '教授 / 硕士生导师', role: '经济管理学院副院长', research: '乡村产业发展、农林经济管理、农业金融与投融资', link: 'http://jgxy.ahau.edu.cn' }
+          { name: '田涛', title: '教授 / 硕士生导师', role: '经济管理学院副院长', research: '乡村产业发展、农林经济管理、农业金融与投融资', link: 'http://jgxy.ahau.edu.cn' },
+          { name: '王士海', title: '教授 / 硕士生导师', role: '金融系骨干教授', research: '农村普惠金融、农业保险与农业风险管理', link: 'http://jgxy.ahau.edu.cn' }
         ]
       },
       {
-        college: '动物科技学院 / 动物医学院',
+        college: '动物科技学院',
         officialPortal: 'http://dwkjxy.ahau.edu.cn/index/sztd.htm',
-        contactOffice: '动科楼科研生管办 / 电话: 0551-65786357',
+        contactOffice: '动科楼科研办 / 电话: 0551-65786357',
         teachers: [
-          { name: '耿照玉', title: '教授 / 博士生导师', role: '全国知名家禽遗传育种专家', research: '家禽遗传育种与繁殖、安徽地方禽种资源精准保护与高产培育', link: 'http://dwkjxy.ahau.edu.cn' },
+          { name: '耿照玉', title: '教授 / 博士生导师', role: '知名家禽遗传育种专家', research: '家禽遗传育种与繁殖、安徽地方禽种资源精准保护与高产培育', link: 'http://dwkjxy.ahau.edu.cn' },
           { name: '程建波', title: '教授 / 博士生导师', role: '动物科技学院院长', research: '反刍动物营养调控、奶牛健康养殖与过瘤胃营养技术', link: 'http://dwkjxy.ahau.edu.cn' },
+          { name: '陈丽娟', title: '教授 / 博士生导师', role: '动物遗传学骨干', research: '猪分子遗传与肉质性状选育、基因组选择育种技术', link: 'http://dwkjxy.ahau.edu.cn' },
+          { name: '凌英会', title: '教授 / 博士生导师', role: '草食动物遗传专家', research: '地方牛羊遗传资源评估与优良基因挖掘、分子育种', link: 'http://dwkjxy.ahau.edu.cn' }
+        ]
+      },
+      {
+        college: '动物医学院',
+        officialPortal: 'https://dwyxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '动医楼研管办 / 电话: 0551-65786358',
+        teachers: [
           { name: '孙裴', title: '教授 / 博士生导师', role: '动物医学院院长', research: '预防兽医学、动物重大疫病分子诊断与新型基因工程疫苗', link: 'https://dwyxy.ahau.edu.cn' },
-          { name: '蒋书东', title: '教授 / 博士生导师', role: '动物生殖生物学专家', research: '动物组织胚胎学、配子发生与体外受精胚胎工程', link: 'http://dwkjxy.ahau.edu.cn' }
+          { name: '蒋书东', title: '教授 / 博士生导师', role: '动物生殖生物学专家', research: '动物组织胚胎学、配子发生与体外受精胚胎工程', link: 'http://dwkjxy.ahau.edu.cn' },
+          { name: '刘德义', title: '教授 / 博士生导师', role: '临床兽医学带头人', research: '兽医内科学、动物代谢病与中毒病发病机制及防治', link: 'https://dwyxy.ahau.edu.cn' }
+        ]
+      },
+      {
+        college: '材料与化学学院',
+        officialPortal: 'http://chxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '材化楼科研办 / 电话: 0551-65786016',
+        teachers: [
+          { name: '袁亮', title: '教授 / 博士生导师', role: '高分子材料学科带头人', research: '生物质分子结构改性、木质素与松香基绿色化学品、环保功能树脂', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html' },
+          { name: '王新', title: '教授 / 博士生导师', role: '纳米物理与器件专家', research: '纳米能源摩擦纳米发电机、柔性物理光学器件、湿气发电与热管理', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html' },
+          { name: '叶冬冬', title: '教授 / 博士生导师', role: '生物质可持续材料团队负责人', research: '生物质基可持续材料、纤维素高值化利用、新型绿色高分子复合材料', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html' },
+          { name: '汪钟凯', title: '教授 / 博士生导师', role: '国家级青年拔尖人才', research: '植物油脂高分子材料、生物基聚氨酯与可降解包装材料创制', link: 'https://jsxx.ahau.edu.cn/ch/jsxx_show.html' }
+        ]
+      },
+      {
+        college: '外国语学院',
+        officialPortal: 'http://wgy.ahau.edu.cn/szdw.htm',
+        contactOffice: '外国语学院科研教学办 / 电话: 0551-65786180',
+        teachers: [
+          { name: '孙志农', title: '教授 / 硕士生导师', role: '外国语言文学学科带头人', research: '应用语言学、农林科技英语翻译理论与实践、跨文化交际', link: 'http://wgy.ahau.edu.cn' },
+          { name: '许宗瑞', title: '教授 / 硕士生导师', role: '外国语学院骨干教授', research: '英美文学、英语教育教学理论、涉农外语国际传播', link: 'http://wgy.ahau.edu.cn' }
+        ]
+      },
+      {
+        college: '人文社会科学学院 / 马克思主义学院',
+        officialPortal: 'http://rwsk.ahau.edu.cn/szdw.htm',
+        contactOffice: '人文楼研工办 / 电话: 0551-65786160',
+        teachers: [
+          { name: '方章东', title: '教授 / 硕士生导师', role: '马克思主义理论学科带头人', research: '中国近现代史基本问题研究、农耕文化与思想政治教育', link: 'http://rwsk.ahau.edu.cn' },
+          { name: '黄学林', title: '教授 / 硕士生导师', role: '法学与公共管理专家', research: '乡村治理与涉农法律制度、农业知识产权保护', link: 'http://rwsk.ahau.edu.cn' }
+        ]
+      },
+      {
+        college: '理学院',
+        officialPortal: 'http://lxy.ahau.edu.cn/szdw.htm',
+        contactOffice: '理学楼教研办 / 电话: 0551-65786170',
+        teachers: [
+          { name: '鲍大秀', title: '教授 / 硕士生导师', role: '应用数学系主任', research: '应用统计学、微分方程与动力系统、生物数学建模', link: 'http://lxy.ahau.edu.cn' },
+          { name: '何晓雄', title: '教授 / 硕士生导师', role: '应用物理系教授', research: '激光物理与光谱技术、光电信息在农产品检测中的应用', link: 'http://lxy.ahau.edu.cn' }
         ]
       }
     ]
@@ -1528,9 +1634,12 @@ canteens: {
     if (t.includes('考研') || t.includes('择校') || t.includes('专硕') || t.includes('学硕') || t.includes('读博') || t.includes('408') || t.includes('414') || t.includes('314') || t.includes('315') || t.includes('考研时间线') || t.includes('考研科目') || t.includes('复习进度') || t.includes('择校方案')) {
       return handleKaoyanWorkflow(raw);
     }
-    // 师资队伍与导师课题触发器（全面覆盖“农学院有哪些老师”、学院名、老师名、导师、教授等所有提问方式）
-    const isFacultyQuery = /师资|导师|教授|课题组|研究课题|研究方向|博导|硕导|老师|教师|副教授|讲师|系主任|宛晓春|夏恩华|宁井铭|宋传奎|李大祥|张正竹|韦朝领|邓威威|辜丽川|张友华|张武|王凯|王永梅|叶勇|樊冬梅|杨帅|姜东|武立权|黄正来|李金才|宋贺|张文静|程备久|江海洋|薛挺|张应烙|李培金|操海群|潘月敏|丁婷|廖敏|栾敬东|孟令杰|张德元|田涛|耿照玉|程建波|孙裴|蒋书东|农学院|茶业学院|茶学院|人工智能学院|信智学院|计算机学院|信息与计算机学院|生科院|生命科学学院|生物制造学院|植保学院|植物保护学院|经管学院|经济管理学院|动科院|动医院|动物科技学院|动物医学院/.test(t) ||
-      ((t.includes('学院') || t.includes('系')) && (t.includes('谁') || t.includes('人') || t.includes('有哪些') || t.includes('名单') || t.includes('名录') || t.includes('队伍')));
+    // 师资队伍与导师课题触发器（动态匹配全校所有教师姓名、学院名、校长、院长、导师、课题等所有提问方式）
+    const hasFacultyName = AHAU_KB.faculty.some(g => g.teachers.some(teacher => raw.includes(teacher.name)));
+    const isFacultyQuery = hasFacultyName ||
+      /师资|导师|教授|课题组|研究课题|研究方向|博导|硕导|老师|教师|副教授|讲师|校长|副校长|院长|系主任|副院长/.test(t) ||
+      /农学院|茶业学院|茶学院|人工智能学院|信智学院|计算机学院|信息与计算机学院|园艺学院|林学院|林学与园林|资环学院|资源与环境|工学院|机械学院|生科院|生命科学学院|生物制造|植保学院|植物保护学院|经管学院|经济管理学院|动科院|动医院|动物科技学院|动物医学院|材化学院|材料与化学|外语学院|外国语学院|理学院/.test(t) ||
+      ((t.includes('学院') || t.includes('系')) && (t.includes('谁') || t.includes('人') || t.includes('有哪些') || t.includes('名单') || t.includes('名录') || t.includes('队伍') || t.includes('老师') || t.includes('导师') || t.includes('教授')));
     if (isFacultyQuery) {
       return handleFacultyQuery(raw);
     }
@@ -2246,13 +2355,22 @@ canteens: {
 
     // 2. 查具体学院（配置全系别名，精准匹配用户口语输入：如“农学院有哪些老师”、“计算机学院老师”、“茶学院导师”）
     const collegeAliases = {
-      '农学院': ['农学院', '农学系', '农学', '农科'],
+      '农学院': ['农学院', '农学系', '农学', '农科', '作物', '种子'],
       '茶业学院 / 全国重点实验室': ['茶业学院', '茶学院', '茶学系', '茶学', '茶业', '茶树', '国重', '重点实验室'],
       '人工智能学院 (原信息与计算机学院)': ['人工智能学院', '计算机学院', '信息与计算机学院', '信息学院', '信智学院', '人工智能', '计算机', '信智', '软件', '计科'],
-      '生物制造学院、生命科学学院': ['生命科学学院', '生物制造学院', '生科院', '生物制造', '生物学院', '生命科学', '生科'],
-      '植物保护学院': ['植物保护学院', '植保学院', '植物保护', '植保院', '植保系', '植保'],
-      '经济管理学院': ['经济管理学院', '经管学院', '经管院', '经济管理', '经管系', '经管', '农经'],
-      '动物科技学院 / 动物医学院': ['动物科技学院', '动物医学院', '动科院', '动医院', '动物科技', '动物医', '动科', '动医', '兽医']
+      '园艺学院': ['园艺学院', '园艺系', '园艺', '果树', '蔬菜', '设施农业'],
+      '林学与园林学院': ['林学与园林学院', '林学与园林', '林学院', '园林学院', '风景园林', '林学', '园林'],
+      '资源与环境学院': ['资源与环境学院', '资源与环境', '资环学院', '资环院', '资环', '环境学院', '土壤'],
+      '工学院 (机械与车辆工程 / 智能制造)': ['工学院', '机械与车辆工程学院', '机械工程', '机械学院', '智能制造学院', '智能制造', '机电', '农机', '车辆'],
+      '植物保护学院': ['植物保护学院', '植物保护', '植保学院', '植保院', '植保系', '植保', '农药'],
+      '生命科学学院 / 生物制造学院': ['生命科学学院', '生物制造学院', '生科院', '生物制造', '生物学院', '生命科学', '生科'],
+      '经济管理学院': ['经济管理学院', '经济管理', '经管学院', '经管院', '经管系', '经管', '农经', '金融'],
+      '动物科技学院': ['动物科技学院', '动科院', '动物科技', '动科', '畜牧', '养殖'],
+      '动物医学院': ['动物医学院', '动医院', '动医', '兽医学', '兽医学院', '兽医'],
+      '材料与化学学院': ['材料与化学学院', '材料与化学', '材化学院', '材化', '材料学院', '化学学院'],
+      '外国语学院': ['外国语学院', '外语学院', '外语系', '英语系', '外国语'],
+      '人文社会科学学院 / 马克思主义学院': ['人文社会科学学院', '人文学院', '马克思主义学院', '马院', '社科院', '人文社科'],
+      '理学院': ['理学院', '数学系', '物理系', '应用数学', '应用物理']
     };
 
     for (const [colName, aliases] of Object.entries(collegeAliases)) {
@@ -2979,7 +3097,7 @@ canteens: {
         workflowKeywords.some(k => t.includes(k.toLowerCase())) ||
         zongceKeywords.some(k => t.includes(k.toLowerCase())) ||
         kaoyanKeywords.some(k => t.includes(k.toLowerCase())) ||
-        facultyKeywords.some(k => t.includes(k.toLowerCase()));
+        facultyKeywords.some(k => t.includes(k.toLowerCase())) || AHAU_KB.faculty.some(g => g.teachers.some(teacher => text.includes(teacher.name)));
 
       if (isCampusSpecific) {
         setTimeout(() => {
