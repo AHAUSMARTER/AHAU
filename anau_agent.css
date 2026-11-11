@@ -1481,3 +1481,32 @@ body.embedded-active .ai-callout-bubble {
 .askb__bar {
   max-width: 800px !important;
 }
+
+/* 移动端与桌面端嵌入视窗彻底消除遮挡 */
+.native-chat-window.embedded-mode {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  bottom: auto !important;
+  right: auto !important;
+  left: auto !important;
+  top: auto !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .native-chat-window.embedded-mode {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .chat-messages {
+    padding: 14px 12px 100px 12px !important;
+  }
+  .askb__dock {
+    padding: 10px 12px 14px 12px !important;
+  }
+}
