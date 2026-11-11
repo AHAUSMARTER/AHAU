@@ -1136,6 +1136,76 @@ canteens: {
   }
 
   // ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
+  // 3.0 智能多轮意图消解与话题抢占检测器 (Topic Switching & Intent Preemption)
+  // 解决：“问了综测后又问茶树国重室/校猫/楼宇”，智能体必须立即响应新话题，坚决不固执死板！
+  // ----------------------------------------------------------------------------
+  function detectIntentSwitch(raw, t) {
+    // 1. 师资与导师
+    const hasFacultyName = AHAU_KB.faculty.some(g => g.teachers.some(teacher => raw.includes(teacher.name)));
+    if (hasFacultyName || /师资|导师|教授|课题组|研究课题|研究方向|博导|硕导|老师|教师|副教授|讲师|校长|副校长|院长|系主任|副院长/.test(t) ||
+        /农学院|茶业学院|茶学院|人工智能学院|信智学院|计算机学院|信息与计算机学院|园艺学院|林学院|林学与园林|资环学院|资源与环境|工学院|机械学院|生科院|生命科学学院|生物制造|植保学院|植物保护学院|经管学院|经济管理学院|动科院|动医院|动物科技学院|动物医学院|材化学院|材料与化学|外语学院|外国语学院|理学院/.test(t) ||
+        ((t.includes('学院') || t.includes('系')) && (t.includes('谁') || t.includes('人') || t.includes('有哪些') || t.includes('名单') || t.includes('名录') || t.includes('队伍') || t.includes('老师') || t.includes('导师') || t.includes('教授')))) {
+      return 'faculty';
+    }
+
+    // 2. 农林特色专项（茶树国重室、银杏路、香樟路名木）
+    if (/茶树|国重|重点实验室|名木|银杏|香樟|水杉|活体圃|品种圃|茶学/.test(t)) {
+      return 'tea_campus';
+    }
+
+    // 3. 校猫与校宠花名册
+    const catKeywords = ['猫', '校宠', '花名册', '来福', '花姐', '英国佬', '大吉', '馆长', '毛毛', '小黑', '小漂亮', '嘴上有屎', '对眼', '屁姐', '屁哥', '鸟哥', '花卷', '足球八嘎', '黑头', '小罐', '小美', '四瓜', '玳瑁', '猫坡'];
+    if (catKeywords.some(k => t.includes(k))) {
+      return 'cats';
+    }
+
+    // 4. 食堂就餐
+    if (/食堂|餐厅|吃饭|吃什么|东苑|西苑|北苑|欣苑|丰泽|思源|外卖/.test(t)) {
+      return 'canteens';
+    }
+
+    // 5. 核心楼宇防跑空
+    if (/勤政楼|勤学楼|博学楼|上课去哪|教学楼|办学籍|盖章去哪|去哪上课|防跑空/.test(t)) {
+      return 'buildings';
+    }
+
+    // 6. 一卡通与报修
+    if (/一卡通|校园卡|挂失|补卡|补办卡|充值卡/.test(t)) {
+      return 'card';
+    }
+    if (/报修|水电|宿舍坏了|修空调|水龙头/.test(t)) {
+      return 'repair';
+    }
+
+    // 7. 借教室
+    if (/借教室|借用教室|多媒体教室|阶梯教室|开班会/.test(t)) {
+      return 'classroom';
+    }
+
+    // 8. 学生请假
+    if (/请假|假条|离校审批|开假单/.test(t)) {
+      return 'leave';
+    }
+
+    // 9. 考研
+    if (/考研|择校|学硕|专硕|读博|408|414|314|315|考研时间线|考研科目|复习进度|择校方案/.test(t)) {
+      return 'kaoyan';
+    }
+
+    // 10. 综测与奖学金
+    if (/综测|算综测|测评|评优|奖学金|志愿汇/.test(t)) {
+      return 'zongce';
+    }
+
+    // 11. 算术题
+    if (solveMath(raw)) {
+      return 'math';
+    }
+
+    return null;
+  }
+
   // 3. 原创多轮意图识别、数学计算与高情商语义推理引擎
   // ----------------------------------------------------------------------------
   function parseChineseNum(str) {
@@ -1595,6 +1665,14 @@ canteens: {
     const raw = (text || '').trim();
     const t = raw.toLowerCase();
 
+    // 智能多轮意图消解与话题抢占（解决用户问了综测后中途跳到茶树国重室/校猫/楼宇等新问题）
+    const detectedIntent = detectIntentSwitch(raw, t);
+    if (detectedIntent && AgentState.workflow && AgentState.workflow !== detectedIntent) {
+      AgentState.workflow = null;
+      AgentState.workflowStep = 0;
+      AgentState.workflowData = {};
+    }
+
     // 优先：如果用户上传了照片，进入多模态智能快诊分支
     if (hasImage) {
       return handleMultimodalInput(raw, imageInfo);
@@ -2038,6 +2116,11 @@ canteens: {
     }
 
     const hasRealScores = Boolean(gpaMatch || scoreMatch);
+    // 安全防护：如果处于工作流但用户输入完全没有提供任何成绩信息（例如用户突然问了其他话题），绝不瞎算！
+    if (AgentState.workflow === 'zongce' && !hasRealScores && !q.match(/\d+/) && !/绩点|gpa|分|四级|六级|志愿|竞赛/.test(q)) {
+      AgentState.workflow = null;
+      return smartReasoner(raw, t);
+    }
 
     // 2. 如果用户只是刚进入该功能或仅进行泛泛的咨询（尚未告知具体成绩），先友好引导提问收集信息！
     if (AgentState.workflow !== 'zongce' && !hasRealScores) {
