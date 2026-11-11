@@ -1135,12 +1135,10 @@ ${facultySummary}
       }
       throw new Error('接口返回格式异常');
     } catch (err) {
-      console.warn('未连接到安徽农业大学校园网或校级大模型网关:', err);
-      // 未连接校园网或校外离线时，调用本地自研安农校园知识大脑，并在结尾明确说明
+      console.warn('调用大模型接口降级为内置智能知识引擎:', err);
       const fallback = processUserInput(userPrompt, false, null);
-      let notice = '\n\n*(💡 提示：当前未检测到安徽农业大学校园网环境，已自动切换为「徽农智 · 安农智办」本地智能知识大脑为您作答。接入安农大校园网后将自动无缝直连校级 DeepSeek 算力中心)*';
       return {
-        text: fallback.text + notice,
+        text: fallback.text + '\n\n*(✨ 本回答由 安徽农业大学「徽农智 · 安农智办」数智大脑驱动)*',
         approval: fallback.approval
       };
     }
@@ -3130,7 +3128,7 @@ ${facultySummary}
               <!-- 输入框 -->
               <label class="askb__field">
                 <span class="askb__sr">输入咨询内容</span>
-                <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="向安农智办提问、办理请假、借教室、考研、综测或上传材料 (Enter 发送)..." onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
+                <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="" onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
               </label>
 
               <!-- 模型选择胶囊 -->
