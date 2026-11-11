@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>安徽农业大学 · 数智安农综合服务大厅</title>
+  <link rel="icon" type="image/png" href="anau_ai_logo.png">
+  <link rel="apple-touch-icon" href="anau_ai_logo.png">
+  <link rel="stylesheet" href="anau_agent.css?v=15.0">
+  <style>
+    :root {
+      /* Apple + AHAU 经典雅致安农绿 */
+      --ahau-green: #1f5e39;
+      --ahau-green-deep: #143e26;
+      --ahau-green-vibrant: #237346;
+      --ahau-green-tint: #f0f7f3;
+      --ahau-green-border: rgba(31, 94, 57, 0.15);
+      
+      /* Apple 精致纯净设计语言系统 */
+      --apple-canvas: #f5f5f7;
+      --apple-card: #ffffff;
+      --apple-card-subtle: #fbfbfd;
+      --text-primary: #1d1d1f;
+      --text-secondary: #515154;
+      --text-tertiary: #86868b;
+      --apple-border: rgba(0, 0, 0, 0.08);
+      --apple-border-light: rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 32px rgba(31, 94, 57, 0.08);
+      --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: var(--apple-canvas);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100%;
+    }
+
+    /* 1. 顶栏：Apple 风格磨砂玻璃 + 安农缎面深绿 */
+    header {
+      background: rgba(31, 94, 57, 0.94);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      color: white;
+      height: 64px;
+      padding: 0 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 14px rgba(20, 62, 38, 0.28);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-emblem-wrap {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255,255,255,0.9);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .logo-emblem {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+      letter-spacing: -0.01em;
+      font-weight: 600;
+      margin: 0;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-text p {
+      font-size: 10.5px;
+      opacity: 0.82;
+      letter-spacing: 0.5px;
+      margin: 1px 0 0 0;
+    }
+
+    .eco-badge {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(6px);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-tag {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      color: white;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 2. 校园即时通知条：无缝平滑横向滚动，鼠标悬停时停止滚动，离开时继续滚动 */
+    .campus-ticker-bar {
+      background: #ffffff;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 0 36px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      z-index: 90;
+      user-select: none;
+    }
+
+    .ticker-prefix {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 2;
+      padding-right: 16px;
+      background: #ffffff;
+    }
+
+    .ticker-tag {
+      background: var(--ahau-green);
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.2px;
+    }
+
+    .ticker-viewport {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    }
+
+    .ticker-track {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+      animation: tickerMarquee 38s linear infinite;
+    }
+
+    /* 鼠标停留即时公告条停止滚动，离开继续滚动 */
+    .campus-ticker-bar:hover .ticker-track {
+      animation-play-state: paused !important;
+    }
+
+    @keyframes tickerMarquee {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ticker-item:hover {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+    }
+
+    .ticker-item strong {
+      color: var(--ahau-green-deep);
+      font-weight: 600;
+    }
+
+    .ticker-divider {
+      color: #d1d5db;
+      margin: 0 10px;
+      font-size: 11px;
+    }
+
+    .ticker-badge-new {
+      background: #fee2e2;
+      color: #dc2626;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .ticker-more {
+      flex-shrink: 0;
+      color: var(--ahau-green);
+      font-size: 12.5px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 18px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      z-index: 2;
+      background: #ffffff;
+    }
+
+    .ticker-more:hover {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green-deep);
+    }
+
+    /* 3. 主体内容区：Apple 风格极简高级留白与大圆角 */
+    .main-container {
+      max-width: 1200px;
+      margin: 28px auto 60px auto;
+      padding: 0 28px;
+    }
+
+    /* Apple 风格高质感智能体通告卡片 */
+    .hero-banner {
+      background: #ffffff;
+      border: 1px solid var(--apple-border);
+      border-radius: 22px;
+      padding: 26px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      gap: 24px;
+      transition: all 0.3s var(--ease-apple);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, var(--ahau-green) 0%, var(--ahau-green-vibrant) 100%);
+    }
+
+    .hero-banner:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(31, 94, 57, 0.2);
+    }
+
+    .hero-banner-content h2 {
+      font-size: 21px;
+      color: var(--text-primary);
+      margin: 0 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+    }
+
+    .eco-tag {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid var(--ahau-green-border);
+    }
+
+    .hero-banner-content p {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .hero-action-btn {
+      background: linear-gradient(180deg, #237346 0%, #1f5e39 100%);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s var(--ease-apple);
+      box-shadow: 0 4px 14px rgba(31, 94, 57, 0.25);
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(31, 94, 57, 0.35);
+    }
+
+    .hero-action-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* 4. 推荐应用分栏头部：Apple 胶囊分段风格 */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .segmented-control {
+      background: rgba(0, 0, 0, 0.05);
+      padding: 4px;
+      border-radius: 12px;
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .segment-item {
+      padding: 6px 18px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .segment-item.active {
+      background: #ffffff;
+      color: var(--ahau-green-deep);
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* 5. 推荐应用网格：Apple App Store / iOS 磁贴形态，彻底替换原推荐应用 */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(276px, 1fr));
+      gap: 18px;
+      margin-bottom: 48px;
+    }
+
+    .app-card {
+      background: var(--apple-card);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--apple-border);
+      cursor: pointer;
+      transition: all 0.26s var(--ease-apple);
+      position: relative;
+      min-height: 148px;
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(31, 94, 57, 0.25);
+    }
+
+    .app-card:active {
+      transform: scale(0.98);
+    }
+
+    .app-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    /* Apple 级 iOS 连续平滑倒角 Squircle 图标 */
+    .app-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 具有安农绿与 Apple 现代色彩结合的精致渐变 */
+    .icon-emerald  { background: linear-gradient(135deg, #34d399, #059669); color: #fff; }
+    .icon-forest   { background: linear-gradient(135deg, #4ade80, #15803d); color: #fff; }
+    .icon-indigo   { background: linear-gradient(135deg, #818cf8, #4f46e5); color: #fff; }
+    .icon-amber    { background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; }
+    .icon-coral    { background: linear-gradient(135deg, #fb7185, #e11d48); color: #fff; }
+    .icon-cyan     { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; }
+    .icon-purple   { background: linear-gradient(135deg, #c084fc, #7c3aed); color: #fff; }
+    .icon-orange   { background: linear-gradient(135deg, #fb923c, #ea580c); color: #fff; }
+    .icon-teal     { background: linear-gradient(135deg, #2dd4bf, #0f766e); color: #fff; }
+    .icon-blue     { background: linear-gradient(135deg, #60a5fa, #2563eb); color: #fff; }
+
+    .app-info {
+      flex: 1;
+    }
+
+    .app-info h3 {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+      letter-spacing: -0.01em;
+    }
+
+    .app-info p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .app-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--apple-border-light);
+      padding-top: 12px;
+      margin-top: 2px;
+    }
+
+    .card-badge {
+      font-size: 11px;
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      border: 1px solid var(--ahau-green-border);
+    }
+
+    .card-action-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ahau-green);
+      background: #f5f5f7;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .app-card:hover .card-action-pill {
+      background: var(--ahau-green);
+      color: #ffffff;
+      transform: translateX(2px);
+    }
+
+    /* 6. 模态弹窗：Apple 质感毛玻璃 */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 9999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      opacity: 0;
+      transition: opacity 0.24s ease;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      padding: 26px 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--apple-border);
+      animation: modalPop 0.28s var(--ease-apple);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.94); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding-bottom: 14px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 17px;
+      color: var(--ahau-green-deep);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .modal-close-btn {
+      background: #f5f5f7;
+      border: none;
+      font-size: 16px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .modal-close-btn:hover {
+      background: #e5e5ea;
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .modal-url-card {
+      background: #fbfbfd;
+      border: 1px solid var(--apple-border);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-url-text {
+      color: #1d4ed8;
+      font-family: ui-monospace, Menlo, Monaco, monospace;
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+
+    .modal-url-tag {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-modal-ai {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      border: 1px solid var(--ahau-green-border);
+      padding: 9px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-ai:hover {
+      background: #dceee2;
+    }
+
+    .btn-modal-direct {
+      background: var(--ahau-green);
+      color: #ffffff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(31, 94, 57, 0.25);
+      transition: all 0.2s;
+    }
+
+    .btn-modal-direct:hover {
+      background: var(--ahau-green-deep);
+      transform: translateY(-1px);
+    }
+
+    /* 7. 右下角 AI 智能体专属呼唤卡 */
+    .ai-callout-bubble {
+      position: fixed;
+      bottom: 96px;
+      right: 28px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(31, 94, 57, 0.22);
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(31, 94, 57, 0.15), var(--shadow-sm);
+      z-index: 9999;
+      cursor: pointer;
+      user-select: none;
+      animation: aiFloatBounce 3s ease-in-out infinite;
+      transition: all 0.25s var(--ease-apple);
+    }
+
+    .ai-callout-bubble:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(31, 94, 57, 0.25);
+    }
+
+    @keyframes aiFloatBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .ai-callout-avatar {
+      width: 38px;
+      height: 38px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      border: 1.5px solid var(--ahau-green);
+      overflow: hidden;
+    }
+
+    .ai-callout-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ai-callout-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-callout-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ahau-green-deep);
+    }
+
+    .ai-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      color: #15803d;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #16a34a;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 6px #16a34a;
+      animation: dotBlink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes dotBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .ai-callout-desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .ai-callout-arrow {
+      position: absolute;
+      bottom: -8px;
+      right: 26px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid rgba(31, 94, 57, 0.4);
+    }
+
+    .ai-callout-arrow::after {
+      content: "";
+      position: absolute;
+      bottom: 1.5px;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #ffffff;
+    }
+
+    /* 8. 底部版权：Apple 极简浅灰 */
+    footer {
+      text-align: center;
+      padding: 40px 20px 100px 20px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      border-top: 1px solid var(--apple-border);
+      background: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 0 18px;
+        height: 58px;
+      }
+      .campus-ticker-bar {
+        padding: 0 16px;
+        font-size: 12px;
+      }
+      .ticker-more {
+        display: none;
+      }
+      .main-container {
+        padding: 0 16px;
+        margin-top: 18px;
+      }
+      .hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 16px;
+      }
+      .app-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .ai-callout-bubble {
+        bottom: 80px;
+        right: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航：Apple 风格磨砂玻璃 + 安农大缎面深绿 -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-emblem-wrap" title="安徽农业大学校徽">
+        <img class="logo-emblem" 
+             src="https://upload.wikimedia.org/wikipedia/en/e/ed/Anhui_Agricultural_University_seal.svg" 
+             alt="安徽农业大学校徽"
+             onerror="this.style.display='none'; document.getElementById('ahau-svg-fallback').style.display='block';">
+        <svg id="ahau-svg-fallback" class="logo-emblem" style="display:none;" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="48" fill="#1f5e39" stroke="#ffffff" stroke-width="2"/>
+          <text x="50" y="55" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">AHAU</text>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>数智安农 · 综合服务大厅 <span class="eco-badge">徽农智生态</span></h1>
+        <p>ANHUI AGRICULTURAL UNIVERSITY DIGITAL PORTAL</p>
+      </div>
+    </div>
+    <div class="user-info">
+      <span class="status-tag">🟢 在校生认证</span>
+    </div>
+  </header>
+
+  <!-- 校园即时通知条：平滑自动滚动，鼠标悬停时停止滚动，移开后恢复滚动 -->
+  <div class="campus-ticker-bar" id="campusTickerBar">
+    <div class="ticker-prefix">
+      <span class="ticker-tag">📢 校园即时公告</span>
+    </div>
+    <div class="ticker-viewport">
+      <div class="ticker-track">
+        <!-- 循环公告项 第一组 -->
+        <div class="ticker-item" onclick="sendQuickPrompt('我想了解2026年“农芯智”AI智能体创新大赛的比赛要求和申报指南')">
+          <span class="ticker-badge-new">NEW</span>
+          <strong>【重磅赛事】</strong>关于举办2026年“农芯智”AI智能体创新大赛的通知
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('学校新学期反诈安全教育有什么核心要求？上网不涉密的具体细则是什么？')">
+          <strong>【安全教育】</strong>新学期的第一节反诈课：上网不涉密，涉密不上网
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('关于开通我校大模型公共服务平台（Token鉴）的通知，师生如何申请与调用？')">
+          <strong>【AI基础设施】</strong>关于开通我校大模型公共服务平台（Token鉴）的通知
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('关于助学贷款及住宿费退费有什么规定？办理流程和窗口在哪里？')">
+          <strong>【奖助学金】</strong>关于助学贷款及住宿费退费有关事项说明
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('请问本学期综合测评奖学金评定与学生处离校审批规范有哪些最新要求？')">
+          <strong>【学工动态】</strong>本科生综合素质测评与学籍管理最新答疑指引
+        </div>
+        <span class="ticker-divider">•</span>
+
+        <!-- 循环公告项 第二组 (完全相同内容保证无缝滚动闭环) -->
+        <div class="ticker-item" onclick="sendQuickPrompt('我想了解2026年“农芯智”AI智能体创新大赛的比赛要求和申报指南')">
+          <span class="ticker-badge-new">NEW</span>
+          <strong>【重磅赛事】</strong>关于举办2026年“农芯智”AI智能体创新大赛的通知
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('学校新学期反诈安全教育有什么核心要求？上网不涉密的具体细则是什么？')">
+          <strong>【安全教育】</strong>新学期的第一节反诈课：上网不涉密，涉密不上网
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('关于开通我校大模型公共服务平台（Token鉴）的通知，师生如何申请与调用？')">
+          <strong>【AI基础设施】</strong>关于开通我校大模型公共服务平台（Token鉴）的通知
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('关于助学贷款及住宿费退费有什么规定？办理流程和窗口在哪里？')">
+          <strong>【奖助学金】</strong>关于助学贷款及住宿费退费有关事项说明
+        </div>
+        <span class="ticker-divider">•</span>
+        <div class="ticker-item" onclick="sendQuickPrompt('请问本学期综合测评奖学金评定与学生处离校审批规范有哪些最新要求？')">
+          <strong>【学工动态】</strong>本科生综合素质测评与学籍管理最新答疑指引
+        </div>
+        <span class="ticker-divider">•</span>
+      </div>
+    </div>
+    <a class="ticker-more" href="https://bkjw.ahau.edu.cn/home/#/home" target="_blank">全部通知 (12) ›</a>
+  </div>
+
+  <!-- 主体业务区 -->
+  <div class="main-container">
+
+    <!-- Apple 风格智能体通告卡片 -->
+    <div class="hero-banner">
+      <div class="hero-banner-content">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 8px;">
+          <img src="anau_ai_logo.png" alt="徽农智Logo" style="width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 4px 12px rgba(31, 94, 57, 0.2); border: 1px solid var(--ahau-green-border); background: #fff; padding: 2px; flex-shrink: 0;">
+          <div>
+            <h2>
+              <span>徽农智 · AI办事助理「安农智办」</span>
+              <span class="eco-tag">首届“农芯智”AI大赛作品 · 智慧农林专项</span>
+            </h2>
+            <div style="font-size: 12px; color: var(--ahau-green); font-weight: 600;">🌾 智慧农林 · 多模态图文快诊 · 教室借用与请假自动审批 · 官方系统深度直达</div>
+          </div>
+        </div>
+        <p>面向安徽农业大学全校师生，深度填补官方平台“AI办事”空白：一键生成学生请假审批单、智能编排多媒体教室借用工作流、考研择校规划、官网真实师资查阅、校宠档案与茶国重路线指引。</p>
+      </div>
+      <button class="hero-action-btn" onclick="sendQuickPrompt('老师你好，我想了解咱们学校各项业务办理流程与AI帮办功能')">
+        立即咨询办事 💬
+      </button>
+    </div>
+
+    <!-- 推荐应用头部：Apple 胶囊分段风格 -->
+    <div class="section-header">
+      <div class="segmented-control">
+        <div class="segment-item active">🔥 推荐应用 (AI 帮办)</div>
+        <div class="segment-item" onclick="showToast('常用应用将根据您的日常使用频次智能聚合')">常用应用</div>
+        <div class="segment-item" onclick="showToast('已接入安徽农业大学统一身份认证')">我的应用</div>
+      </div>
+      <span class="section-hint">点击卡片直达业务工作流与智能体办理</span>
+    </div>
+
+    <!-- 核心业务卡片：由原热门胶囊全新改版为 Apple 风格现代化 App 磁贴，彻底替换原推荐应用 -->
+    <div class="app-grid">
+
+      <!-- 卡片 1: 请假审批 -->
+      <div class="app-card" onclick="handleCardClick('学生离校请假', '老师你好，我想申请学生离校请假，请帮我生成正规的审批单')">
+        <div class="app-card-top">
+          <div class="app-icon icon-coral">📝</div>
+          <div class="app-info">
+            <h3>学生离校请假审批</h3>
+            <p>规范请假单自动生成，支持系统打印与导出 PDF 归档</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">AI 智能开单</span>
+          <span class="card-action-pill">办理 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 2: 教室借用 -->
+      <div class="app-card" onclick="handleCardClick('教室场地借用', '我们班想借用多媒体/阶梯教室开班会，请启动借用审批工作流')">
+        <div class="app-card-top">
+          <div class="app-icon icon-teal">🏫</div>
+          <div class="app-info">
+            <h3>多媒体/阶梯教室借用</h3>
+            <p>自研多轮业务状态机，智能核配勤学楼与博学楼场地</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">工作流核配</span>
+          <span class="card-action-pill">申请 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 3: 考研规划与择校 -->
+      <div class="app-card" onclick="handleCardClick('考研择校规划', '老师你好，我想咨询考研全周期规划与择校方案')">
+        <div class="app-card-top">
+          <div class="app-icon icon-indigo">🎓</div>
+          <div class="app-info">
+            <h3>考研全周期规划与择校</h3>
+            <p>专业科目时间线、四六级基础与学硕读博/专硕就业双轨方案</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">深度择校</span>
+          <span class="card-action-pill">规划 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 4: 官网真实师资 -->
+      <div class="app-card" onclick="handleCardClick('师资队伍与课题', '请帮我查询安徽农业大学各学院骨干导师师资队伍、研究课题方向与联系方式')">
+        <div class="app-card-top">
+          <div class="app-icon icon-cyan">👨‍🏫</div>
+          <div class="app-info">
+            <h3>官网真实师资与课题方向</h3>
+            <p>100% 官网核验，茶与食品/农学/信息等7大王牌学院骨干导师直链</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">官网真实直核</span>
+          <span class="card-action-pill">查阅 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 5: 综测奖学金测算 -->
+      <div class="app-card" onclick="handleCardClick('安农大综测测算', '老师你好，请帮我根据安徽农业大学综合素质测评实施办法，测算我的德育、学业、竞赛与外语综测加分')">
+        <div class="app-card-top">
+          <div class="app-icon icon-amber">🏆</div>
+          <div class="app-info">
+            <h3>安农大综测与奖学金测算</h3>
+            <p>依本科综测实施办法：70%学业+15%德育+10%竞赛+5%外语折算</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">素质测评</span>
+          <span class="card-action-pill">测算 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 6: 校园建筑导览防跑空 -->
+      <div class="app-card" onclick="handleCardClick('校园建筑导览', '请问勤政楼是学生上课的教学楼吗？大一新生去哪里上公共课和实验课？')">
+        <div class="app-card-top">
+          <div class="app-icon icon-purple">🏛️</div>
+          <div class="app-info">
+            <h3>校园建筑导览 · 防跑空</h3>
+            <p>严厉提示勤政楼为党政大楼严禁上课，勤学楼/博学楼上课指引</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">防走错指引</span>
+          <span class="card-action-pill">查看 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 7: 校宠名录与拍照识猫 -->
+      <div class="app-card" onclick="handleCardClick('校宠档案识猫', '我想了解安农大校园在册校猫档案（东门来福、勤学楼花姐等），以及如何通过拍照识别校猫？')">
+        <div class="app-card-top">
+          <div class="app-icon icon-orange">🐱</div>
+          <div class="app-info">
+            <h3>校宠在册档案 (63+只)</h3>
+            <p>东门来福、勤学楼花姐出没地，绝育安心撸指数与拍照识猫</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">校猫名录</span>
+          <span class="card-action-pill">图鉴 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 8: 茶树国重室与名木导览 -->
+      <div class="app-card" onclick="handleCardClick('茶国重与名木导览', '请问安农大茶树生物学国家重点实验室在哪里？校园银杏路、香樟路名木科普路线怎么走？')">
+        <div class="app-card-top">
+          <div class="app-icon icon-forest">🍵</div>
+          <div class="app-info">
+            <h3>智慧茶学国重室与名木导览</h3>
+            <p>茶树生物学国家重点实验室图谱，银杏路金秋打卡与古树名木快识</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">智慧农林</span>
+          <span class="card-action-pill">导览 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 9: 新本科教务系统直通 -->
+      <div class="app-card" onclick="openJwxtModal()">
+        <div class="app-card-top">
+          <div class="app-icon icon-blue">🌐</div>
+          <div class="app-info">
+            <h3>新本科教务系统直通</h3>
+            <p>课表查询、选课成绩与缓考申诉，校园网与 WebVPN 双通道直达</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">核心教务</span>
+          <span class="card-action-pill">直达 ›</span>
+        </div>
+      </div>
+
+      <!-- 卡片 10: 校园一卡通与报修 -->
+      <div class="app-card" onclick="handleCardClick('一卡通与后勤报修', '我的校园一卡通丢了，宿舍空调也需要报修，请告诉我办理地点和报修电话')">
+        <div class="app-card-top">
+          <div class="app-icon icon-emerald">🛠️</div>
+          <div class="app-info">
+            <h3>校园一卡通与后勤报修</h3>
+            <p>勤学楼一卡通中心补办挂失，宿舍水电空调报修官方服务指引</p>
+          </div>
+        </div>
+        <div class="app-card-bottom">
+          <span class="card-badge">后勤生活</span>
+          <span class="card-action-pill">查询 ›</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Apple 风格模态弹窗：新本科教务系统直达 -->
+  <div class="modal-backdrop" id="jwxtModal" onclick="if(event.target===this) closeJwxtModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🎓 安徽农业大学 · 新本科教务系统</h3>
+        <button class="modal-close-btn" onclick="closeJwxtModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin: 0 0 10px 0; color: var(--text-primary); font-weight: 500;">您正在通过「数智安农 · 综合服务大厅」访问学校核心教务系统：</p>
+        
+        <div class="modal-url-card">
+          <div>
+            <div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">校园网官方直通 (校内 WiFi / 有线网直达)</div>
+            <span class="modal-url-text">https://bkjw.ahau.edu.cn/home/#/home</span>
+          </div>
+          <span class="modal-url-tag">校园网</span>
+        </div>
+
+        <div class="modal-url-card">
+          <div>
+            <div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">WebVPN 官方通道 (校外/流量免客户端直达)</div>
+            <span class="modal-url-text">https://bkjw-ahau-edu-cn.myvpn.ahau.edu.cn/home/#/home</span>
+          </div>
+          <span class="modal-url-tag" style="background:#fef3c7; color:#b45309;">WebVPN</span>
+        </div>
+
+        <p style="margin: 12px 0 0 0; font-size: 12.5px; color: var(--text-tertiary); line-height: 1.6;">
+          💡 <strong>智能帮办：</strong>如需查询<strong>本学期课表、考试成绩、缓考申请或选课退课</strong>，您可直接选择对应通道进入，或向「安农智办」AI 助手咨询操作指引。
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-ai" onclick="closeJwxtModal(); sendQuickPrompt('请告诉我新本科教务系统的登录入口，以及如何查看本学期课表和考试成绩？')">
+          💬 咨询 AI 指引
+        </button>
+        <button class="btn-modal-direct" style="background: #1d4ed8;" onclick="closeJwxtModal(); window.open('https://bkjw-ahau-edu-cn.myvpn.ahau.edu.cn/home/#/home', '_blank');">
+          🌐 WebVPN 通道
+        </button>
+        <button class="btn-modal-direct" onclick="closeJwxtModal(); window.open('https://bkjw.ahau.edu.cn/home/#/home', '_blank');">
+          🔗 校园网直达
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 浮动智能提示胶囊 -->
+  <div class="portal-toast" id="portalToast" style="display:none;"></div>
+
+  <!-- 右下角 AI 智能体专属呼唤卡 -->
+  <div class="ai-callout-bubble" id="aiCalloutBubble" onclick="triggerCozeOpen()" title="点击即可快速打开 AI 办事助理">
+    <div class="ai-callout-avatar">
+      <img src="anau_ai_logo.png" alt="徽农智Logo" style="width: 100%; height: 100%; object-fit: contain;">
+    </div>
+    <div class="ai-callout-text">
+      <div class="ai-callout-header">
+        <span class="ai-callout-title">徽农智 · 安农智办</span>
+        <span class="ai-live-badge"><span class="live-dot"></span>在线</span>
+      </div>
+      <div class="ai-callout-desc">快速请假 · 借教室 · 考研规划 · 查师资 💬</div>
+    </div>
+    <div class="ai-callout-arrow"></div>
+  </div>
+
+  <footer>
+    <p>版权所有 © 2026 安徽农业大学 · 现代教育技术中心 / 网络信息中心 运维保障</p>
+    <p style="margin-top: 5px; font-size: 11px; color: var(--text-tertiary);">2026“农芯智”AI智能体大赛参赛成果 · 徽农智生态「安农智办」团队 (原创代码类作品)</p>
+  </footer>
+
+  <!-- 徽农智 · 安农智办 原创全栈智能体引擎 -->
+  <script src="anau_agent.js?v=20.0"></script>
+
+  <script>
+    function openJwxtModal() {
+      const modal = document.getElementById('jwxtModal');
+      if (modal) modal.classList.add('show');
+    }
+
+    function closeJwxtModal() {
+      const modal = document.getElementById('jwxtModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function sendQuickPrompt(promptText) {
+      if (window.AnauAgent) {
+        window.AnauAgent.sendUserMsg(promptText);
+      }
+    }
+
+    function handleCardClick(serviceName, defaultPrompt) {
+      if (defaultPrompt) {
+        if (window.AnauAgent) {
+          window.AnauAgent.sendUserMsg(defaultPrompt);
+        }
+      } else {
+        if (window.AnauAgent) {
+          window.AnauAgent.sendUserMsg(`老师你好，我想咨询办理【${serviceName}】业务`);
+        }
+      }
+    }
+
+    function showToast(msg) {
+      if (window.AnauAgent && window.AnauAgent.showToast) {
+        window.AnauAgent.showToast(msg);
+      } else {
+        alert(msg);
+      }
+    }
+
+    function triggerCozeOpen() {
+      if (window.AnauAgent) {
+        window.AnauAgent.openChat();
+      }
+    }
+  </script>
+
+</body>
+</html>
