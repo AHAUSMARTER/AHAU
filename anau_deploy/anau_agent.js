@@ -1032,7 +1032,103 @@ canteens: {
           { name: '何晓雄', title: '教授 / 硕士生导师', role: '应用物理系教授', research: '激光物理与光谱技术、光电信息在农产品检测中的应用', link: 'http://lxy.ahau.edu.cn' }
         ]
       }
-    ]
+    ],
+    // ------------------------------------------------------------------------
+    // 1.6 安徽农业大学课程资料共享计划 (Leaning-in-AAU 历年期末真题与复习库)
+    // ------------------------------------------------------------------------
+    examRepo: {
+      name: '安徽农业大学课程资料共享计划 (Leaning in AAU)',
+      portalUrl: 'https://ahau-course.pages.dev/',
+      githubUrl: 'https://github.com/lastwejust/Leaning-in-AAU',
+      description: '安农学子开源共建的期末复习宝库，汇集278+份历年考试原卷、复习提纲、实验报告与作业范例。',
+      totalFiles: '278+ 份',
+      courses: {
+        '高等数学': {
+          category: '00-公共与平台课',
+          files: '22 份',
+          highlights: '包含2009-2020年高数II(下)A卷/B卷十余套期末试卷与详细答案，分级考试真题及冲刺复习题',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '线性代数': {
+          category: '00-公共与平台课',
+          files: '32 份',
+          highlights: '包含03至16年历年期末A/B卷真题与标准参考答案，矩阵初等变换、特征值特征向量必考大题解析',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '普通化学': {
+          category: '00-公共与平台课',
+          files: '34 份',
+          highlights: '涵盖物质状态、反应速率、化学热力学、四大平衡（酸碱/沉淀/配位/氧化还原）各章期末真题与复习提纲',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '有机化学': {
+          category: '00-公共与平台课',
+          files: '3 份',
+          highlights: '有机化学学习指导与历年习题解答精选',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '生物化学': {
+          category: '00-公共与平台课',
+          files: '6 份',
+          highlights: '蛋白质、核酸、酶、生物氧化与糖代谢五大核心模块讲义与期末备考重点',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '工程制图': {
+          category: '00-公共与平台课',
+          files: '13 份',
+          highlights: '平面与直线投影、立体表面交线、相贯线精解，工图期末样卷与参考答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '基础物理': {
+          category: '00-公共与平台课',
+          files: '6 份',
+          highlights: '2022-2023学年第一学期期末真题、2026修订版基础物理I(B)习题册、实验选择题题库',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '思政课合集': {
+          category: '00-公共与平台课',
+          files: '7 份',
+          highlights: '《思想道德与法治》2023版综合练习题库、中国近现代史纲要课后题答案与期末论述题答题模板',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '动物学与土壤学': {
+          category: '00-公共与平台课',
+          files: '11 份',
+          highlights: '动物学分章节考题、最近5年期末试卷重点；土壤学分章习题与学习指导',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '微观经济学': {
+          category: '04经济管理学院',
+          files: '11 份',
+          highlights: '曼昆与高鸿业版重点总结、名词解释题库、知识网络图与历年期末模拟卷及答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '基础会计': {
+          category: '04经济管理学院',
+          files: '7 份',
+          highlights: '会计分录题专项题库、基础会计期末综合练习题及详细参考答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '管理学': {
+          category: '04经济管理学院',
+          files: '7 份',
+          highlights: '马工程管理学案例分析（卡旺卡案例）、主观题与简答题题库及答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '农学院专业课': {
+          category: '01-农学',
+          files: '9 份',
+          highlights: '普通遗传学考试2.5学分A卷及习题集、土壤肥料学微量元素营养与复混肥料讲义',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '写作与沟通': {
+          category: '00-公共与平台课',
+          files: '23 份',
+          highlights: '优秀结课论文范文示范作业1-5、文献综述写作规范与参考文献格式撰写指南',
+          url: 'https://ahau-course.pages.dev/'
+        }
+      }
+    }
   };
 
   // ----------------------------------------------------------------------------
@@ -1069,10 +1165,15 @@ canteens: {
         facultySummary = AHAU_KB.faculty.map(g => '【' + (g.college || g.group || '学院') + '】: ' + g.teachers.map(t => t.name + ' (' + t.title + ', 课题:' + t.research + ')').join('; ')).join('\n');
       }
 
+      let examSummary = '';
+      if (AHAU_KB && AHAU_KB.examRepo) {
+        examSummary = `- 历年期末真题与复习共享库（Leaning-in-AAU 镜像站: https://ahau-course.pages.dev/ ，共 278+ 份文档）：涵盖高等数学（22份含2009-2020真题与答案）、线性代数（32份真题与初等变换矩阵大题）、普通化学（34份含四大平衡真题）、工程制图（13份含相贯线样卷）、基础物理（6份含2023最新期末卷）、微观经济学（11份高鸿业/曼昆真题与名词解释）、基础会计（7份分录题）、管理学（卡旺卡案例）、思政合集（7份马原史纲毛概习题库）、农学与写作论文范例等。用户询问考试真题或期末试卷时，给出各科考点并引导访问 https://ahau-course.pages.dev/ 查阅下载原卷。`;
+      }
+
       const systemPrompt = `你是安徽农业大学官方 AI 办事智能体「徽农智 · 安农智办」，底层由安徽农业大学校级算力平台【Deepseek-V4.1-Flash-SS】大模型强劲驱动。
 【核心定位与行为准则】：
 1. 身份：你不仅是安农大校园全栈智能助手，也是拥有顶级推理、文学创作、学术研讨和常识解答能力的 AI 伙伴（具备与 DeepSeek 原生模型完全一致的极高智商、深度思考与自然人设）。
-2. 学校专业知识（RAG 增强）：当用户提问涉及安徽农业大学（如各学院老师导师、课题方向、校宠花名册、四大食堂与北区餐饮、勤政楼办公不上课/勤学博学楼上课、茶树生物学国家重点实验室、综合素质测评加分细则、考研规划）时，你必须严格依据下方【安农大权威校情知识库】精准作答，严禁编造虚假信息！
+2. 学校专业知识（RAG 增强）：当用户提问涉及安徽农业大学（如各学院老师导师、课题方向、校宠花名册、四大食堂与北区餐饮、勤政楼办公不上课/勤学博学楼上课、茶树生物学国家重点实验室、综合素质测评加分细则、考研规划、期末历年真题库）时，你必须严格依据下方【安农大权威校情知识库】精准作答，严禁编造虚假信息！
 3. 通用常识与创作：当用户提问不涉及安徽农业大学（如写诗、编程、算法、哲学、天文地理、聊天闲聊、通用科学、文学、考研复习通法）时，你就是纯粹的 DeepSeek！以极高的文学素养、逻辑严密性和亲切自然的口吻直接回答，绝不要机械回复功能菜单或官话套话！
 
 【安农大权威校情知识库】：
@@ -1084,6 +1185,7 @@ canteens: {
 ${facultySummary}
 - 本科生综测细则：学业成绩(70%) + 德育表现(15%) + 创新创业与竞赛(10%) + 外语特长(5%)。
 - 考研科目：信智农机专硕考数学二/英二/自命题，学硕考英一/数一，统考代码408/314/315，安农大农科与茶学具有一级学科博硕士点。
+${examSummary}
 4. 深度记忆与上下文指代：具备极强的多轮连贯性，对省略主语的追问（如“东门呢”、“那勤政楼呢”）紧扣上文回答。
 5. 语气要求：亲切、生动、严谨、睿智、热情，知无不言！`;
 
@@ -1210,6 +1312,11 @@ ${facultySummary}
     // 11. 算术题
     if (solveMath(raw)) {
       return 'math';
+    }
+
+    // 12. 期末考试真题与课程资料共享 (Leaning in AAU)
+    if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|leaning|aau-course/.test(t)) {
+      return 'exam_materials';
     }
 
     return null;
@@ -1768,6 +1875,78 @@ ${facultySummary}
     };
   }
 
+  // ----------------------------------------------------------------------------
+  // 3.9 期末历年考试真题与课程资料共享 (Leaning-in-AAU 镜像直链与核心考点解析)
+  // ----------------------------------------------------------------------------
+  function handleExamMaterials(raw) {
+    const t = (raw || '').toLowerCase();
+    const repo = AHAU_KB.examRepo;
+    if (!repo) return { text: '期末真题库正在更新中...' };
+
+    let courseKey = null;
+
+    if (/高数|高等数学|微积分|极限|导数/.test(t)) {
+      courseKey = '高等数学';
+    } else if (/线代|线性代数|矩阵|行列式|特征值/.test(t)) {
+      courseKey = '线性代数';
+    } else if (/普化|普通化学|四大平衡|酸碱|沉淀/.test(t)) {
+      courseKey = '普通化学';
+    } else if (/有机|有机化学/.test(t)) {
+      courseKey = '有机化学';
+    } else if (/生化|生物化学|代谢|糖代谢|蛋白质/.test(t)) {
+      courseKey = '生物化学';
+    } else if (/工图|工程制图|相贯线|三视图|投影/.test(t)) {
+      courseKey = '工程制图';
+    } else if (/物理|大物|基础物理/.test(t)) {
+      courseKey = '基础物理';
+    } else if (/思政|毛概|马原|史纲|近代史|思修|道德与法治/.test(t)) {
+      courseKey = '思政课合集';
+    } else if (/微观|经济学|微观经济|高鸿业|曼昆/.test(t)) {
+      courseKey = '微观经济学';
+    } else if (/会计|基础会计|分录/.test(t)) {
+      courseKey = '基础会计';
+    } else if (/管理学|卡旺卡/.test(t)) {
+      courseKey = '管理学';
+    } else if (/农学|遗传|土壤|肥料/.test(t)) {
+      courseKey = '农学院专业课';
+    } else if (/写作|论文|文献综述|沟通/.test(t)) {
+      courseKey = '写作与沟通';
+    } else if (/动物学|土壤学/.test(t)) {
+      courseKey = '动物学与土壤学';
+    }
+
+    if (courseKey && repo.courses[courseKey]) {
+      const c = repo.courses[courseKey];
+      return {
+        text: `📚 **【安徽农业大学课程真题库 · ${courseKey}专项】**\n\n` +
+          `- **资料模块**：${c.category}\n` +
+          `- **收录试卷**：共计 **${c.files}** 历年真实期末试卷与权威参考答案\n` +
+          `- **期末核心考察重点**：\n  ${c.highlights}\n\n` +
+          `🔗 **原卷在线阅读与下载通道**：\n` +
+          `- [🌐 点击直达 AHAU-Course 在线共享镜像](${c.url})\n` +
+          `- [💻 访问 GitHub 开源项目仓库 (Leaning-in-AAU)](${repo.githubUrl})\n\n` +
+          `💡 **备考小贴士**：历年真题是期末备考最具价值的参考，建议优先吃透真题中的经典题型与解答规范！祝考试顺利！✨`
+      };
+    }
+
+    // 默认全景真题库总览
+    const courseRows = Object.entries(repo.courses).map(([name, item]) => {
+      return `| **${name}** | ${item.category} | ${item.files} | ${item.highlights.slice(0, 24)}... |`;
+    }).join('\n');
+
+    return {
+      text: `📖 **【安徽农业大学课程资料共享计划 (Leaning in AAU) · 期末真题库】**\n\n` +
+        `汇集安农学子开源整理的 **278+ 份** 历年各科期末试卷、复习提纲与实验指导，现已全面并入「安农智办」知识库！\n\n` +
+        `| 课程科目 | 分类归属 | 资料数量 | 核心考察亮点 |\n` +
+        `| :--- | :--- | :--- | :--- |\n` +
+        courseRows + '\n\n' +
+        `🔗 **一键直达在线真题库**：\n` +
+        `- 🌐 **免翻墙在线镜像站**：[ahau-course.pages.dev](${repo.portalUrl}) (点击可直接检索并下载 PDF)\n` +
+        `- 💻 **GitHub 开源项目**：[lastwejust/Leaning-in-AAU](${repo.githubUrl})\n\n` +
+        `💡 **快捷提问**：您可以直接问我：“**高数期末真题**”、“**线代复习重点**”、“**工程制图试卷**”或“**微观经济学题库**”，我会为您定位具体科目！`
+    };
+  }
+
   function processUserInput(text, hasImage = false, imageInfo = null) {
     const raw = (text || '').trim();
     const t = raw.toLowerCase();
@@ -1827,6 +2006,11 @@ ${facultySummary}
       ((t.includes('学院') || t.includes('系')) && (t.includes('谁') || t.includes('人') || t.includes('有哪些') || t.includes('名单') || t.includes('名录') || t.includes('队伍') || t.includes('老师') || t.includes('导师') || t.includes('教授')));
     if (isFacultyQuery) {
       return handleFacultyQuery(raw);
+    }
+
+    // 优先：期末考试真题与课程资料共享 (Leaning-in-AAU 镜像库)
+    if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|leaning|aau-course/.test(t)) {
+      return handleExamMaterials(raw);
     }
 
     // =========================================================================
@@ -3677,6 +3861,7 @@ ${facultySummary}
       const zongceKeywords = ['综测', '测评', '算综测', '奖学金', '国家奖学金', '励志奖学金', '志愿汇', '德育'];
       const kaoyanKeywords = ['考研', '择校', '专硕', '学硕', '读博', '408', '414', '314', '315', '考研时间线', '考研科目', '复习进度', '择校方案'];
       const facultyKeywords = ['师资', '导师', '教授', '课题组', '研究课题', '研究方向', '老师', '教师', '博导', '硕导', '农学院', '茶业学院', '茶学院', '计算机学院', '人工智能学院', '信息与计算机学院', '信智学院', '生命科学学院', '生科院', '生物制造', '植物保护学院', '植保学院', '经济管理学院', '经管学院', '动物科技学院', '动科院', '动物医学院', '动医院', '有哪些老师', '找老师', '找导师', '宛晓春', '夏恩华', '张友华', '姜东', '武立权', '程备久', '薛挺', '操海群', '辜丽川'];
+      const examKeywords = ['期末', '真题', '试卷', '往年卷', '复习资料', '高数卷', '高数题', '高数真题', '线代卷', '线代题', '线代真题', '普化卷', '普化题', '生化卷', '生化题', '工图卷', '工图题', '工程制图', '微观经济', '基础会计', '思政合集', '题库', 'leaning'];
       
       const isShortFollowUp = (AgentState.lastTopic !== null) && (text.length <= 10 || text.endsWith('呢') || text.endsWith('吗') || text.startsWith('那'));
       const isCampusSpecific = AgentState.workflow || hasImage || isShortFollowUp ||
@@ -3686,6 +3871,7 @@ ${facultySummary}
         workflowKeywords.some(k => t.includes(k.toLowerCase())) ||
         zongceKeywords.some(k => t.includes(k.toLowerCase())) ||
         kaoyanKeywords.some(k => t.includes(k.toLowerCase())) ||
+        examKeywords.some(k => t.includes(k.toLowerCase())) ||
         facultyKeywords.some(k => t.includes(k.toLowerCase())) || AHAU_KB.faculty.some(g => g.teachers.some(teacher => text.includes(teacher.name)));
 
       if (isCampusSpecific) {
