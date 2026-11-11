@@ -1058,122 +1058,10 @@ canteens: {
     modelName: 'Deepseek-V4.1-Flash-SS'
   };
 
-  const MODEL_PRESETS = {
-    gemini: {
-      name: 'Google Gemini',
-      url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
-      model: 'gemini-1.5-pro',
-      tip: '🌟 <b>Google Gemini 官方端点</b>：访问 <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#1b4d2e;font-weight:600;text-decoration:underline;">aistudio.google.com/apikey</a> 免费创建密钥 (以 <code>AIzaSy...</code> 开头)，需配合科学上网/代理访问。',
-      placeholder: 'AIzaSy...'
-    },
-    deepseek: {
-      name: 'DeepSeek 官方',
-      url: 'https://api.deepseek.com/chat/completions',
-      model: 'deepseek-chat',
-      tip: '⚡ <b>DeepSeek 官方公网</b>：访问 <a href="https://platform.deepseek.com" target="_blank" style="color:#1b4d2e;font-weight:600;text-decoration:underline;">platform.deepseek.com</a> 获取密钥 (<code>sk-...</code>)，国内网络直连极速响应，无需代理。',
-      placeholder: 'sk-...'
-    },
-    openai: {
-      name: 'OpenAI (ChatGPT)',
-      url: 'https://api.openai.com/v1/chat/completions',
-      model: 'gpt-4o',
-      tip: '🤖 <b>OpenAI 官方端点</b>：访问 <a href="https://platform.openai.com" target="_blank" style="color:#1b4d2e;font-weight:600;text-decoration:underline;">platform.openai.com</a> 获取 API Key (<code>sk-proj-...</code>)，需配合科学上网/代理访问。',
-      placeholder: 'sk-proj-...'
-    },
-    kimi: {
-      name: '月之暗面 Kimi',
-      url: 'https://api.moonshot.cn/v1/chat/completions',
-      model: 'moonshot-v1-8k',
-      tip: '🌙 <b>月之暗面 Kimi</b>：访问 <a href="https://platform.moonshot.cn" target="_blank" style="color:#1b4d2e;font-weight:600;text-decoration:underline;">platform.moonshot.cn</a> 获取 API Key (<code>sk-...</code>)，国内直连。',
-      placeholder: 'sk-...'
-    },
-    doubao: {
-      name: '字节跳动 豆包',
-      url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
-      model: 'doubao-pro-32k',
-      tip: '🫘 <b>火山方舟豆包</b>：访问 <a href="https://console.volcengine.com/ark" target="_blank" style="color:#1b4d2e;font-weight:600;text-decoration:underline;">console.volcengine.com/ark</a> 获取 API Key，模型名填推理接入点 Endpoint ID。',
-      placeholder: 'sk-...'
-    },
-    grok: {
-      name: 'xAI Grok',
-      url: 'https://api.x.ai/v1/chat/completions',
-      model: 'grok-beta',
-      tip: '🚀 <b>xAI Grok 官方端点</b>：访问 <a href="https://console.x.ai" target="_blank" style="color:#1b4d2e;font-weight:600;text-decoration:underline;">console.x.ai</a> 获取 API Key (<code>xai-...</code>)，需配合科学上网/代理访问。',
-      placeholder: 'xai-...'
-    },
-    ahau: {
-      name: '安农大校级网关',
-      url: 'https://llmv1.ahau.edu.cn/v1/chat/completions',
-      model: 'Deepseek-V4.1-Flash-SS',
-      defaultKey: 'sk-FqJuk3X-X7J7hn20ks3RvQ',
-      tip: '🏫 <b>安农大校级网关</b>：学校私有集群，需连接安农大校园网或学校 VPN 访问（校外直连或机房维护时自动降级）。',
-      placeholder: 'sk-FqJuk3X-X7J7hn20ks3RvQ'
-    },
-    custom: {
-      name: '自定义中继',
-      url: '',
-      model: 'gpt-4o',
-      tip: '🛠️ <b>自定义中继</b>：支持兼容 OpenAI 标准的各种三方中继、反向代理或本地 Ollama/vLLM 服务。',
-      placeholder: 'sk-...'
-    }
-  };
-
-  function getProviderDisplayName(url, model) {
-    const u = (url || '').toLowerCase();
-    const m = (model || '').toLowerCase();
-    if (u.includes('googleapis.com') || m.includes('gemini')) return 'Google Gemini';
-    if (u.includes('deepseek.com') || m.includes('deepseek')) return 'DeepSeek 官方';
-    if (u.includes('openai.com') || m.includes('gpt')) return 'OpenAI (ChatGPT)';
-    if (u.includes('moonshot.cn') || m.includes('kimi')) return '月之暗面 Kimi';
-    if (u.includes('volces.com') || m.includes('doubao')) return '字节跳动 豆包';
-    if (u.includes('api.x.ai') || m.includes('grok')) return 'xAI Grok';
-    if (u.includes('ahau.edu.cn')) return '安徽农业大学官方算力平台';
-    return '云端大模型';
-  }
-
-  function detectActivePreset(url, model) {
-    const u = (url || '').toLowerCase();
-    const m = (model || '').toLowerCase();
-    if (u.includes('googleapis.com') || m.includes('gemini')) return 'gemini';
-    if (u.includes('deepseek.com') || m.includes('deepseek')) return 'deepseek';
-    if (u.includes('openai.com') || m.includes('gpt')) return 'openai';
-    if (u.includes('moonshot.cn') || m.includes('kimi')) return 'kimi';
-    if (u.includes('volces.com') || m.includes('doubao')) return 'doubao';
-    if (u.includes('api.x.ai') || m.includes('grok')) return 'grok';
-    if (u.includes('ahau.edu.cn')) return 'ahau';
-    return 'custom';
-  }
-
-  function loadSavedKeySettings() {
-    try {
-      const savedKey = localStorage.getItem('anau_custom_api_key');
-      const savedUrl = localStorage.getItem('anau_custom_api_url');
-      const savedModel = localStorage.getItem('anau_custom_model');
-      if (savedKey) AgentState.apiKey = savedKey;
-      if (savedUrl) AgentState.apiUrl = savedUrl;
-      if (savedModel) AgentState.modelName = savedModel;
-      updateKeyBadge();
-    } catch (e) {
-      console.warn('LocalStorage access:', e);
-    }
-  }
-
-  function updateKeyBadge() {
-    const badge = document.getElementById('agentKeyBadge');
-    if (badge) {
-      if (AgentState.apiKey && AgentState.apiKey.trim().length > 5) {
-        badge.classList.add('active');
-      } else {
-        badge.classList.remove('active');
-      }
-    }
-  }
-
   // ----------------------------------------------------------------------------
-  // 2.1 官方与云端大模型异步通信引擎 (支持 Gemini / DeepSeek / GPT / Kimi / 豆包 / 校网关)
+  // 2.1 安徽农业大学官方大模型异步通信引擎 (Deepseek-V4.1-Flash-SS)
   // ----------------------------------------------------------------------------
   async function callAhauOfficialLlm(userPrompt) {
-    const providerName = getProviderDisplayName(AgentState.apiUrl, AgentState.modelName);
     try {
       // 动态知识库压缩注入 (RAG)：如果用户问到具体学校信息，自动检索权威知识库；如果不涉及学校，完全保持通用顶级大模型纯净智能
       let facultySummary = '';
@@ -1181,11 +1069,11 @@ canteens: {
         facultySummary = AHAU_KB.faculty.map(g => '【' + (g.college || g.group || '学院') + '】: ' + g.teachers.map(t => t.name + ' (' + t.title + ', 课题:' + t.research + ')').join('; ')).join('\n');
       }
 
-      const systemPrompt = `你是安徽农业大学官方 AI 办事智能体「徽农智 · 安农智办」，底层由【${providerName} (${AgentState.modelName})】大模型强劲驱动。
+      const systemPrompt = `你是安徽农业大学官方 AI 办事智能体「徽农智 · 安农智办」，底层由安徽农业大学校级算力平台【Deepseek-V4.1-Flash-SS】大模型强劲驱动。
 【核心定位与行为准则】：
-1. 身份：你不仅是安农大校园全栈智能助手，也是拥有顶级推理、文学创作、学术研讨和常识解答能力的 AI 伙伴（具备与 ${providerName} 原生模型完全一致的极高智商、深度思考与自然人设）。
+1. 身份：你不仅是安农大校园全栈智能助手，也是拥有顶级推理、文学创作、学术研讨和常识解答能力的 AI 伙伴（具备与 DeepSeek 原生模型完全一致的极高智商、深度思考与自然人设）。
 2. 学校专业知识（RAG 增强）：当用户提问涉及安徽农业大学（如各学院老师导师、课题方向、校宠花名册、四大食堂与北区餐饮、勤政楼办公不上课/勤学博学楼上课、茶树生物学国家重点实验室、综合素质测评加分细则、考研规划）时，你必须严格依据下方【安农大权威校情知识库】精准作答，严禁编造虚假信息！
-3. 通用常识与创作：当用户提问不涉及安徽农业大学（如写诗、编程、算法、哲学、天文地理、聊天闲聊、通用科学、文学、考研复习通法）时，你就是纯粹的 ${providerName}！以极高的文学素养、逻辑严密性和亲切自然的口吻直接回答，绝不要机械回复功能菜单或官话套话！
+3. 通用常识与创作：当用户提问不涉及安徽农业大学（如写诗、编程、算法、哲学、天文地理、聊天闲聊、通用科学、文学、考研复习通法）时，你就是纯粹的 DeepSeek！以极高的文学素养、逻辑严密性和亲切自然的口吻直接回答，绝不要机械回复功能菜单或官话套话！
 
 【安农大权威校情知识库】：
 - 楼宇定性：勤政楼是党政机关领导与行政老师办公大楼，严禁学生上课！日常上课必须去勤学楼、博学楼。
@@ -1200,7 +1088,7 @@ ${facultySummary}
 5. 语气要求：亲切、生动、严谨、睿智、热情，知无不言！`;
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
 
       // 提取前序历史 (排除刚刚追加的当前用户消息，避免结尾重复)
       const previousHistory = (AgentState.messages || [])
@@ -1235,24 +1123,22 @@ ${facultySummary}
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        const errText = await response.text().catch(() => '');
-        throw new Error(`HTTP ${response.status}${errText ? ': ' + errText.slice(0, 80) : ''}`);
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
       if (data && data.choices && data.choices[0] && data.choices[0].message) {
         return {
-          text: data.choices[0].message.content + `\n\n*(✨ 本回答由 ${providerName}「${AgentState.modelName}」驱动)*`,
+          text: data.choices[0].message.content + '\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*',
           approval: null
         };
       }
       throw new Error('接口返回格式异常');
     } catch (err) {
-      console.warn(`[${providerName}] 外部通信受阻，平滑降级至安农自研离线大脑:`, err);
-      // 网络超时、跨域、密钥错误或学校网关503维护时，无缝调用本地自研安农校园知识大脑
+      console.warn('未连接到安徽农业大学校园网或校级大模型网关:', err);
+      // 未连接校园网或校外离线时，调用本地自研安农校园知识大脑，并在结尾明确说明
       const fallback = processUserInput(userPrompt, false, null);
-      let statusDesc = err.name === 'AbortError' ? '响应超时(>12s)' : (err.message.includes('503') ? '校级网关临时维护中[HTTP 503]' : err.message.slice(0, 40));
-      let notice = `\n\n*(💡 提示：当前「${providerName}」未连通 (${statusDesc})，已自动切换至「安农离线智能知识大脑」为您作答。您可点击打字框旁 🔑 切换为 Google Gemini、DeepSeek 官方或个人密钥)*`;
+      let notice = '\n\n*(💡 提示：当前未检测到安徽农业大学校园网环境，已自动切换为「徽农智 · 安农智办」本地智能知识大脑为您作答。接入安农大校园网后将自动无缝直连校级 DeepSeek 算力中心)*';
       return {
         text: fallback.text + notice,
         approval: fallback.approval
@@ -3074,10 +2960,6 @@ ${facultySummary}
           <div class="chat-input-tools">
             <input type="file" id="agentImageInput" accept="image/*" style="display: none;" onchange="window.AnauAgent.handleFileSelect(event)">
             <button class="input-tool-btn" onclick="document.getElementById('agentImageInput').click()" title="上传照片识楼/识树/识猫">📷</button>
-            <button class="input-tool-btn" id="agentKeyBtn" onclick="window.AnauAgent.openKeyModal()" title="接入学校专属大模型密钥 / DeepSeek" style="position: relative;">
-              <span style="font-size: 15px;">🔑</span>
-              <span id="agentKeyBadge" class="key-status-dot active"></span>
-            </button>
           </div>
           <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="提问办事、借教室、请假、考研、综测或上传照片..." onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
           <button class="chat-send-btn" id="agentSendBtn" onclick="window.AnauAgent.submitInput()" title="发送消息">✈️</button>
@@ -3103,75 +2985,9 @@ ${facultySummary}
       </div>
     `;
 
-    // 4. 专属大模型密钥配置模态窗 (支持 Google Gemini / DeepSeek / OpenAI / Kimi / 豆包 / Grok / 校级网关)
-    const keyModalHtml = `
-      <div class="official-print-overlay" id="aiKeyModal">
-        <div class="print-sheet-paper" style="max-width: 520px; border-radius: 18px; padding: 0; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.22);">
-          <div style="background: linear-gradient(135deg, #1b4d2e, #2d6a4f); color: #fff; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 22px;">🔑</span>
-              <div>
-                <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px;">接入个人 / 学校多厂商大模型</div>
-                <div style="font-size: 11.5px; opacity: 0.9;">支持 Google Gemini · DeepSeek · GPT-4o · Kimi · 豆包 · Grok · 校网关</div>
-              </div>
-            </div>
-            <button style="border:none; background:rgba(255,255,255,0.2); color:#fff; width:28px; height:28px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;" onclick="window.AnauAgent.closeKeyModal()">✕</button>
-          </div>
-          <div style="padding: 20px 22px; font-size: 13px; line-height: 1.6; color: #334155; max-height: 82vh; overflow-y: auto;">
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 9px 12px; margin-bottom: 12px; color: #166534; font-size: 12px; display: flex; gap: 8px; align-items: flex-start;">
-              <span>🛡️</span>
-              <span><strong>本地隐私保护：</strong>密钥只保存在您本机的浏览器本地缓存（LocalStorage）中，绝不上传到任何公开代码库，安全私密。</span>
-            </div>
-
-            <!-- 快捷预设按钮 -->
-            <label style="display:block; font-weight:600; margin-bottom:8px; color:#1e293b;">快捷选择大模型提供商：</label>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">
-              <button type="button" class="key-preset-btn" id="presetBtnGemini" onclick="window.AnauAgent.selectPreset('gemini', true)">🌟 Google Gemini</button>
-              <button type="button" class="key-preset-btn" id="presetBtnDeepseek" onclick="window.AnauAgent.selectPreset('deepseek', true)">⚡ DeepSeek 官方</button>
-              <button type="button" class="key-preset-btn" id="presetBtnOpenai" onclick="window.AnauAgent.selectPreset('openai', true)">🤖 OpenAI (GPT-4o)</button>
-              <button type="button" class="key-preset-btn" id="presetBtnKimi" onclick="window.AnauAgent.selectPreset('kimi', true)">🌙 月之暗面 Kimi</button>
-              <button type="button" class="key-preset-btn" id="presetBtnDoubao" onclick="window.AnauAgent.selectPreset('doubao', true)">🫘 字节跳动 豆包</button>
-              <button type="button" class="key-preset-btn" id="presetBtnGrok" onclick="window.AnauAgent.selectPreset('grok', true)">🚀 xAI Grok</button>
-              <button type="button" class="key-preset-btn active" id="presetBtnAhau" onclick="window.AnauAgent.selectPreset('ahau', true)">🏫 安农大校级网关</button>
-              <button type="button" class="key-preset-btn" id="presetBtnCustom" onclick="window.AnauAgent.selectPreset('custom', true)">🛠️ 自定义中继</button>
-            </div>
-
-            <!-- 动态说明卡片 -->
-            <div id="presetHelperTip" style="font-size: 12px; color: #334155; margin-bottom: 14px; background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0; line-height: 1.55;"></div>
-
-            <!-- API Key -->
-            <div style="margin-bottom: 12px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <label style="font-weight:600; color:#1e293b;">我的模型密钥 (API Key)：</label>
-                <button type="button" onclick="window.AnauAgent.toggleKeyVisibility()" style="border:none; background:none; color:#1b4d2e; font-size:11.5px; cursor:pointer; font-weight:600;">👁️ 切换明文/密文</button>
-              </div>
-              <input type="password" id="customApiKeyInput" placeholder="sk-... 或 AIzaSy..." style="width:100%; box-sizing:border-box; padding:9px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:13px; font-family:monospace; transition:0.2s; outline:none;" onfocus="this.style.borderColor='#1b4d2e'">
-            </div>
-
-            <!-- API URL -->
-            <div style="margin-bottom: 12px;">
-              <label style="display:block; font-weight:600; margin-bottom:5px; color:#1e293b;">接口服务地址 (API Base URL)：</label>
-              <input type="text" id="customApiUrlInput" placeholder="https://..." style="width:100%; box-sizing:border-box; padding:9px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:12.5px; font-family:monospace; transition:0.2s; outline:none;" onfocus="this.style.borderColor='#1b4d2e'">
-            </div>
-
-            <!-- Model Name -->
-            <div style="margin-bottom: 18px;">
-              <label style="display:block; font-weight:600; margin-bottom:5px; color:#1e293b;">模型名称 (Model Identifier)：</label>
-              <input type="text" id="customModelInput" placeholder="gemini-1.5-pro / deepseek-chat" style="width:100%; box-sizing:border-box; padding:9px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:12.5px; font-family:monospace; transition:0.2s; outline:none;" onfocus="this.style.borderColor='#1b4d2e'">
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-              <button type="button" style="flex: 1; padding: 10px; background: #1b4d2e; color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(27,77,46,0.25);" onclick="window.AnauAgent.saveKeySettings()">💾 保存并接入</button>
-              <button type="button" style="padding: 10px 16px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; cursor: pointer; transition: 0.2s;" onclick="window.AnauAgent.resetKeySettings()">恢复默认</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
     const container = document.createElement('div');
     container.id = 'nativeAgentRoot';
-    container.innerHTML = fabHtml + windowHtml + printModalHtml + keyModalHtml;
+    container.innerHTML = fabHtml + windowHtml + printModalHtml;
     document.body.appendChild(container);
 
     // 初始欢迎语
@@ -3609,122 +3425,6 @@ ${facultySummary}
       if (modal) modal.classList.remove('show');
     },
 
-    openKeyModal: function () {
-      const modal = document.getElementById('aiKeyModal');
-      if (!modal) return;
-      const keyInput = document.getElementById('customApiKeyInput');
-      const urlInput = document.getElementById('customApiUrlInput');
-      const modelInput = document.getElementById('customModelInput');
-
-      if (keyInput) keyInput.value = AgentState.apiKey || '';
-      if (urlInput) urlInput.value = AgentState.apiUrl || '';
-      if (modelInput) modelInput.value = AgentState.modelName || '';
-
-      const activePreset = detectActivePreset(AgentState.apiUrl, AgentState.modelName);
-      this.selectPreset(activePreset, false);
-
-      modal.classList.add('show');
-    },
-
-    closeKeyModal: function () {
-      const modal = document.getElementById('aiKeyModal');
-      if (modal) modal.classList.remove('show');
-    },
-
-    selectPreset: function (type, isUserClick) {
-      const preset = MODEL_PRESETS[type] || MODEL_PRESETS.custom;
-      const keyInput = document.getElementById('customApiKeyInput');
-      const urlInput = document.getElementById('customApiUrlInput');
-      const modelInput = document.getElementById('customModelInput');
-      const tipEl = document.getElementById('presetHelperTip');
-
-      Object.keys(MODEL_PRESETS).forEach(k => {
-        const btn = document.getElementById('presetBtn' + k.charAt(0).toUpperCase() + k.slice(1));
-        if (btn) {
-          if (k === type) btn.classList.add('active');
-          else btn.classList.remove('active');
-        }
-      });
-
-      if (tipEl) tipEl.innerHTML = preset.tip;
-
-      if (isUserClick) {
-        if (urlInput) urlInput.value = preset.url || '';
-        if (modelInput) modelInput.value = preset.model || '';
-        if (keyInput) {
-          keyInput.placeholder = preset.placeholder || '请输入对应的 API Key';
-          if (type === 'ahau') {
-            keyInput.value = preset.defaultKey;
-          } else if (keyInput.value === 'sk-FqJuk3X-X7J7hn20ks3RvQ') {
-            keyInput.value = '';
-          }
-        }
-      } else {
-        if (keyInput) keyInput.placeholder = preset.placeholder || '请输入对应的 API Key';
-      }
-    },
-
-    toggleKeyVisibility: function () {
-      const keyInput = document.getElementById('customApiKeyInput');
-      if (keyInput) {
-        keyInput.type = (keyInput.type === 'password') ? 'text' : 'password';
-      }
-    },
-
-    saveKeySettings: function () {
-      const keyInput = document.getElementById('customApiKeyInput');
-      const urlInput = document.getElementById('customApiUrlInput');
-      const modelInput = document.getElementById('customModelInput');
-
-      const key = keyInput ? keyInput.value.trim() : '';
-      const url = urlInput ? urlInput.value.trim() : '';
-      const model = modelInput ? modelInput.value.trim() : '';
-
-      AgentState.apiKey = key || DEFAULT_CONFIG.apiKey;
-      AgentState.apiUrl = url || DEFAULT_CONFIG.apiUrl;
-      AgentState.modelName = model || DEFAULT_CONFIG.modelName;
-
-      try {
-        localStorage.setItem('anau_custom_api_key', AgentState.apiKey);
-        localStorage.setItem('anau_custom_api_url', AgentState.apiUrl);
-        localStorage.setItem('anau_custom_model', AgentState.modelName);
-      } catch (e) {}
-
-      updateKeyBadge();
-      this.closeKeyModal();
-
-      const providerName = getProviderDisplayName(AgentState.apiUrl, AgentState.modelName);
-      const maskedKey = AgentState.apiKey ? (AgentState.apiKey.slice(0, 6) + '...' + AgentState.apiKey.slice(-4)) : '未设置';
-
-      appendBotMessage(`🔑 **大模型专属配置已更新生效！**\n\n` +
-        `- **当前激活模型渠道**：**${providerName}**\n` +
-        `- **激活模型标识**：\`${AgentState.modelName}\`\n` +
-        `- **服务端点 (Base URL)**：\`${AgentState.apiUrl}\`\n` +
-        `- **密钥状态**：\`${maskedKey}\`\n\n` +
-        `💡 *温馨提示：配置已保存在您当前浏览器的本地存储（LocalStorage）中。现在您可以向我发起常识问答、哲学思考、代码算法或专业学术研讨！*`
-      );
-    },
-
-    resetKeySettings: function () {
-      AgentState.apiKey = DEFAULT_CONFIG.apiKey;
-      AgentState.apiUrl = DEFAULT_CONFIG.apiUrl;
-      AgentState.modelName = DEFAULT_CONFIG.modelName;
-      try {
-        localStorage.removeItem('anau_custom_api_key');
-        localStorage.removeItem('anau_custom_api_url');
-        localStorage.removeItem('anau_custom_model');
-      } catch (e) {}
-      this.openKeyModal();
-    },
-
-    openSettings: function () {
-      this.openKeyModal();
-    },
-
-    saveSettings: function () {
-      this.saveKeySettings();
-    },
-
     // 兼容接口 (静音模式安全无缝响应)
     openVoiceMode: function () {},
     closeVoiceMode: function () {},
@@ -3752,8 +3452,12 @@ ${facultySummary}
       try { window.speechSynthesis.cancel(); } catch(e) {}
     }
     if (document.getElementById('nativeAgentRoot')) return; // 避免重复注入
+    try {
+      localStorage.removeItem('anau_custom_api_key');
+      localStorage.removeItem('anau_custom_api_url');
+      localStorage.removeItem('anau_custom_model');
+    } catch(e) {}
     injectNativeChatUI();
-    loadSavedKeySettings();
 
     // 覆盖全站原本的 sendQuickPrompt 与 handleCardClick，直接无缝对接自研引擎！
     window.sendQuickPrompt = function (promptText) {
