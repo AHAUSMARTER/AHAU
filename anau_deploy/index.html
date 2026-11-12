@@ -6,7 +6,7 @@
   <title>安徽农业大学 · 数智安农综合服务大厅</title>
   <link rel="icon" type="image/png" href="anau_ai_logo.png">
   <link rel="apple-touch-icon" href="anau_ai_logo.png">
-  <link rel="stylesheet" href="anau_agent.css?v=33.0">
+  <link rel="stylesheet" href="anau_agent.css?v=34.0">
   <style>
     :root {
       /* Apple + AHAU 经典雅致安农绿 */
@@ -28,7 +28,12 @@
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
       --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
       --shadow-lg: 0 12px 32px rgba(31, 94, 57, 0.08);
-      --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+      /* Apple + shadcn + unslop 极致丝滑物理动效曲线 */
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-apple-spring: cubic-bezier(0.32, 0.72, 0, 1);
+      --ease-apple-exit: cubic-bezier(0.25, 1, 0.5, 1);
+      --duration-enter: 0.36s;
+      --duration-exit: 0.28s;
     }
 
     * {
@@ -209,7 +214,7 @@
       overflow: hidden;
     }
 
-    /* 左侧控制面板：标准 290px 空间，与现代生产力 IDE 完全对齐，文字从容不折行 */
+    /* 左侧控制面板：现代生产力 IDE 分屏架构 · 290px 标准空间 · 硬件加速平滑滑动 */
     .sidebar-panel {
       width: 290px;
       min-width: 290px;
@@ -222,7 +227,11 @@
       border-radius: 0;
       box-shadow: none;
       overflow: hidden;
-      transition: width 0.25s var(--ease-apple), min-width 0.25s var(--ease-apple);
+      will-change: margin-left, transform, opacity;
+      transition: margin-left var(--duration-enter) var(--ease-apple),
+                  transform var(--duration-enter) var(--ease-apple),
+                  opacity 0.26s var(--ease-apple),
+                  border-color 0.26s ease !important;
     }
 
     /* shadcn 风格侧边栏顶部品牌标识与工作台状态 */
@@ -394,9 +403,16 @@
     }
 
     .accordion-collapse-panel {
-      max-height: 1400px;
+      max-height: 850px;
       opacity: 1;
-      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, margin-top 0.3s ease;
+      visibility: visible;
+      transform: translate3d(0, 0, 0);
+      will-change: max-height, opacity, transform;
+      transition: max-height 0.36s var(--ease-apple),
+                  opacity 0.28s var(--ease-apple),
+                  transform 0.28s var(--ease-apple),
+                  margin-top 0.28s ease,
+                  visibility 0s linear 0s;
       overflow: hidden;
       margin-top: 10px;
       display: flex;
@@ -407,8 +423,15 @@
     .accordion-collapse-panel.collapsed {
       max-height: 0;
       opacity: 0;
+      transform: translate3d(0, -6px, 0);
       margin-top: 0;
       pointer-events: none;
+      visibility: hidden;
+      transition: max-height 0.28s var(--ease-apple-exit),
+                  opacity 0.2s ease,
+                  transform 0.2s ease,
+                  margin-top 0.26s ease,
+                  visibility 0s linear 0.28s;
     }
 
     .user-profile-row {
@@ -1318,7 +1341,7 @@
     }
 
 
-    /* 侧边栏折叠/展开专用切换按钮 (搭载专属图标) */
+    /* 侧边栏折叠/展开专用切换按钮 (触感级微交互与流畅状态回馈) */
     .sidebar-toggle-btn {
       width: 38px;
       height: 38px;
@@ -1331,19 +1354,26 @@
       cursor: pointer;
       padding: 0;
       flex-shrink: 0;
-      transition: all 0.2s var(--ease-apple);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      will-change: transform, background, border-color, box-shadow;
+      transition: background 0.2s var(--ease-apple),
+                  border-color 0.2s var(--ease-apple),
+                  transform 0.16s var(--ease-apple),
+                  box-shadow 0.2s ease;
     }
 
     .sidebar-toggle-btn:hover {
       background: rgba(255, 255, 255, 0.28);
       border-color: rgba(255, 255, 255, 0.45);
-      transform: scale(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
 
     .sidebar-toggle-btn:active {
-      transform: scale(0.96);
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.22);
     }
 
     .toggle-icon-img {
@@ -1352,40 +1382,51 @@
       object-fit: contain;
       display: block;
       filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+      will-change: transform, opacity;
+      transition: transform 0.32s var(--ease-apple), opacity 0.2s ease;
     }
 
-    /* 侧边栏移动端抽屉遮罩 */
+    .sidebar-toggle-btn.is-collapsed .toggle-icon-img {
+      transform: scale(0.92) rotate(180deg);
+      opacity: 0.85;
+    }
+
+    /* 侧边栏移动端抽屉遮罩：Apple Liquid Frosted Glass 渐隐渐现，消灭 display:none 闪烁 */
     .sidebar-mobile-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 99998;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.25s ease;
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(15, 23, 42, 0.45) !important;
+      backdrop-filter: blur(12px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+      z-index: 999998 !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      will-change: opacity, backdrop-filter, visibility;
+      transition: opacity var(--duration-enter) var(--ease-apple),
+                  backdrop-filter var(--duration-enter) var(--ease-apple),
+                  visibility var(--duration-enter) var(--ease-apple) !important;
     }
 
     .sidebar-mobile-backdrop.show {
-      display: block;
-      opacity: 1;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
     }
 
-    /* 桌面端平滑收起展开动画 */
-    .sidebar-panel {
-      transition: width 0.3s var(--ease-apple), transform 0.3s var(--ease-apple), opacity 0.2s ease, margin 0.3s var(--ease-apple) !important;
-    }
-
+    /* 桌面端极度丝滑收起：基于硬件加速位移与负边距滑出，内容内部完全不折行、无任何布局抖动 */
     .sidebar-panel.desktop-collapsed {
-      width: 0 !important;
-      min-width: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
+      margin-left: -290px !important;
+      transform: translate3d(-8px, 0, 0) !important;
       opacity: 0 !important;
       pointer-events: none !important;
-      border-right: none !important;
-      overflow: hidden !important;
+      border-color: transparent !important;
+      visibility: hidden !important;
+      transition: margin-left var(--duration-exit) var(--ease-apple),
+                  transform var(--duration-exit) var(--ease-apple),
+                  opacity 0.2s ease,
+                  border-color 0.2s ease,
+                  visibility 0s linear var(--duration-exit) !important;
     }
 
     /* 移动端专属媒体查询：顶栏置顶防挡，字体等比微缩，侧边栏专属顶层抽屉 */
@@ -1538,62 +1579,85 @@
         overflow: hidden !important;
       }
 
-      /* 4. 手机端侧边栏：脱离容器文档流，独立全屏抽屉，高层级，平滑推入 */
+      /* 4. 手机端侧边栏：脱离容器文档流，独立全屏高质感抽屉，物理加速滑入 */
       .sidebar-panel {
         position: fixed !important;
         top: 0 !important;
         bottom: 0 !important;
         left: 0 !important;
-        width: 80vw !important;
-        max-width: 300px !important;
+        width: 82vw !important;
+        max-width: 310px !important;
         height: 100% !important;
         height: 100vh !important;
         height: 100dvh !important;
         z-index: 999999 !important;
-        background: rgba(255, 255, 255, 0.97) !important;
-        backdrop-filter: blur(40px) saturate(190%) !important;
-        -webkit-backdrop-filter: blur(40px) saturate(190%) !important;
-        box-shadow: 4px 0 36px rgba(0, 0, 0, 0.3) !important;
-        transform: translateX(-105%) !important;
-        border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
-        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        background: rgba(255, 255, 255, 0.96) !important;
+        backdrop-filter: blur(48px) saturate(190%) !important;
+        -webkit-backdrop-filter: blur(48px) saturate(190%) !important;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
+        margin-left: 0 !important;
+        transform: translate3d(-102%, 0, 0) !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border-radius: 0 20px 20px 0 !important;
+        visibility: hidden !important;
+        will-change: transform, box-shadow, visibility;
+        transition: transform var(--duration-exit) var(--ease-apple-exit),
+                    box-shadow var(--duration-exit) ease,
+                    visibility 0s linear var(--duration-exit) !important;
         display: flex !important;
         flex-direction: column !important;
       }
 
       .sidebar-panel.mobile-open {
-        transform: translateX(0) !important;
-      }
-
-      .sidebar-mobile-backdrop {
-        position: fixed !important;
-        inset: 0 !important;
-        z-index: 999998 !important;
-        background: rgba(15, 23, 42, 0.5) !important;
-        backdrop-filter: blur(8px) !important;
-        -webkit-backdrop-filter: blur(8px) !important;
+        transform: translate3d(0, 0, 0) !important;
+        visibility: visible !important;
+        box-shadow: 12px 0 42px -6px rgba(10, 35, 20, 0.24), 4px 0 16px rgba(0, 0, 0, 0.06) !important;
+        transition: transform var(--duration-enter) var(--ease-apple),
+                    box-shadow var(--duration-enter) var(--ease-apple),
+                    visibility 0s linear 0s !important;
       }
     }
 
   
     .sidebar-inner-close-btn {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
       border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 7px;
-      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.85);
       color: #64748b;
       cursor: pointer;
       margin-left: 6px;
-      transition: all 0.15s ease;
       padding: 0;
+      will-change: transform, background, color;
+      transition: background 0.18s ease,
+                  color 0.18s ease,
+                  border-color 0.18s ease,
+                  transform 0.18s var(--ease-apple);
     }
     .sidebar-inner-close-btn:hover {
-      background: #f1f5f9;
-      color: #0f172a;
+      background: #ffffff;
+      color: #1e293b;
+      border-color: rgba(0, 0, 0, 0.16);
+      transform: rotate(90deg);
+    }
+    .sidebar-inner-close-btn:active {
+      transform: scale(0.9) rotate(90deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sidebar-panel,
+      .sidebar-mobile-backdrop,
+      .accordion-collapse-panel,
+      .sidebar-toggle-btn,
+      .toggle-icon-img,
+      .sidebar-inner-close-btn {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
     }
 
   
@@ -2045,7 +2109,7 @@
 
 
   <!-- 徽农智 · 安农智办 原创全栈智能体引擎 -->
-  <script src="anau_agent.js?v=33.0"></script>
+  <script src="anau_agent.js?v=34.0"></script>
 
   <script>
     function switchSidebarTab(tabName) {
@@ -2140,6 +2204,7 @@ function filterServices(query) {
           window.AnauAgent.sendUserMsg(`老师你好，我想咨询办理【${serviceName}】业务`);
         }
       }
+      autoCloseSidebarOnMobile();
     }
 
     function showToast(msg) {
@@ -2177,6 +2242,7 @@ function filterServices(query) {
       checkDrawerPlacement();
       const sidebar = document.querySelector('.sidebar-panel');
       const backdrop = document.getElementById('sidebarBackdrop');
+      const toggleBtn = document.getElementById('sidebarToggleBtn');
       if (!sidebar) return;
 
       const isMobile = window.innerWidth <= 768;
@@ -2185,12 +2251,21 @@ function filterServices(query) {
         if (isOpen) {
           sidebar.classList.remove('mobile-open');
           if (backdrop) backdrop.classList.remove('show');
+          if (toggleBtn) toggleBtn.classList.remove('is-open');
         } else {
           sidebar.classList.add('mobile-open');
           if (backdrop) backdrop.classList.add('show');
+          if (toggleBtn) toggleBtn.classList.add('is-open');
         }
       } else {
-        sidebar.classList.toggle('desktop-collapsed');
+        const isCollapsed = sidebar.classList.toggle('desktop-collapsed');
+        if (toggleBtn) {
+          if (isCollapsed) {
+            toggleBtn.classList.add('is-collapsed');
+          } else {
+            toggleBtn.classList.remove('is-collapsed');
+          }
+        }
       }
     }
 
@@ -2198,19 +2273,29 @@ function filterServices(query) {
       if (window.innerWidth <= 768) {
         const sidebar = document.querySelector('.sidebar-panel');
         const backdrop = document.getElementById('sidebarBackdrop');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
         if (sidebar) sidebar.classList.remove('mobile-open');
         if (backdrop) backdrop.classList.remove('show');
+        if (toggleBtn) toggleBtn.classList.remove('is-open');
       }
     }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        autoCloseSidebarOnMobile();
+      }
+    });
 
     window.addEventListener('DOMContentLoaded', checkDrawerPlacement);
     window.addEventListener('resize', function() {
       checkDrawerPlacement();
       const sidebar = document.querySelector('.sidebar-panel');
       const backdrop = document.getElementById('sidebarBackdrop');
+      const toggleBtn = document.getElementById('sidebarToggleBtn');
       if (window.innerWidth > 768) {
         if (sidebar) sidebar.classList.remove('mobile-open');
         if (backdrop) backdrop.classList.remove('show');
+        if (toggleBtn) toggleBtn.classList.remove('is-open');
       }
     });
   </script>
