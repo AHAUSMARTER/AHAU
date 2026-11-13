@@ -3288,19 +3288,10 @@ ${examSummary}
                 </button>
                 <div class="askb__menu askb__menu--plus" id="askbPlusMenu" style="display: none;">
                   <button type="button" onclick="window.AnauAgent.triggerImageUpload()">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>拍照识图 (名木/叶片/校宠/证明)
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>上传照片
                   </button>
                   <button type="button" onclick="window.AnauAgent.triggerDocUpload()">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>上传办事材料 (PDF/证明/申请书)
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.insertTemplate('老师你好，我想申请学生离校请假：请假事由、起止时间为...')">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>离校请假单申请模板
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.insertTemplate('我们班想借用多媒体/阶梯教室开班会，拟借用勤学楼教室...')">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>阶梯教室借用工作流模板
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.insertTemplate('请帮我根据安农大综测实施办法测算综测得分：学业绩点3.68，六级520...')">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>综测与奖学金测算模板
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>上传文件
                   </button>
                 </div>
               </div>
@@ -3314,26 +3305,6 @@ ${examSummary}
                 <span class="askb__sr">输入咨询内容</span>
                 <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="" onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
               </label>
-
-              <!-- 模型选择胶囊 -->
-              <div class="askb__model-wrap">
-                <button type="button" class="askb__model" id="askbModelBtn" onclick="window.AnauAgent.toggleModelMenu()" title="切换大模型">
-                  <span id="currentModelLabel">DeepSeek-V4.1</span>
-                  <svg viewBox="0 0 24 24"><path d="m6.5 9.5 5.5 5.5 5.5-5.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                </button>
-                <div class="askb__menu askb__menu--model" id="askbModelMenu" style="display: none;">
-                  <button type="button" onclick="window.AnauAgent.selectModel('DeepSeek-V4.1-Flash-SS', 'DeepSeek-V4.1')">
-                    <span><strong>DeepSeek-V4.1-Flash-SS</strong><small>校园官方推荐 · 极速响应 · 综合推理</small></span>
-                    <span class="model-check-icon">✓</span>
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.selectModel('AHAU-EduBot-2026', 'AHAU-EduBot')">
-                    <span><strong>AHAU-EduBot 2026</strong><small>安农大学工与教务专精微调模型</small></span>
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.selectModel('Multimodal-Vision', 'Vision-Pro')">
-                    <span><strong>Multimodal-Vision</strong><small>茶学/名木叶片识别与校宠视觉图鉴</small></span>
-                  </button>
-                </div>
-              </div>
 
               <!-- 动作按钮 (发送 / 语音) -->
               <div class="askb__action-wrap">
