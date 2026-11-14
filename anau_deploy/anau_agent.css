@@ -338,11 +338,152 @@
   box-shadow: 0 4px 18px rgba(35, 100, 60, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-/* 气泡内样式格式化 */
-.chat-msg-bubble p { margin: 0 0 8px 0; }
-.chat-msg-bubble p:last-child { margin-bottom: 0; }
-.chat-msg-bubble strong { color: var(--agent-green-dark); font-weight: 700; }
-.chat-msg.user .chat-msg-bubble strong { color: #fef08a; }
+/* 气泡内样式格式化与 Notion / Linear 极简科技黑白排版规范 */
+.chat-msg-bubble p {
+  margin: 0 0 10px 0;
+  line-height: 1.68;
+}
+.chat-msg-bubble p:last-child {
+  margin-bottom: 0;
+}
+.chat-msg-bubble strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+.chat-msg.user .chat-msg-bubble strong {
+  color: #fef08a;
+}
+
+/* 标题体系 (h1, h2, h3, h4) */
+.chat-msg-bubble h1,
+.chat-msg-bubble h2,
+.chat-msg-bubble h3,
+.chat-msg-bubble h4 {
+  color: #0f172a;
+  font-weight: 700;
+  margin: 14px 0 8px 0;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.chat-msg-bubble h1:first-child,
+.chat-msg-bubble h2:first-child,
+.chat-msg-bubble h3:first-child {
+  margin-top: 0;
+}
+.chat-msg-bubble h1 { font-size: 16px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); padding-bottom: 6px; }
+.chat-msg-bubble h2 { font-size: 15px; }
+.chat-msg-bubble h3 { font-size: 14px; }
+.chat-msg-bubble h4 { font-size: 13.5px; }
+
+/* 细灰线分割线 */
+.chat-msg-bubble hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 14px 0;
+}
+
+/* 极简科技黑白表格 (Notion / Linear 风格，移动端自适应平滑滚动) */
+.chat-msg-bubble .table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 10px 0 14px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+.chat-msg-bubble table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  text-align: left;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.chat-msg-bubble th,
+.chat-msg-bubble td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.chat-msg-bubble th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.chat-msg-bubble tr:last-child td {
+  border-bottom: none;
+}
+.chat-msg-bubble tr:nth-child(even) td {
+  background: rgba(248, 250, 252, 0.6);
+}
+.chat-msg-bubble tr:hover td {
+  background: rgba(241, 245, 249, 0.8);
+}
+
+/* 结构化列表 */
+.chat-msg-bubble ul,
+.chat-msg-bubble ol {
+  margin: 6px 0 10px 0;
+  padding-left: 20px;
+}
+.chat-msg-bubble ul li {
+  list-style-type: disc;
+  margin-bottom: 4px;
+}
+.chat-msg-bubble ol li {
+  list-style-type: decimal;
+  margin-bottom: 4px;
+}
+.chat-msg-bubble li::marker {
+  color: #64748b;
+}
+
+/* 极简提要引用块 (Blockquote) */
+.chat-msg-bubble blockquote {
+  margin: 10px 0;
+  padding: 8px 14px;
+  border-left: 3px solid #64748b;
+  background: rgba(248, 250, 252, 0.85);
+  border-radius: 0 8px 8px 0;
+  color: #334155;
+  font-size: 13px;
+}
+.chat-msg-bubble blockquote p {
+  margin: 0;
+}
+
+/* 代码标签与代码块 (Inline Code & Pre) */
+.chat-msg-bubble code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  padding: 2px 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: #0f172a;
+}
+.chat-msg-bubble pre {
+  margin: 10px 0;
+  padding: 12px 14px;
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.chat-msg-bubble pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
 
 .chat-badge {
   display: inline-block;
