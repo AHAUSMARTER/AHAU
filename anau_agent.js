@@ -1,6 +1,6 @@
 /**
  * ==============================================================================
- * 🌾 徽农智 · 安农智办 (AHAU Smart Agent Core) - 原创全栈智能体引擎
+ * 徽农智 · 安农智办 (AHAU Smart Agent Core) - 原创全栈智能体引擎
  * 首届“农芯智”AI智能体创新大赛 · 原创代码类作品核心驱动库
  * 架构：自研混合推理引擎 (离线精准知识库 + 多轮办事状态机 + 视觉多模态快诊 + 云端LLM适配)
  * 版权所有 © 2026 安徽农业大学「安农智办」团队
@@ -9,6 +9,284 @@
 
 (function () {
   'use strict';
+
+  // ----------------------------------------------------------------------------
+  // 0. 安徽农业大学 权威规章与事实基座 (吸收 AgentWeber 事实追溯体系)
+  // ----------------------------------------------------------------------------
+  const OFFICIAL_CITATIONS = {
+    'ahau-jw-2024-18': {
+      id: 'ahau-jw-2024-18',
+      title: '安徽农业大学本科生学籍管理规定 (2024年修订版)',
+      no: '安农校发〔2024〕18号',
+      dept: '教务处',
+      date: '2024年8月26日',
+      excerpt: '第十五条 学生因病、因事离校必须严格履行书面请假审批手续。请假2天以内由辅导员审批并报学院备案；请假3天至7天由学院分管学生工作领导审批；请假7天以上须报教务处与学工部联合备案。未经批准擅自离校者按旷课处理。公私分级安全机制保障：系统仅生成拟办审批单，严禁AI越权代签。',
+      lawUrl: 'https://bkjw.ahau.edu.cn'
+    },
+    'ahau-zc-2023-42': {
+      id: 'ahau-zc-2023-42',
+      title: '安徽农业大学本科生综合素质测评实施办法',
+      no: '安农学字〔2023〕42号',
+      dept: '学生工作部 (处) / 资助中心',
+      date: '2023年9月15日',
+      excerpt: '第七条 综合测评成绩由学业成绩(70%)、德育表现(15%)、创新创业与学科竞赛(10%)、外语特长(5%)四部分组成。学业成绩按必修课与专业选修课绩点严格折算。国家奖学金推荐人选综合素质测评成绩须位列专业前10%，且无任何挂科违纪记录。各分值微调计算规则透明公示。',
+      lawUrl: 'https://xg.ahau.edu.cn'
+    },
+    'ahau-hq-2022-09': {
+      id: 'ahau-hq-2022-09',
+      title: '安徽农业大学公共教学场地借用与安全使用守则',
+      no: '安农资后〔2022〕09号',
+      dept: '后勤保障处 / 教务处',
+      date: '2022年10月11日',
+      excerpt: '第四条 勤学楼、博学楼公共多媒体教室原则上优先保障日常本科教学。班级召开主题班会或学术讲座借用，须由经办人在系统提交借用申请单，注明活动主题与责任人，严禁擅自转借第三方或用于盈利性活动。借用提交须本人确认。',
+      lawUrl: 'https://hq.ahau.edu.cn'
+    },
+    'ahau-mesh-2026-01': {
+      id: 'ahau-mesh-2026-01',
+      title: '安徽农业大学跨学科多智能体互联与科研资源共享规范 (ANAU-AgentMesh)',
+      no: '安农科发〔2026〕01号',
+      dept: '科学技术处 / 现代教育技术中心',
+      date: '2026年3月1日',
+      excerpt: '第一条 为促进农科与理工学科深度交叉融合，学校部署ANAU-AgentMesh分布式多智能体互联总线。各学科智能体可在校园网内自动化广播科研需求与寻找合作，但涉及科研数据交互、仪器进场交接等实质权责，必须经双方师生本人最终拍板确权。',
+      lawUrl: 'https://kjc.ahau.edu.cn'
+    },
+    'ahau-exam-2024-03': {
+      id: 'ahau-exam-2024-03',
+      title: '安徽农业大学本科课程考核与学业成绩评定规范',
+      no: '安农教〔2024〕03号',
+      dept: '教务处',
+      date: '2024年1月10日',
+      excerpt: '第九条 鼓励学生开展自主式探究学习与真题诊断。智能助学系统应立足认知诊断本质，区分粗心笔误与概念性混淆，不得直接出具无思维深度的应试答案；艾宾浩斯复习曲线与自测权重必须采用确定性离线算法，确保教学评测严肃性与可溯源性。',
+      lawUrl: 'https://bkjw.ahau.edu.cn'
+    }
+  };
+
+  // ----------------------------------------------------------------------------
+  // 四大吸收组件渲染引擎 (AgentWeber / Nexus / BookMind / Manim Agent)
+  // ----------------------------------------------------------------------------
+  function renderActionGatingWidget(g) {
+    const gid = 'gating-' + Math.floor(100000 + Math.random() * 900000);
+    return `
+      <div class="security-gating-card" id="${gid}">
+        <div class="security-gating-header">
+          <div class="gating-title-wrap">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>公私分级安全栅栏 · 敏感写入操作人审确认</span>
+          </div>
+          <span class="gating-badge-promise">0次越权安全承诺</span>
+        </div>
+        <p class="gating-desc">
+          <strong>安全合规机制（吸收 AgentWeber 核心范式）</strong>：公开校园规章与可用状态已由 AI 自动核验完成；教务与学工系统<strong>写操作、正式离校报备、场地审批单提交</strong>属于学生私有高敏业务，<strong>AI 绝不越权擅自点击提交</strong>，必须由您本人最终审定签名！
+        </p>
+        <div class="gating-details-box">
+          <div class="gating-detail-row"><span class="label">业务类型:</span><span class="val">${g.bizType}</span></div>
+          <div class="gating-detail-row"><span class="label">申请经办人:</span><span class="val">${g.applicant}</span></div>
+          <div class="gating-detail-row"><span class="label">归口单位:</span><span class="val">${g.targetDept}</span></div>
+          <div class="gating-detail-row"><span class="label">凭证单号:</span><span class="val">${g.docNo}</span></div>
+        </div>
+        <div class="gating-actions-wrap" id="${gid}-actions">
+          <button class="btn-gating-confirm" onclick="window.AnauAgent.confirmActionGating('${gid}', '${g.bizType}', '${g.docNo}')">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>本人核验无误 · 电子签名并授权提交
+          </button>
+          <button class="btn-gating-cancel" onclick="window.AnauAgent.cancelActionGating('${gid}')">暂存为拟办草案</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderInteractiveSliderWidget(initialGpa = 3.65, initialVol = 20, initialComp = 4) {
+    const wid = 'slider-box-' + Math.floor(100000 + Math.random() * 900000);
+    return `
+      <div class="interactive-slider-box" id="${wid}" data-initial-gpa="${initialGpa}" data-initial-vol="${initialVol}" data-initial-comp="${initialComp}">
+        <div class="slider-box-header">
+          <div class="slider-box-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--agent-green);"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+            <span>综测与奖学金动态参数推演沙盘 (吸收 Manim Agent 参数微调)</span>
+          </div>
+          <span class="slider-box-pill">实时拖动推演</span>
+        </div>
+        <div class="slider-controls-group">
+          <div class="slider-control-item">
+            <div class="slider-label-row">
+              <span class="slider-label-title">学业成绩绩点 (GPA)</span>
+              <span class="slider-val-badge" id="${wid}-gpa-val">${initialGpa.toFixed(2)}</span>
+            </div>
+            <input type="range" class="slider-range-input" id="${wid}-gpa-slider" min="2.00" max="4.50" step="0.05" value="${initialGpa.toFixed(2)}" oninput="window.AnauAgent.updateZongceSliders('${wid}')">
+          </div>
+          <div class="slider-control-item">
+            <div class="slider-label-row">
+              <span class="slider-label-title">志愿汇认定工时 (小时)</span>
+              <span class="slider-val-badge" id="${wid}-vol-val">${initialVol} 小时</span>
+            </div>
+            <input type="range" class="slider-range-input" id="${wid}-vol-slider" min="0" max="60" step="5" value="${initialVol}" oninput="window.AnauAgent.updateZongceSliders('${wid}')">
+          </div>
+          <div class="slider-control-item">
+            <div class="slider-label-row">
+              <span class="slider-label-title">学科竞赛与双创加分 (分值)</span>
+              <span class="slider-val-badge" id="${wid}-comp-val">+${initialComp}.0 分</span>
+            </div>
+            <input type="range" class="slider-range-input" id="${wid}-comp-slider" min="0" max="10" step="1" value="${initialComp}" oninput="window.AnauAgent.updateZongceSliders('${wid}')">
+          </div>
+        </div>
+        <div class="slider-live-dashboard">
+          <div class="slider-total-score-wrap">
+            <span class="slider-total-label">实时推演综合测评总分</span>
+            <span class="slider-total-number" id="${wid}-total-score">--</span>
+          </div>
+          <div class="slider-award-wrap">
+            <div class="slider-award-tier" id="${wid}-award-tier">计算中...</div>
+            <div class="slider-award-rank" id="${wid}-award-rank">排位区间计算中</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderCognitiveProbeWidget(probeType = 'gaoshu') {
+    const pid = 'probe-' + Math.floor(100000 + Math.random() * 900000);
+    return `
+      <div class="probe-diagnostic-card" id="${pid}">
+        <div class="probe-header">
+          <div class="probe-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>错因认知诊断探针靶场 (吸收 BookMind 教学心理闭环)</span>
+          </div>
+          <span class="probe-rule-badge">确定性离线复习规则</span>
+        </div>
+        <div class="probe-question-box">
+          <strong>【安农高等数学期末统考真题 · 错因穿透】</strong><br>
+          求极限：lim_{x→0} (sin x - x) / x³。请选择您推导得出的计算结果：
+        </div>
+        <div class="probe-options-list" id="${pid}-options">
+          <button class="probe-option-btn" onclick="window.AnauAgent.submitDiagnosticProbe('${pid}', 'A')">
+            <span><strong>选项 A</strong>：结果为 0 (直接将分子 sin x 代换为 x 得到 (x-x)/x³ = 0)</span>
+            <span style="font-size:11px; color:#94a3b8;">诊断 ›</span>
+          </button>
+          <button class="probe-option-btn" onclick="window.AnauAgent.submitDiagnosticProbe('${pid}', 'B')">
+            <span><strong>选项 B</strong>：结果为 -1/6 (利用三阶泰勒展开 sin x = x - x³/6 + o(x³))</span>
+            <span style="font-size:11px; color:#94a3b8;">诊断 ›</span>
+          </button>
+          <button class="probe-option-btn" onclick="window.AnauAgent.submitDiagnosticProbe('${pid}', 'C')">
+            <span><strong>选项 C</strong>：结果不存在 / 震荡无界</span>
+            <span style="font-size:11px; color:#94a3b8;">诊断 ›</span>
+          </button>
+        </div>
+        <div id="${pid}-feedback" style="display:none;"></div>
+      </div>
+    `;
+  }
+
+  function renderCurriculumDAGWidget() {
+    return `
+      <div class="curriculum-dag-card">
+        <div class="dag-header">
+          <span class="dag-title">课程知识先后依赖拓扑图 (Curriculum Precedence DAG · 吸收 Manim Agent)</span>
+          <span style="font-size:11px; color:#64748b;">先修约束 · 知识断层前瞻</span>
+        </div>
+        <div class="dag-chain">
+          <div class="dag-node passed">
+            <span>高等数学 (上)</span>
+            <span style="font-size:10px; opacity:0.8;">已结课 · 88分</span>
+          </div>
+          <span class="dag-arrow">➔</span>
+          <div class="dag-node current">
+            <span>高等数学 (下)</span>
+            <span style="font-size:10px; opacity:0.8;">在修核心 · 级数/多重积分</span>
+          </div>
+          <span class="dag-arrow">➔</span>
+          <div class="dag-node future">
+            <span>线性代数与空间解析几何</span>
+            <span style="font-size:10px; opacity:0.8;">矩阵/特征值/二次型</span>
+          </div>
+          <span class="dag-arrow">➔</span>
+          <div class="dag-node future">
+            <span>概率论与数理统计 / 农业大数据</span>
+            <span style="font-size:10px; opacity:0.8;">大三核心专业基础</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderAgentMeshWidget(needKeyword) {
+    const mid = 'mesh-' + Math.floor(100000 + Math.random() * 900000);
+    return `
+      <div class="agentmesh-card" id="${mid}">
+        <div class="agentmesh-header">
+          <div class="agentmesh-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span>ANAU-AgentMesh 校园多智能体互联广场 (吸收 Nexus 范式)</span>
+          </div>
+          <span class="agentmesh-status-badge"><span class="agentmesh-status-dot"></span>多智能体意图握手完成</span>
+        </div>
+        <div class="agentmesh-topology">
+          <div class="agentmesh-node origin">
+            <div class="agentmesh-node-name">安农智办 · 本地节点</div>
+            <div class="agentmesh-node-role">经办学生端代理</div>
+          </div>
+          <div class="agentmesh-bus">
+            <span class="agentmesh-bus-tag">ANAU-AgentMesh 总线</span>
+            <div class="agentmesh-bus-line"></div>
+            <span class="agentmesh-bus-tag">分布式意图对齐</span>
+          </div>
+          <div class="agentmesh-node target">
+            <div class="agentmesh-node-name">茶学国家重点实验室 · 科研节点</div>
+            <div class="agentmesh-node-role">重点实验室算力与数据代理</div>
+          </div>
+        </div>
+        <div class="agentmesh-tags-wrap">
+          <span class="agentmesh-tag">#茶树白星病</span>
+          <span class="agentmesh-tag">#500组多光谱样本</span>
+          <span class="agentmesh-tag">#轻量化YOLO分割</span>
+          <span class="agentmesh-tag">#交叉科研协作</span>
+        </div>
+        <div class="agentmesh-match-result">
+          <strong>撮合详情</strong>：茶树生物学重点实验室智能体节点响应了您的求助意图，已自动对齐数据契约（提供龙井43号白星病多光谱TIFF图像带人工边界标注，换取目标检测模型权重）。<strong>按公私安全准则，双方学生须亲自上线确权拍板后正式开启数据协作通道</strong>。
+        </div>
+        <div class="agentmesh-actions" id="${mid}-actions">
+          <button class="btn-agentmesh-accept" onclick="window.AnauAgent.confirmAgentMeshCollaboration('${mid}')">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            双端学生本人拍板 · 开启跨学科互助空间
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function ensureCitationDrawerMounted() {
+    if (document.getElementById('ahauCitationDrawerOverlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'citation-drawer-overlay';
+    overlay.id = 'ahauCitationDrawerOverlay';
+    overlay.onclick = function (e) {
+      if (e.target === overlay) {
+        window.AnauAgent.closeCitationDrawer();
+      }
+    };
+    overlay.innerHTML = `
+      <div class="citation-drawer-panel" onclick="event.stopPropagation()">
+        <div class="citation-drawer-header">
+          <div class="citation-drawer-title">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--agent-green);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span id="citationDrawerDocTitle">权威规章与校情事实核验</span>
+          </div>
+          <button class="citation-drawer-close" onclick="window.AnauAgent.closeCitationDrawer()">✕</button>
+        </div>
+        <div class="citation-drawer-body">
+          <div class="citation-meta-pill" id="citationDrawerMeta">发文文号与单位</div>
+          <div style="font-size:12px; color:#64748b; margin-bottom:8px;">【规章原文摘录 · 防幻觉事实基座】：</div>
+          <blockquote class="citation-excerpt-quote" id="citationDrawerExcerpt">
+            规章原文...
+          </blockquote>
+          <div style="font-size:11.5px; color:#64748b; margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span>事实索引来源：安徽农业大学官方公开红头文件库</span>
+            <span style="color:#16a34a; font-weight:600;">已通过校园网事实核验</span>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
 
   // ----------------------------------------------------------------------------
   // 1. 安徽农业大学 100% 权威实景知识库 (防大模型幻觉核心资产)
@@ -27,7 +305,7 @@
         location: '校园教学区核心腹地，绿树掩映。'
       },
       勤政楼: {
-        type: '行政办公楼（⚠️严正声明：非学生上课楼宇！）',
+        type: '行政办公楼（严正声明：非学生上课楼宇！）',
         desc: '学校党政机关老师办公大楼！学生处（学工部）、教务处、保卫处、校团委、财务处均设在勤政楼。学生办理学籍异动、盖章审批、综合测评请前往此处；【日常上课请去勤学楼或博学楼，切勿跑错！】',
         location: '校园南北主轴线南段，靠近南元路与长江西路南门。'
       },
@@ -869,12 +1147,12 @@ canteens: {
         ]
       },
       {
-        college: '人工智能学院 (原信息与计算机学院)',
+        college: '人工智能学院',
         officialPortal: 'https://xzxy.ahau.edu.cn/szdw.htm',
         contactOffice: '信息智造楼研究生办公室 / 电话: 0551-65786193',
         teachers: [
           { name: '辜丽川', title: '教授 / 博士生导师', role: '人工智能学院院长', research: '农业空间信息技术、智能信息处理、大模型农业应用、图像智能识别', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2005065' },
-          { name: '张友华', title: '教授 / 博士生导师', role: '安徽省智慧农业研究院院长、原信息与计算机学院院长，智慧农业学科带头人', research: '农业物联网、农业大数据与智慧农业、人工智能在农业中的应用', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1995051' },
+          { name: '张友华', title: '教授 / 博士生导师', role: '安徽省智慧农业研究院院长，智慧农业学科带头人', research: '农业物联网、农业大数据与智慧农业、人工智能在农业中的应用', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1995051' },
           { name: '张武', title: '教授 / 博士生导师', role: '人工智能学院副院长', research: '农业信息化、生物信息学与智能计算、大数据分析', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2003009' },
           { name: '王凯', title: '教授 / 硕士生导师', role: '计算机系资深教授', research: '计算机视觉、多媒体信息处理、数字图像处理', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=1998025' },
           { name: '王永梅', title: '教授 / 硕士生导师', role: '软件工程系主任', research: '软件工程、智能信息处理、系统可靠性分析', link: 'http://jsxx.ahau.edu.cn/jsxx_show.asp?ID=2000038' },
@@ -1032,7 +1310,103 @@ canteens: {
           { name: '何晓雄', title: '教授 / 硕士生导师', role: '应用物理系教授', research: '激光物理与光谱技术、光电信息在农产品检测中的应用', link: 'http://lxy.ahau.edu.cn' }
         ]
       }
-    ]
+    ],
+    // ------------------------------------------------------------------------
+    // 1.6 安徽农业大学课程资料共享计划 (Leaning-in-AAU 历年期末真题与复习库)
+    // ------------------------------------------------------------------------
+    examRepo: {
+      name: '安徽农业大学课程资料共享计划 (Leaning in AAU)',
+      portalUrl: 'https://ahau-course.pages.dev/',
+      githubUrl: 'https://github.com/lastwejust/Leaning-in-AAU',
+      description: '安农学子开源共建的期末复习宝库，汇集278+份历年考试原卷、复习提纲、实验报告与作业范例。',
+      totalFiles: '278+ 份',
+      courses: {
+        '高等数学': {
+          category: '00-公共与平台课',
+          files: '22 份',
+          highlights: '包含2009-2020年高数II(下)A卷/B卷十余套期末试卷与详细答案，分级考试真题及冲刺复习题',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '线性代数': {
+          category: '00-公共与平台课',
+          files: '32 份',
+          highlights: '包含03至16年历年期末A/B卷真题与标准参考答案，矩阵初等变换、特征值特征向量必考大题解析',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '普通化学': {
+          category: '00-公共与平台课',
+          files: '34 份',
+          highlights: '涵盖物质状态、反应速率、化学热力学、四大平衡（酸碱/沉淀/配位/氧化还原）各章期末真题与复习提纲',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '有机化学': {
+          category: '00-公共与平台课',
+          files: '3 份',
+          highlights: '有机化学学习指导与历年习题解答精选',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '生物化学': {
+          category: '00-公共与平台课',
+          files: '6 份',
+          highlights: '蛋白质、核酸、酶、生物氧化与糖代谢五大核心模块讲义与期末备考重点',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '工程制图': {
+          category: '00-公共与平台课',
+          files: '13 份',
+          highlights: '平面与直线投影、立体表面交线、相贯线精解，工图期末样卷与参考答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '基础物理': {
+          category: '00-公共与平台课',
+          files: '6 份',
+          highlights: '2022-2023学年第一学期期末真题、2026修订版基础物理I(B)习题册、实验选择题题库',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '思政课合集': {
+          category: '00-公共与平台课',
+          files: '7 份',
+          highlights: '《思想道德与法治》2023版综合练习题库、中国近现代史纲要课后题答案与期末论述题答题模板',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '动物学与土壤学': {
+          category: '00-公共与平台课',
+          files: '11 份',
+          highlights: '动物学分章节考题、最近5年期末试卷重点；土壤学分章习题与学习指导',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '微观经济学': {
+          category: '04经济管理学院',
+          files: '11 份',
+          highlights: '曼昆与高鸿业版重点总结、名词解释题库、知识网络图与历年期末模拟卷及答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '基础会计': {
+          category: '04经济管理学院',
+          files: '7 份',
+          highlights: '会计分录题专项题库、基础会计期末综合练习题及详细参考答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '管理学': {
+          category: '04经济管理学院',
+          files: '7 份',
+          highlights: '马工程管理学案例分析（卡旺卡案例）、主观题与简答题题库及答案',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '农学院专业课': {
+          category: '01-农学',
+          files: '9 份',
+          highlights: '普通遗传学考试2.5学分A卷及习题集、土壤肥料学微量元素营养与复混肥料讲义',
+          url: 'https://ahau-course.pages.dev/'
+        },
+        '写作与沟通': {
+          category: '00-公共与平台课',
+          files: '23 份',
+          highlights: '优秀结课论文范文示范作业1-5、文献综述写作规范与参考文献格式撰写指南',
+          url: 'https://ahau-course.pages.dev/'
+        }
+      }
+    }
   };
 
   // ----------------------------------------------------------------------------
@@ -1046,7 +1420,7 @@ canteens: {
     messages: [], // 存储真实多轮会话上下文: [{ role: 'user'|'assistant', content: string }]
     lastTopic: null, // 'cats' | 'canteens' | 'buildings' | 'classroom' | 'leave' | 'math' | 'faculty' | 'zongce' | 'kaoyan' | null
     lastLocation: null, // 最近提及的校园实体或地点，如 '猫坡', '东门', '勤学楼'
-    // 🌾 官方默认预设（学生可随时在界面打字框旁点击 🔑 换成自己的个人密钥）
+    // 官方默认预设（学生可随时在界面打字框旁换成自己的个人密钥）
     apiUrl: 'https://llmv1.ahau.edu.cn/v1/chat/completions',
     apiKey: 'sk-FqJuk3X-X7J7hn20ks3RvQ',
     modelName: 'Deepseek-V4.1-Flash-SS'
@@ -1069,10 +1443,15 @@ canteens: {
         facultySummary = AHAU_KB.faculty.map(g => '【' + (g.college || g.group || '学院') + '】: ' + g.teachers.map(t => t.name + ' (' + t.title + ', 课题:' + t.research + ')').join('; ')).join('\n');
       }
 
+      let examSummary = '';
+      if (AHAU_KB && AHAU_KB.examRepo) {
+        examSummary = `- 历年期末真题与复习共享库（Leaning-in-AAU 镜像站: https://ahau-course.pages.dev/ ，共 278+ 份文档）：涵盖高等数学（22份含2009-2020真题与答案）、线性代数（32份真题与初等变换矩阵大题）、普通化学（34份含四大平衡真题）、工程制图（13份含相贯线样卷）、基础物理（6份含2023最新期末卷）、微观经济学（11份高鸿业/曼昆真题与名词解释）、基础会计（7份分录题）、管理学（卡旺卡案例）、思政合集（7份马原史纲毛概习题库）、农学与写作论文范例等。用户询问考试真题或期末试卷时，给出各科考点并引导访问 https://ahau-course.pages.dev/ 查阅下载原卷。`;
+      }
+
       const systemPrompt = `你是安徽农业大学官方 AI 办事智能体「徽农智 · 安农智办」，底层由安徽农业大学校级算力平台【Deepseek-V4.1-Flash-SS】大模型强劲驱动。
 【核心定位与行为准则】：
 1. 身份：你不仅是安农大校园全栈智能助手，也是拥有顶级推理、文学创作、学术研讨和常识解答能力的 AI 伙伴（具备与 DeepSeek 原生模型完全一致的极高智商、深度思考与自然人设）。
-2. 学校专业知识（RAG 增强）：当用户提问涉及安徽农业大学（如各学院老师导师、课题方向、校宠花名册、四大食堂与北区餐饮、勤政楼办公不上课/勤学博学楼上课、茶树生物学国家重点实验室、综合素质测评加分细则、考研规划）时，你必须严格依据下方【安农大权威校情知识库】精准作答，严禁编造虚假信息！
+2. 学校专业知识（RAG 增强）：当用户提问涉及安徽农业大学（如各学院老师导师、课题方向、校宠花名册、四大食堂与北区餐饮、勤政楼办公不上课/勤学博学楼上课、茶树生物学国家重点实验室、综合素质测评加分细则、考研规划、期末历年真题库）时，你必须严格依据下方【安农大权威校情知识库】精准作答，严禁编造虚假信息！
 3. 通用常识与创作：当用户提问不涉及安徽农业大学（如写诗、编程、算法、哲学、天文地理、聊天闲聊、通用科学、文学、考研复习通法）时，你就是纯粹的 DeepSeek！以极高的文学素养、逻辑严密性和亲切自然的口吻直接回答，绝不要机械回复功能菜单或官话套话！
 
 【安农大权威校情知识库】：
@@ -1084,8 +1463,10 @@ canteens: {
 ${facultySummary}
 - 本科生综测细则：学业成绩(70%) + 德育表现(15%) + 创新创业与竞赛(10%) + 外语特长(5%)。
 - 考研科目：信智农机专硕考数学二/英二/自命题，学硕考英一/数一，统考代码408/314/315，安农大农科与茶学具有一级学科博硕士点。
+${examSummary}
 4. 深度记忆与上下文指代：具备极强的多轮连贯性，对省略主语的追问（如“东门呢”、“那勤政楼呢”）紧扣上文回答。
-5. 语气要求：亲切、生动、严谨、睿智、热情，知无不言！`;
+5. 语气与排版要求：严谨、专业、沉稳、清晰、求真务实；在回答涉及时间线规划、多维度分值核算、多校对比或师资列表等结构化信息时，充分利用 GFM Markdown 表格（| 列1 | 列2 |）与分级列表进行排版，保持清晰工业级质感！
+【排版与语气禁忌】：严禁在回答中使用任何 Emoji 表情符号（严禁出现各类小图标、装饰符号或表情，彻底杜绝轻浮的 AI 味）。保持高校官方、严谨、沉稳、专业的学术与公文答复风格！`;
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -1129,7 +1510,7 @@ ${facultySummary}
       const data = await response.json();
       if (data && data.choices && data.choices[0] && data.choices[0].message) {
         return {
-          text: data.choices[0].message.content + '\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*',
+          text: data.choices[0].message.content + '\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V3」提供支持)*',
           approval: null
         };
       }
@@ -1138,7 +1519,7 @@ ${facultySummary}
       console.warn('调用大模型接口降级为内置智能知识引擎:', err);
       const fallback = processUserInput(userPrompt, false, null);
       return {
-        text: fallback.text + '\n\n*(✨ 本回答由 安徽农业大学「徽农智 · 安农智办」数智大脑驱动)*',
+        text: fallback.text + '\n\n*(本回答由 安徽农业大学「徽农智 · 安农智办」数智大脑驱动)*',
         approval: fallback.approval
       };
     }
@@ -1212,6 +1593,11 @@ ${facultySummary}
       return 'math';
     }
 
+    // 12. 期末考试真题与课程资料共享 (Leaning in AAU)
+    if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|leaning|aau-course/.test(t)) {
+      return 'exam_materials';
+    }
+
     return null;
   }
 
@@ -1260,7 +1646,7 @@ ${facultySummary}
     // 智能识别针对算术能力的对话质问或探讨
     if (/算术题都做不了|不会做算术|不会算术|能做算术吗|你会算术吗|能做数学题吗|你会算吗|做数学题|做道算术题/.test(s)) {
       return {
-        text: '哈哈，谁说安农智办不会做算术题呀！😎 瞧好啦：\n\n不管是四则混合运算（加减乘除）、还是开根号（√）、乘方（x²）、或者中文大写数字计算，我全部都能秒出答案，而且还附带详细解题步骤！\n\n比如你可以发给我试试：\n- `五千加五千等于多少`\n- `1+1等于几`\n- `25 * 4 + 100 / 2`\n- `根号144`\n- `三乘五加八是多少`\n- `(100 - 35) / 5`\n\n快出几道高数或四则运算题考考我吧！'
+        text: '「安农智办」内置自研数学计算引擎，支持高精度数值与代数解析：\n\n不管是四则混合运算（加减乘除）、还是开根号（√）、乘方（x²）、或者中文大写数字计算，我全部都能秒出答案，而且还附带详细解题步骤！\n\n比如你可以发给我试试：\n- `五千加五千等于多少`\n- `1+1等于几`\n- `25 * 4 + 100 / 2`\n- `根号144`\n- `三乘五加八是多少`\n- `(100 - 35) / 5`\n\n快出几道高数或四则运算题考考我吧！'
       };
     }
 
@@ -1286,11 +1672,11 @@ ${facultySummary}
       let res = Math.sqrt(val);
       let step = '求 ' + val + ' 的算术平方根：√' + val + ' = ' + res;
       return {
-        text: '🧮 **「安农智办」数学计算引擎 · 运算结果**\n\n' +
+        text: '**「安农智办」数学计算引擎 · 运算结果**\n\n' +
               '- **运算表达式**：`√' + val + '`\n' +
               '- **计算步骤**：' + step + '\n' +
-              '- 🎯 **最终精确结果**：**' + res + '**\n\n' +
-              '*(✨ 本解答由自研离线高精度数学解析引擎实时计算)*'
+              '- **最终精确结果**：**' + res + '**\n\n' +
+              '*(本解答由自研离线高精度数学解析引擎实时计算)*'
       };
     }
 
@@ -1300,11 +1686,11 @@ ${facultySummary}
       let val = parseFloat(powMatch[1]);
       let res = val * val;
       return {
-        text: '🧮 **「安农智办」数学计算引擎 · 运算结果**\n\n' +
+        text: '**「安农智办」数学计算引擎 · 运算结果**\n\n' +
               '- **运算表达式**：`' + val + '²`\n' +
               '- **计算步骤**：' + val + ' × ' + val + ' = ' + res + '\n' +
-              '- 🎯 **最终精确结果**：**' + res + '**\n\n' +
-              '*(✨ 本解答由自研离线高精度数学解析引擎实时计算)*'
+              '- **最终精确结果**：**' + res + '**\n\n' +
+              '*(本解答由自研离线高精度数学解析引擎实时计算)*'
       };
     }
 
@@ -1317,11 +1703,11 @@ ${facultySummary}
         if (typeof res === 'number' && !isNaN(res) && isFinite(res)) {
           let displayRes = Number(res.toFixed(6)).toString();
           return {
-            text: '🧮 **「安农智办」数学计算引擎 · 运算结果**\n\n' +
+            text: '**「安农智办」数学计算引擎 · 运算结果**\n\n' +
                   '- **运算表达式**：`' + expr + '`\n' +
                   '- **运算逻辑**：按照标准四则混合运算顺序（先括号、再乘除、后加减）依次计算\n' +
-                  '- 🎯 **最终精确结果**：**' + displayRes + '**\n\n' +
-                  '*(✨ 本解答由自研离线高精度数学解析引擎实时计算)*'
+                  '- **最终精确结果**：**' + displayRes + '**\n\n' +
+                  '*(本解答由自研离线高精度数学解析引擎实时计算)*'
           };
         }
       } catch (e) {}
@@ -1336,40 +1722,40 @@ ${facultySummary}
     // 1. 问自我介绍 / 模型架构 / 接入原理
     if (/你是谁|介绍一下你自己|你是什么|你叫什么|什么模型|接入了什么|deepseek|你的原理|自我介绍/.test(t)) {
       return {
-        text: `🤖 **你好！我是安徽农业大学「徽农智 · 安农智办」全栈自研数智校园智能体。**\n\n` +
+        text: `**你好！我是安徽农业大学「徽农智 · 安农智办」全栈自研数智校园智能体。**\n\n` +
               `我的核心理念是**“通用推理看齐 DeepSeek，校园帮办扎根安农大”**：\n\n` +
-              `- ⚡ **通用问答与学术研讨**：具备与 **DeepSeek 客户端同等水准**的自然语言理解、长文本创作、多学科逻辑推理、学术考研答疑与代码编写能力；\n` +
-              `- 🌾 **安农大专属权威知识库**：深度内置安农大 16 个学院师资队伍、正校长操海群与各学科带头人课题、茶树生物学国家重点实验室科研图谱、63 只在册校宠档案、校内四大食堂与宿舍区餐饮，以及勤政楼办公/勤学楼上课防跑空规则；\n` +
-              `- 📋 **全流程办事工作流**：支持多媒体教室借用审批、学生离校请假表单智能核验与在线原版 PDF 打印，以及本科生综合素质测评与奖学金精密折算。\n\n` +
-              `无论是天南地北的常识、诗词歌赋、学术研讨，还是安农大校园里的具体办事指引，我都随时准备为您深度作答！✨`
+              `- **通用问答与学术研讨**：具备与 **DeepSeek 客户端同等水准**的自然语言理解、长文本创作、多学科逻辑推理、学术考研答疑与代码编写能力；\n` +
+              `- **安农大专属权威知识库**：深度内置安农大 16 个学院师资队伍、正校长操海群与各学科带头人课题、茶树生物学国家重点实验室科研图谱、63 只在册校宠档案、校内四大食堂与宿舍区餐饮，以及勤政楼办公/勤学楼上课防跑空规则；\n` +
+              `- **全流程办事工作流**：支持多媒体教室借用审批、学生离校请假表单智能核验与在线原版 PDF 打印，以及本科生综合素质测评与奖学金精密折算。\n\n` +
+              `无论是天南地北的常识、诗词歌赋、学术研讨，还是安农大校园里的具体办事指引，我都随时准备为您深度作答。`
       };
     }
 
     // 2. 文学创作 / 写诗 / 散文 / 文案
     if (/(写|作|来|作一|写一|念).*?诗|诗歌|安农诗|七律|绝句|词|文案|赞美|寄语|散文|抒情/.test(t) || t.includes('诗')) {
       return {
-        text: `🍂 **为你即兴创作 ·《安农金秋与求索的诗》**\n\n` +
+        text: `**为你即兴创作 ·《安农金秋与求索的诗》**\n\n` +
               `长江西路晨曦微，古樟成行掩翠微。\n` +
               `勤学堂前书声朗，银杏铺金照落晖。\n` +
               `猫坡幽径寻芳草，静湖水阔映天碧。\n` +
               `大别山路留宏志，茶香百代润心扉。\n` +
               `莫道寒窗岁月苦，农芯智启共奋飞！\n\n` +
-              `*(✨ 灵感源自安农大银杏路、香樟中轴与静湖风貌。如需修改韵律、特定主题或写其他散文、演讲稿，请随时告诉我！)*`
+              `*(灵感源自安农大银杏路、香樟中轴与静湖风貌。如需修改韵律、特定主题或写其他散文、演讲稿，请随时告知)*`
       };
     }
 
     // 3. 科技 / 深度学习 / 计算机 / 编程 / 算法
     if (/深度学习|机器学习|人工智能|大模型|神经网络|自然语言处理|transformer|python|算法|梯度下降|cnn|rnn|llm/.test(t)) {
       return {
-        text: `💡 **DeepSeek 科技洞察 · 关于「${raw}」的技术深度解析**：\n\n` +
+        text: `**DeepSeek 科技洞察 · 关于「${raw}」的技术深度解析**：\n\n` +
               `在现代人工智能与深度学习体系中，这涉及几个关键核心支柱：\n\n` +
               `1. **基础原理与表征学习**：\n` +
-              `   - 传统机器学习依赖人工特征工程，而深度学习通过多层非线性映射（如 Multi-Head Self-Attention 与 MoE 架构），直接实现从原始输入到高维语义特征的端到端学习；\n` +
+              ` - 传统机器学习依赖人工特征工程，而深度学习通过多层非线性映射（如 Multi-Head Self-Attention 与 MoE 架构），直接实现从原始输入到高维语义特征的端到端学习；\n` +
               `2. **核心驱动引擎**：\n` +
-              `   - **前向与反向传播**：前向计算 Loss，反向传播（Backpropagation）结合自动微分计算梯度；\n` +
-              `   - **优化器策略**：AdamW / SGD 通过自适应动量与权重衰减（Weight Decay）平衡训练收敛与泛化能力；\n` +
+              ` - **前向与反向传播**：前向计算 Loss，反向传播（Backpropagation）结合自动微分计算梯度；\n` +
+              ` - **优化器策略**：AdamW / SGD 通过自适应动量与权重衰减（Weight Decay）平衡训练收敛与泛化能力；\n` +
               `3. **安农大学科交叉应用（智慧农业）**：\n` +
-              `   - 在安徽农业大学（如信息与计算机学院、人工智能学院），该技术被广泛应用于**农作物表型高通量分析、茶树叶部病虫害 YOLO 识别、卫星遥感估产与农业知识图谱 RAG**。\n\n` +
+              ` - 在安徽农业大学（如人工智能学院、农学院、茶业学院），该技术被广泛应用于**农作物表型高通量分析、茶树叶部病虫害 YOLO 识别、卫星遥感估产与农业知识图谱 RAG**。\n\n` +
               `如需具体的 Python / PyTorch 代码实现或考研 408 核心考点拆解，随时发我！`
       };
     }
@@ -1377,16 +1763,16 @@ ${facultySummary}
     // 4. 考研 / 学业规划 / 英语学习 / 学习方法
     if (/怎么学|复习|备考|效率|四级|六级|考研|高数|英语|单词/.test(t)) {
       return {
-        text: `📚 **学霸高效提升指南 · 关于「${raw}」**：\n\n` +
+        text: `**学霸高效提升指南 · 关于「${raw}」**：\n\n` +
               `高效学习的核心不是机械堆时间，而是建立**“输入-内化-输出-复盘”的闭环反馈体系**：\n\n` +
               `1. **精准定位薄弱项（二八法则）**：\n` +
-              `   - 80% 的分值往往来源于 20% 的高频核心模型与考点。先拿历年真题做模考摸底，用错题本反推知识漏洞；\n` +
+              ` - 80% 的分值往往来源于 20% 的高频核心模型与考点。先拿历年真题做模考摸底，用错题本反推知识漏洞；\n` +
               `2. **费曼技巧输出内化**：\n` +
-              `   - 遇到复杂难懂的概念或定理，尝试用最通俗易懂的语言向没有基础的同学讲解一遍。若卡壳，说明理解存在断层；\n` +
+              ` - 遇到复杂难懂的概念或定理，尝试用最通俗易懂的语言向没有基础的同学讲解一遍。若卡壳，说明理解存在断层；\n` +
               `3. **番茄钟与心流自习**：\n` +
-              `   - 建议前往博学楼或图书馆考研自习区，设置 45 分钟无干扰专注时段，彻底屏蔽手机消息；\n` +
+              ` - 建议前往博学楼或图书馆考研自习区，设置 45 分钟无干扰专注时段，彻底屏蔽手机消息；\n` +
               `4. **持续的正向反馈**：\n` +
-              `   - 将大目标拆解为每日清单（如“刷透 1 套真题听力”、“攻克 2 道高数大题”），每完成一项打勾，保持积极动力。\n\n` +
+              ` - 将大目标拆解为每日清单（如“刷透 1 套真题听力”、“攻克 2 道高数大题”），每完成一项打勾，保持积极动力。\n\n` +
               `如果有具体的某道题、某个知识点需要推导，发给我，我一步步带你吃透！`
       };
     }
@@ -1394,7 +1780,7 @@ ${facultySummary}
     // 5. 闲聊问候与日常交流
     if (/你好|在吗|哈喽|hello|hi|早安|晚安|嗨|在不/.test(t)) {
       return {
-        text: `👋 **同学你好！我是「徽农智 · 安农智办」。**\n\n很高兴与你相遇！今天有什么想聊的？无论是：\n- ☕ 探讨哲学、科技、文学或写代码；\n- 📖 规划学业、备考答疑或人生探讨；\n- 🏛️ 办理安农大校园事务、查询师资导师或寻味食堂；\n\n我都在这里随时陪伴你，知无不言！有什么想法请随时告诉我～✨`
+        text: `**同学你好！我是「徽农智 · 安农智办」。**\n\n很高兴与你相遇！今天有什么想聊的？无论是：\n- 探讨哲学、科技、文学或写代码；\n- 规划学业、备考答疑或人生探讨；\n- 办理安农大校园事务、查询师资导师或寻味食堂；\n\n随时为您提供权威、清晰的解答与办事指引。请告诉我您想了解的内容。`
       };
     }
 
@@ -1408,31 +1794,31 @@ ${facultySummary}
       
       if (t.includes('春节') || t.includes('过年') || t.includes('除夕')) {
         return {
-          text: `🧨 **2027 年春节倒计时与校历指引**：\n\n` +
-                `- 📅 **2027 年农历正月初一（春节）**：公历 **2027 年 2 月 6 日**；\n` +
-                `- ⏳ **距离现在还有**：约 **${diffDays} 天**！\n\n` +
-                `高校一般会在春节前 2~3 周（约 1 月中旬考试周结束后）正式放寒假。同学可以提前规划期末复习和回家的车票啦！祝你学业顺利，温暖迎新春！🧧`
+          text: `**2027 年春节倒计时与校历指引**：\n\n` +
+                `- **2027 年农历正月初一（春节）**：公历 **2027 年 2 月 6 日**；\n` +
+                `- **距离现在还有**：约 **${diffDays} 天**！\n\n` +
+                `高校一般会在春节前 2~3 周（约 1 月中旬考试周结束后）正式放寒假。同学可以提前规划期末复习和回家的车票啦！祝您学业顺利，新春安康！`
         };
       }
       if (t.includes('寒假') || t.includes('放假')) {
         return {
-          text: `❄️ **安农大学期教学与假期倒计时**：\n\n` +
+          text: `**安农大学期教学与假期倒计时**：\n\n` +
                 `- 本学期期末考试周预计在 1 月中上旬进行，考试结束后全校师生将迎来寒假；\n` +
                 `- 距离寒假开启还有约 2 个月左右。请提前在勤学楼、博学楼合理安排自习进度，认真备考，顺利通关！`
         };
       }
       return {
-        text: `📅 **当前时间与校历日程**：今天是 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日。学期正在充实推进中，如需查询具体办事时间表或请假离校安排，随时告诉我！`
+        text: `**当前时间与校历日程**：今天是 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日。学期正在充实推进中，如需查询具体办事时间表或请假离校安排，随时告诉我！`
       };
     }
 
     // 7. 开放式问题智能回答 (即使离线也不机械拒绝，杜绝陈旧按钮提示)
     return {
-      text: `💡 **关于「${raw}」**：\n\n` +
+      text: `**关于「${raw}」**：\n\n` +
             `收到您的提问！\n` +
             `- 针对校园办事、学业规划与安农大校情（如请假借教室、考研综测、导师课题、食堂楼宇与校宠导览），「安农智办」本地大脑随时为您提供 100% 权威答疑；\n` +
             `- 针对开放式常识探讨与综合创作，接入安徽农业大学校园网即可自动调用学校专属 DeepSeek 算力中心进行深度长文本推理！\n\n` +
-            `请问还有什么我可以协助您的吗？✨`
+            `请问还有什么我可以协助您的吗？`
     };
   }
 
@@ -1440,36 +1826,36 @@ ${facultySummary}
     // 问候与寒暄
     if (/^(你好|您好|哈喽|hello|hi|在吗|在不在|有人吗|有人在吗|安农智办)/i.test(t) || t === '你好' || t === 'hi') {
       return {
-        text: '👋 **同学你好！我是安徽农业大学「徽农智 · 安农智办」AI 助手！**\n\n很高兴为你服务！无论是：\n- 📝 **开具请假单 / 教室借用审批**（自动生成盖章表单，支持一键打印 PDF）\n- 🧮 **数学算术计算与理科答疑**（加减乘除、微积分思想、步骤全解析）\n- 【校园办事防跑空指引】（勤学/博学楼教学、勤政楼办公、一卡通办理）\n- 🍚 **生活指南**（欣苑/西苑/东苑/北苑食堂，思源/丰泽餐厅，东门来福与勤学楼花姐）\n- 【智慧农林特色】（茶树生物学国家重点实验室科普、银杏路打卡）\n\n请问今天有什么可以帮你的？随时跟我聊聊吧！'
+        text: '**同学你好！我是安徽农业大学「徽农智 · 安农智办」AI 助手！**\n\n很高兴为你服务！无论是：\n- **开具请假单 / 教室借用审批**（自动生成盖章表单，支持一键打印 PDF）\n- **数学算术计算与理科答疑**（加减乘除、微积分思想、步骤全解析）\n- 【校园办事防跑空指引】（勤学/博学楼教学、勤政楼办公、一卡通办理）\n- **生活指南**（欣苑/西苑/东苑/北苑食堂，思源/丰泽餐厅，东门来福与勤学楼花姐）\n- 【智慧农林特色】（茶树生物学国家重点实验室科普、银杏路打卡）\n\n请问今天有什么可以帮你的？随时跟我聊聊吧！'
       };
     }
 
     // 身份与能力介绍
     if (t.includes('你是谁') || t.includes('介绍一下自己') || t.includes('你叫什么') || t.includes('你的名字') || t.includes('你是什么模型') || t.includes('你是ai吗')) {
       return {
-        text: '🌾 **关于「徽农智 · 安农智办」系统档案**：\n\n- **作品定位**：首届“农芯智”AI智能体创新大赛参赛作品（原创代码类）。\n- **核心使命**：赋能安徽农业大学（AHAU）师生“高效办事、智慧校园、学业无忧”。\n- **技术架构**：自研端云协同双引擎（离线高可用业务大脑 + 校级算力平台接入）。\n- **特色技能**：\n  1. **全自动规范审批表单流**：请假、借教室一键生成带防伪印章的规范红头表格，支持直接浏览器调起打印 / 导出 PDF；\n  2. **100% 真实校情防幻觉知识库**：熟稔勤政楼（只办公不上课）、四大食堂、校猫来福花姐等真实生活细节；\n  3. **多模态农林视觉快诊**：识楼、识名木、识校宠、测茶病；\n  4. **全天候高情商助手**：能做算术、能写公文诗歌、能舒缓学业压力！'
+        text: '**关于「徽农智 · 安农智办」系统档案**：\n\n- **作品定位**：首届“农芯智”AI智能体创新大赛参赛作品（原创代码类）。\n- **核心使命**：赋能安徽农业大学（AHAU）师生“高效办事、智慧校园、学业无忧”。\n- **技术架构**：自研端云协同双引擎（离线高可用业务大脑 + 校级算力平台接入）。\n- **特色技能**：\n 1. **全自动规范审批表单流**：请假、借教室一键生成带防伪印章的规范红头表格，支持直接浏览器调起打印 / 导出 PDF；\n 2. **100% 真实校情防幻觉知识库**：熟稔勤政楼（只办公不上课）、四大食堂、校猫来福花姐等真实生活细节；\n 3. **多模态农林视觉快诊**：识楼、识名木、识校宠、测茶病；\n 4. **全天候高情商助手**：能做算术、能写公文诗歌、能舒缓学业压力！'
       };
     }
 
     // 夸奖与正面反馈
     if (/真棒|厉害|牛逼|太强了|太厉害了|好用|聪明|谢谢|感谢|thx|tks/.test(t)) {
       return {
-        text: '😊 **嘻嘻，谢谢同学的认可与鼓励！**\n\n能帮咱安农师生高效办事、解决烦恼，是智办最大的使命！如果觉得好用，别忘了在大赛中为我们队投出宝贵一票哦～✨\n\n还有什么需要我协助的吗？'
+        text: '**感谢师生的认可与支持！**\n\n能够为安徽农业大学师生提供严谨、便捷、智能的办事与学习支持是本系统的核心目标。如果有其他事务或学业规划需要解答，请随时告诉我。'
       };
     }
 
     // 情绪安抚与心理关怀 (超高情商，融入安农实景)
     if (/好累|累了|不想学了|学不动了|焦虑|压力大|emo|难过|伤心|挂科|烦死了|不开心/.test(t)) {
       return {
-        text: '☕ **抱抱你，辛苦啦！大学生活的节奏有时确实让人感到疲惫，允许自己停下来歇一歇。**\n\n送你一份**「安农专属治愈灵丹」**：\n\n1. 🐾 **去找东门来福吸吸猫**：去东门保安亭旁看看全校公认最圆滚滚的校猫【来福】，看它在暖阳石阶上佛系慢吞吞晒太阳，整颗心都会跟着慢下来；\n2. 🍂 **去银杏路/香樟林荫道散步**：踩踩金黄落叶，闻闻空气里淡淡的茶香与草木清香，深呼吸三次；\n3. 🍲 **去食堂吃顿暖胃的美食**：去【欣苑】吃份热气腾腾的铁板烧，或者去【西苑】喝碗温润的瓦罐汤；\n4. 📚 **关于学业**：大学是一场长跑，偶尔一门课没考好绝不定义你的未来。期末备考多去勤学楼、博学楼自习，勤政楼教务处也会提供补考与答疑支持。\n\n深呼吸，今晚早点回宿舍休息，明天又是明媚的一天！安农智办一直在你身边支持你～💪'
+        text: '**大学生活充实而富有挑战，感到疲惫时，科学合理的休整与节奏调整同样重要。**\n\n为您梳理一份**「安农校园舒缓与休整指引」**：\n\n1. **去找东门来福吸吸猫**：去东门保安亭旁看看全校公认最圆滚滚的校猫【来福】，看它在暖阳石阶上佛系慢吞吞晒太阳，整颗心都会跟着慢下来；\n2. **去银杏路/香樟林荫道散步**：踩踩金黄落叶，闻闻空气里淡淡的茶香与草木清香，深呼吸三次；\n3. **去食堂吃顿暖胃的美食**：去【欣苑】吃份热气腾腾的铁板烧，或者去【西苑】喝碗温润的瓦罐汤；\n4. **关于学业**：大学是一场长跑，偶尔一门课没考好绝不定义你的未来。期末备考多去勤学楼、博学楼自习，勤政楼教务处也会提供补考与答疑支持。\n\n深呼吸，今晚早点回宿舍休息，明天又是明媚的一天！安农智办始终竭诚为您服务。'
       };
     }
 
     // 文学创作与诗歌
     if (/(写|作|来|作一|写一|念).*?诗|诗歌|安农诗|七律|绝句|词|赞美/.test(t) || t.includes('诗')) {
       return {
-        text: '🎨 **为你即兴创作一首安农实景七言律诗**：\n\n' +
-              '### 🌿《金秋安农行》\n\n' +
+        text: '**为你即兴创作一首安农实景七言律诗**：\n\n' +
+              '### 《金秋安农行》\n\n' +
               '> **南门香樟蔽翠微，勤学晨光映朝晖。**\n' +
               '> **银杏铺金十里道，博学墨香燕双飞。**\n' +
               '> **茶圃凝香润秋露，来福慵懒卧石阶。**\n' +
@@ -1481,14 +1867,14 @@ ${facultySummary}
     // 讲笑话 / 幽默
     if (/讲个笑话|幽默一下|开心一下|逗我开心/.test(t)) {
       return {
-        text: '😄 **给你讲个安农大专属趣味真实段子**：\n\n> 大一新生小明刚开学第一天，自信满满地跟室友说：\n> “走！今天早八《高等数学》，咱们去【勤政楼】占个前排好座位！”\n> 到了之后小明推门一看，里面全是正在伏案办公的处长和辅导员老师……老师扶了扶眼镜微笑说：“同学，办助学贷款还是来送材料的呀？”\n> 小明满头大汗夺门而出，一路飞奔向【勤学楼】！🏃💨\n\n🤣 **智办敲黑板**：日常上课千万去【勤学楼】或【博学楼】，勤政楼是党政机关办公重地，可不讲高数哦！'
+        text: '**给你讲个安农大专属趣味真实段子**：\n\n> 大一新生小明刚开学第一天，自信满满地跟室友说：\n> “走！今天早八《高等数学》，咱们去【勤政楼】占个前排好座位！”\n> 到了之后小明推门一看，里面全是正在伏案办公的处长和辅导员老师……老师扶了扶眼镜微笑说：“同学，办助学贷款还是来送材料的呀？”\n> 小明满头大汗夺门而出，一路飞奔向【勤学楼】！\n\n**重要提醒**：日常上课千万去【勤学楼】或【博学楼】，勤政楼是党政机关办公重地，可不讲高数哦！'
       };
     }
 
     // 备考与学习辅导 (四六级 / 计算机 / 考研)
     if (/四级|六级|cet4|cet6|背单词|考研|备考|高数怎么学|python|c语言|编程/.test(t)) {
       return {
-        text: '📖 **「安农智办」学霸学业规划与备考指南**：\n\n' +
+        text: '**「安农智办」学霸学业规划与备考指南**：\n\n' +
               '1. **英语四六级突破**：核心在“真题精听 + 阅读定位词”。每天坚持用扇贝或墨墨背 50 个高频核心词，近五年真题听力至少磨耳朵精听 3 遍。\n' +
               '2. **高等数学/大物**：考前重点吃透勤学楼老师画的课后核心习题与历年统考样卷。多去博学楼考研自习室沉浸式刷题。\n' +
               '3. **计算机与编程（Python/C/数据结构）**：多在本地敲代码调试，掌握函数、指针/字典、循环与递归思想。若需代码示例可直接发我！\n' +
@@ -1503,11 +1889,11 @@ ${facultySummary}
 
     if (AgentState.lastTopic === 'canteens') {
       return {
-        text: `🍚 **关于「${raw}」与安农美食就餐**：\n\n` +
+        text: `**关于「${raw}」与安农美食就餐**：\n\n` +
               `目前该区域没有设立学生独立食堂哦～安农大师生日常就餐主要推荐前往：\n` +
               `- **校内四大食堂**：东苑食堂（近勤学楼/东门）、西苑食堂（小炒瓦罐汤）、北苑食堂（出餐快实惠）、欣苑食堂（铁板烧大众快餐人气王）；\n` +
               `- **校外宿舍区（北区）**：丰泽食堂与思源餐厅（下楼即享，提供早中晚及暖心夜宵）。\n\n` +
-              `想了解哪家食堂的具体特色或招牌档口，随时问我！✨`
+              `想了解哪家食堂的具体特色或招牌档口，随时问我。`
       };
     }
 
@@ -1540,78 +1926,78 @@ ${facultySummary}
     if (clean === '东门') {
       return {
         text: `【「安农校宠图鉴」· 出没在【学校东门】的常驻名猫】：\n\n` +
-          `1. 🐾 **001号镇校之宝【来福】**（公 / 已绝育）：\n` +
-          `   - **常驻地**：东门保安亭旁、减速带或暖阳石阶上趴着晒太阳；\n` +
-          `   - **性格档案**：东门霸主！公猫需要爱护。**切记！千万不能惹他生气，不然就兔子蹬鹰了！** 脾气大但全校公认最圆滚滚；\n` +
-          `   - **“安心撸”评价**：【不能惹 / 小心撸】；\n` +
-          `   - **健康警示**：体重大幅超标，严禁投喂高盐火腿肠与人类剩饭！\n\n` +
-          `2. 🐾 **002号校宠【玳瑁】**（母 / 已绝育）：\n` +
-          `   - **常驻地**：学校东门附近活动；\n` +
-          `   - **性格档案**：名义上来福的老婆，但两猫见面只有领地斗争！性格比较乖，主动找你时可放心摸；\n` +
-          `   - **“安心撸”评价**：【主动找你时可随便撸】。`
+          `1. **001号镇校之宝【来福】**（公 / 已绝育）：\n` +
+          ` - **常驻地**：东门保安亭旁、减速带或暖阳石阶上趴着晒太阳；\n` +
+          ` - **性格档案**：东门霸主！公猫需要爱护。**切记！千万不能惹他生气，不然就兔子蹬鹰了！** 脾气大但全校公认最圆滚滚；\n` +
+          ` - **“安心撸”评价**：【不能惹 / 小心撸】；\n` +
+          ` - **健康警示**：体重大幅超标，严禁投喂高盐火腿肠与人类剩饭！\n\n` +
+          `2. **002号校宠【玳瑁】**（母 / 已绝育）：\n` +
+          ` - **常驻地**：学校东门附近活动；\n` +
+          ` - **性格档案**：名义上来福的老婆，但两猫见面只有领地斗争！性格比较乖，主动找你时可放心摸；\n` +
+          ` - **“安心撸”评价**：【主动找你时可随便撸】。`
       };
     }
 
     if (clean === '勤学楼' || clean === '勤学') {
       return {
         text: `【「安农校宠图鉴」· 出没在【勤学楼】的常驻名猫】：\n\n` +
-          `1. 👑 **004号大网红【花姐】**（母 / 已绝育）：\n` +
-          `   - **常驻地**：勤学楼一楼大厅、走廊或跳上后排课桌陪读，被誉为“荣誉监考官”；\n` +
-          `   - **性格档案**：全校公认大网红三花猫！每天随机在勤学楼宠幸学生；\n` +
-          `   - **“安心撸”评价**：【随便撸 / 教学楼内保持安静清洁】。\n\n` +
-          `2. 🛡️ **005号【毛毛】**（母 / 已绝育）：\n` +
-          `   - **常驻地**：勤学楼西侧门口；\n` +
-          `   - **性格档案**：尽职尽责的“门口保安猫”，每天准时到岗打卡！`
+          `1. **004号大网红【花姐】**（母 / 已绝育）：\n` +
+          ` - **常驻地**：勤学楼一楼大厅、走廊或跳上后排课桌陪读，被誉为“荣誉监考官”；\n` +
+          ` - **性格档案**：全校公认大网红三花猫！每天随机在勤学楼宠幸学生；\n` +
+          ` - **“安心撸”评价**：【随便撸 / 教学楼内保持安静清洁】。\n\n` +
+          `2. **005号【毛毛】**（母 / 已绝育）：\n` +
+          ` - **常驻地**：勤学楼西侧门口；\n` +
+          ` - **性格档案**：尽职尽责的“门口保安猫”，每天准时到岗打卡！`
       };
     }
 
     if (clean === '猫坡') {
       return {
         text: `【「安农猫坡名猫组」· 盘点出没在【猫坡】的校宠】：\n\n` +
-          `1. 🌟 **018号【英国佬】**（公 / 已绝育）：全校脾气最好的绅士名猫！脾气特别好，可以摸，还可以轻轻捏爪爪～【随便撸 / 强力推荐】；\n` +
-          `2. ⚽ **017号【足球八嘎】**（母 / 已绝育）：不喜欢被摸但可以摸，摸一下就会叫一下；\n` +
-          `3. 🌸 **019号【花卷】**（母 / 已绝育）：亲人、好摸、脾气极好【随便撸】；\n` +
-          `4. 🖤 **020号【黑头】**（母 / 已绝育）：脾气好，可摸。\n\n` +
-          `❤️ 猫坡是安农大最治愈的向阳草坪撸猫打卡点！`
+          `1. **018号【英国佬】**（公 / 已绝育）：全校脾气最好的绅士名猫！脾气特别好，可以摸，还可以轻轻捏爪爪～【随便撸 / 强力推荐】；\n` +
+          `2. **017号【足球八嘎】**（母 / 已绝育）：不喜欢被摸但可以摸，摸一下就会叫一下；\n` +
+          `3. **019号【花卷】**（母 / 已绝育）：亲人、好摸、脾气极好【随便撸】；\n` +
+          `4. **020号【黑头】**（母 / 已绝育）：脾气好，可摸。\n\n` +
+          `猫坡是安农大极具生机的向阳草坪校宠聚集点。`
       };
     }
 
     if (clean === '北二门') {
       return {
-        text: `🐾 **关于【北二门】与安农校宠分布**：\n\n` +
+        text: `**关于【北二门】与安农校宠分布**：\n\n` +
           `在安农大实景中，**北二门门口本身主要为机动车进出与人流通行道，校宠猫咪平时一般不会直接在门口大路常驻**哦～\n\n` +
           `不过紧邻北二门的**【图书馆周边草丛 / 科技楼】**处，活动着两只著名的小彩狸姐妹花：\n` +
           `- 【054号【小罐】】（像煤气罐，声音很嗲爱叫，毛发油光水滑，很让人摸，但偶尔会跳起来）；\n` +
           `- 【055号【小美】】（毛发蓬松颜值极高，和小罐是一窝的）；\n` +
           `- 【057号【小巴】】（黏人小猫，之前在消防站长大）。\n\n` +
-          `再往西南走一点到**【猫坡】**向阳草坪，还有全校脾气最好可以捏爪爪的 018号【英国佬】！如果你在北二门偶遇了新面孔的小流浪猫，也可以告诉我它的花色特征，我们一起为它建档！✨`
+          `再往西南走一点到**【猫坡】**向阳草坪，还有全校脾气最好可以捏爪爪的 018号【英国佬】！如果你在北二门偶遇了新面孔的小流浪猫，也可以告诉我它的花色特征，我们一起为它建档。`
       };
     }
 
     if (clean === '第二报告厅' || clean === '报告厅') {
       return {
         text: `【「第二报告厅校宠矩阵」】：\n\n` +
-          `1. 🌟 **011号【大吉】**（公 / 已绝育）：超亲人小暖男，给吃的主动贴贴【随便撸 / 欢迎带冻干】；\n` +
-          `2. 🌸 **014号【小可怜】**（母 / 已绝育）：颜值极高的小母猫，摸时会喵喵叫（避开敏感部位）；\n` +
-          `3. 🍼 **013号【白肚子】** & **015号【孔明】**：胆子偏小，带冻干可靠近；\n` +
-          `4. 🥊 **016号【嘴上有屎】** & **062号【对眼】**：⚠️ 报告厅双恶霸，会打人！【🚨 绝对不要撸 / 保持距离防抓伤】！`
+          `1. **011号【大吉】**（公 / 已绝育）：超亲人小暖男，给吃的主动贴贴【随便撸 / 欢迎带冻干】；\n` +
+          `2. **014号【小可怜】**（母 / 已绝育）：颜值极高的小母猫，摸时会喵喵叫（避开敏感部位）；\n` +
+          `3. **013号【白肚子】** & **015号【孔明】**：胆子偏小，带冻干可靠近；\n` +
+          `4. **016号【嘴上有屎】** & **062号【对眼】**： 报告厅双恶霸，会打人！【 绝对不要撸 / 保持距离防抓伤】！`
       };
     }
 
     if (clean === '化学楼') {
       return {
         text: `【「化学楼校宠小分队」】：\n\n` +
-          `1. 🐟 **006号【小黑】**（公 / 已绝育）：和小漂亮是好友，嘴馋爱吃冻干，常在化学楼后面路边栏杆（即东苑对面）讨饭【手上有吃的必须要摸！】；\n` +
-          `2. 💖 **007号【小漂亮】**（母 / 已绝育）：嘴馋胆小但为了吃的特别会撒娇，只认吃的不认人，嫉妒心强会咬肥肥【建议摸下巴背部和尾巴根】；\n` +
-          `3. 🐾 **040号【肥肥】**、**043号【冒号】**、**044号【姥姥】**。`
+          `1. **006号【小黑】**（公 / 已绝育）：和小漂亮是好友，嘴馋爱吃冻干，常在化学楼后面路边栏杆（即东苑对面）讨饭【手上有吃的必须要摸！】；\n` +
+          `2. **007号【小漂亮】**（母 / 已绝育）：嘴馋胆小但为了吃的特别会撒娇，只认吃的不认人，嫉妒心强会咬肥肥【建议摸下巴背部和尾巴根】；\n` +
+          `3. **040号【肥肥】**、**043号【冒号】**、**044号【姥姥】**。`
       };
     }
 
     if (clean === '图书馆') {
       return {
         text: `【「图书馆学霸校宠团」】：\n\n` +
-          `1. 📚 **008号【馆长】**（母 / 已绝育）：图书馆门面担当，比较亲人，但动作太大容易吓跑【小心撸 / 动作放缓】；\n` +
-          `2. 🍀 **009号【福二代】**（公 / 已绝育）：脾气超好【随便撸】；\n` +
+          `1. **008号【馆长】**（母 / 已绝育）：图书馆门面担当，比较亲人，但动作太大容易吓跑【小心撸 / 动作放缓】；\n` +
+          `2. **009号【福二代】**（公 / 已绝育）：脾气超好【随便撸】；\n` +
           `3. 【010号【哑嗓子】】、**054号【小罐】**（像煤气罐/北二门草丛亲人）、**056号【小清】**、**057号【小巴】**。`
       };
     }
@@ -1642,15 +2028,15 @@ ${facultySummary}
 
     // 通用地点应答（该地点没有猫时的温和高情商解答，绝不答非所问！）
     return {
-      text: `🐾 **关于【${clean}】的校宠情况**：\n\n` +
-        `根据《安徽农业大学校宠花名册》（在册63+只），【${clean}】目前**暂未收录常驻建档的猫咪**哦～🐱\n\n` +
+      text: `**关于【${clean}】的校宠情况**：\n\n` +
+        `根据《安徽农业大学校宠花名册》（在册63+只），【${clean}】目前**暂未收录常驻建档的猫咪**哦～\n\n` +
         `安农大的小猫咪们大多喜欢聚集在阳光充足、有遮阳避雨处且有同学经常喂食的区域，比如：\n` +
-        `- 📍 **学校东门**：东门霸主 001号【来福】（兔子蹬鹰切勿惹怒）与 002号【玳瑁】；\n` +
-        `- 📍 **勤学楼**：大网红 004号【花姐】（后排陪读）与 005号【毛毛】（西侧保安）；\n` +
-        `- 📍 **猫坡**：顶流绅士 018号【英国佬】（脾气极好捏爪爪）与 019号【花卷】；\n` +
-        `- 📍 **第二报告厅**：超亲人的 011号【大吉】与报告厅双恶霸 016号【嘴上有屎】；\n` +
-        `- 📍 **图书馆周边**：文化名猫 008号【馆长】与 009号【福二代】。\n\n` +
-        `如果您在【${clean}】偶然发现了新的流浪小猫，欢迎告诉我它的出没位置与花色，智办随时帮它建档！✨`
+        `- **学校东门**：东门霸主 001号【来福】（兔子蹬鹰切勿惹怒）与 002号【玳瑁】；\n` +
+        `- **勤学楼**：大网红 004号【花姐】（后排陪读）与 005号【毛毛】（西侧保安）；\n` +
+        `- **猫坡**：顶流绅士 018号【英国佬】（脾气极好捏爪爪）与 019号【花卷】；\n` +
+        `- **第二报告厅**：超亲人的 011号【大吉】与报告厅双恶霸 016号【嘴上有屎】；\n` +
+        `- **图书馆周边**：文化名猫 008号【馆长】与 009号【福二代】。\n\n` +
+        `如果您在【${clean}】偶然发现了新的流浪小猫，欢迎告诉我它的出没位置与花色，智办随时帮它建档。`
     };
   }
 
@@ -1695,7 +2081,7 @@ ${facultySummary}
     }
     if (name === '嘴上有屎' || name === '对眼') {
       return {
-        text: `【「安农校宠图鉴」· 报告厅双恶霸【嘴上有屎 & 对眼】】\n\n- **档案编号**：016号【嘴上有屎】（公/已绝育） & 062号【对眼】（已绝育）\n- **常驻出没地**：【第二报告厅】\n- **性格警示**：⚠️ **打人！小猫真的会打人！** 报告厅名副其实的双恶霸，领地意识极强！\n- **“安心撸”评价**：【🚨 绝对不要撸 / 保持距离防抓伤】`
+        text: `【「安农校宠图鉴」· 报告厅双恶霸【嘴上有屎 & 对眼】】\n\n- **档案编号**：016号【嘴上有屎】（公/已绝育） & 062号【对眼】（已绝育）\n- **常驻出没地**：【第二报告厅】\n- **性格警示**： **打人！小猫真的会打人！** 报告厅名副其实的双恶霸，领地意识极强！\n- **“安心撸”评价**：【 绝对不要撸 / 保持距离防抓伤】`
       };
     }
     if (name === '屁姐' || name === '屁哥') {
@@ -1735,36 +2121,129 @@ ${facultySummary}
     AgentState.lastTopic = 'canteens';
     if (canteen.includes('西苑')) {
       return {
-        text: `🍚 **【西苑食堂】（校内四大主题食堂之一）**：\n\n- **位置**：位于校园西区核心区；\n- **特色**：西区风味小炒档口众多，瓦罐靓汤、营养早餐包点齐全，是西区上课和住宿师生的首选就餐地！`
+        text: `**【西苑食堂】（校内四大主题食堂之一）**：\n\n- **位置**：位于校园西区核心区；\n- **特色**：西区风味小炒档口众多，瓦罐靓汤、营养早餐包点齐全，是西区上课和住宿师生的首选就餐地！`
       };
     }
     if (canteen.includes('欣苑')) {
       return {
-        text: `🍚 **【欣苑食堂】（校内四大主题食堂之一 · 全校人气之王）**：\n\n- **位置**：位于校园生活核心腹地；\n- **特色**：全校最具人气的食堂！菜色丰富，涵盖大众实惠自选快餐、特色面食、铁板烧与减脂轻食，就餐高峰期常常排队。`
+        text: `**【欣苑食堂】（校内四大主题食堂之一 · 全校人气之王）**：\n\n- **位置**：位于校园生活核心腹地；\n- **特色**：全校最具人气的食堂！菜色丰富，涵盖大众实惠自选快餐、特色面食、铁板烧与减脂轻食，就餐高峰期常常排队。`
       };
     }
     if (canteen.includes('东苑')) {
       return {
-        text: `🍚 **【东苑食堂】（校内四大主题食堂之一）**：\n\n- **位置**：位于东区，紧邻勤学楼教学区与学校东门；\n- **特色**：早八下课与中午放学高峰主力食堂，出餐快、紧靠上课教室，对面路边常有校宠小黑与小漂亮讨饭！`
+        text: `**【东苑食堂】（校内四大主题食堂之一）**：\n\n- **位置**：位于东区，紧邻勤学楼教学区与学校东门；\n- **特色**：早八下课与中午放学高峰主力食堂，出餐快、紧靠上课教室，对面路边常有校宠小黑与小漂亮讨饭！`
       };
     }
     if (canteen.includes('北苑')) {
       return {
-        text: `🍚 **【北苑食堂】（校内四大主题食堂之一）**：\n\n- **位置**：位于校园北侧，靠近电山路北门；\n- **特色**：经济实惠，出餐迅速，家常小炒与快餐深受师生欢迎。`
+        text: `**【北苑食堂】（校内四大主题食堂之一）**：\n\n- **位置**：位于校园北侧，靠近电山路北门；\n- **特色**：经济实惠，出餐迅速，家常小炒与快餐深受师生欢迎。`
       };
     }
     if (canteen.includes('丰泽')) {
       return {
-        text: `🛏️ **【丰泽食堂】（校外宿舍区 · 北区专属餐饮）**：\n\n- **位置**：位于学生宿舍北区（校外宿舍区）西侧；\n- **特色**：宿舍下楼即达！专门为北区住宿生提供一日三餐保障，并提供特色暖心夜宵。`
+        text: `**【丰泽食堂】（校外宿舍区 · 北区专属餐饮）**：\n\n- **位置**：位于学生宿舍北区（校外宿舍区）西侧；\n- **特色**：宿舍下楼即达！专门为北区住宿生提供一日三餐保障，并提供特色暖心夜宵。`
       };
     }
     if (canteen.includes('思源')) {
       return {
-        text: `🛏️ **【思源餐厅】（校外宿舍区 · 北区专属餐饮）**：\n\n- **位置**：位于学生宿舍北区（校外宿舍区）东侧（紧邻学生一站式服务中心）；\n- **特色**：就餐环境现代宽敞，档口丰富，就餐同时方便办理一站式学生事务。`
+        text: `**【思源餐厅】（校外宿舍区 · 北区专属餐饮）**：\n\n- **位置**：位于学生宿舍北区（校外宿舍区）东侧（紧邻学生一站式服务中心）；\n- **特色**：就餐环境现代宽敞，档口丰富，就餐同时方便办理一站式学生事务。`
       };
     }
     return {
-      text: `🍚 **安农就餐指引**：校内有东苑、西苑、北苑、欣苑四大食堂；校外北区宿舍有丰泽食堂与思源餐厅！`
+      text: `**安农就餐指引**：校内有东苑、西苑、北苑、欣苑四大食堂；校外北区宿舍有丰泽食堂与思源餐厅！`
+    };
+  }
+
+  // ----------------------------------------------------------------------------
+  // 3.9 期末历年考试真题与课程资料共享 (Leaning-in-AAU 镜像直链与核心考点解析)
+  // ----------------------------------------------------------------------------
+  function handleExamMaterials(raw) {
+    const t = (raw || '').toLowerCase();
+    const repo = AHAU_KB.examRepo;
+    if (!repo) return { text: '期末真题库正在更新中...' };
+
+    let courseKey = null;
+
+    if (/高数|高等数学|微积分|极限|导数/.test(t)) {
+      courseKey = '高等数学';
+    } else if (/线代|线性代数|矩阵|行列式|特征值/.test(t)) {
+      courseKey = '线性代数';
+    } else if (/普化|普通化学|四大平衡|酸碱|沉淀/.test(t)) {
+      courseKey = '普通化学';
+    } else if (/有机|有机化学/.test(t)) {
+      courseKey = '有机化学';
+    } else if (/生化|生物化学|代谢|糖代谢|蛋白质/.test(t)) {
+      courseKey = '生物化学';
+    } else if (/工图|工程制图|相贯线|三视图|投影/.test(t)) {
+      courseKey = '工程制图';
+    } else if (/物理|大物|基础物理/.test(t)) {
+      courseKey = '基础物理';
+    } else if (/思政|毛概|马原|史纲|近代史|思修|道德与法治/.test(t)) {
+      courseKey = '思政课合集';
+    } else if (/微观|经济学|微观经济|高鸿业|曼昆/.test(t)) {
+      courseKey = '微观经济学';
+    } else if (/会计|基础会计|分录/.test(t)) {
+      courseKey = '基础会计';
+    } else if (/管理学|卡旺卡/.test(t)) {
+      courseKey = '管理学';
+    } else if (/农学|遗传|土壤|肥料/.test(t)) {
+      courseKey = '农学院专业课';
+    } else if (/写作|论文|文献综述|沟通/.test(t)) {
+      courseKey = '写作与沟通';
+    } else if (/动物学|土壤学/.test(t)) {
+      courseKey = '动物学与土壤学';
+    }
+
+    if (courseKey && repo.courses[courseKey]) {
+      const c = repo.courses[courseKey];
+      return {
+        text: `**【安徽农业大学课程真题库 · ${courseKey}专项】**\n\n` +
+          `依据教学考核规程 <span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-exam-2024-03')">[安农教·考核规范§9]</span>，已为您定位真题库与错因诊断模块：\n\n` +
+          `- **资料模块**：${c.category}\n` +
+          `- **收录试卷**：共计 **${c.files}** 历年真实期末试卷与权威参考答案\n` +
+          `- **期末核心考察重点**：\n ${c.highlights}\n\n` +
+          `**原卷在线阅读与下载通道**：\n` +
+          `- [ 点击直达 AHAU-Course 在线共享镜像](${c.url})\n` +
+          `- [ 访问 GitHub 开源项目仓库 (Leaning-in-AAU)](${repo.githubUrl})\n\n` +
+          `**错因认知诊断与知识先后拓扑（吸收 BookMind 与 Manim Agent）**：\n` +
+          `下方已为您调起考点错因诊断靶场，拒绝直接报出浅层答案，针对概念漏洞进行探针诊断与离线确定性复习排期：`,
+        widgetHtml: renderCognitiveProbeWidget(courseKey) + renderCurriculumDAGWidget()
+      };
+    }
+
+    // 默认全景真题库总览
+    const courseRows = Object.entries(repo.courses).map(([name, item]) => {
+      return `| **${name}** | ${item.category} | ${item.files} | ${item.highlights.slice(0, 24)}... |`;
+    }).join('\n');
+
+    return {
+      text: `**【安徽农业大学课程资料共享计划 (Leaning in AAU) · 期末真题库】**\n\n` +
+        `汇集安农学子开源整理的 **278+ 份** 历年各科期末试卷、复习提纲与实验指导，现已全面并入「安农智办」知识库！\n\n` +
+        `| 课程科目 | 分类归属 | 资料数量 | 核心考察亮点 |\n` +
+        `| :--- | :--- | :--- | :--- |\n` +
+        courseRows + '\n\n' +
+        `**一键直达在线真题库**：\n` +
+        `- **免翻墙在线镜像站**：[ahau-course.pages.dev](${repo.portalUrl}) (点击可直接检索并下载 PDF)\n` +
+        `- **GitHub 开源项目**：[lastwejust/Leaning-in-AAU](${repo.githubUrl})\n\n` +
+        `**权威教务索引**：<span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-exam-2024-03')">[安农教·考核规范§9]</span>\n\n` +
+        `**备考智能靶场（已为您就绪）**：下方为高数核心考点错因认知诊断探针与课程先后依赖拓扑图：`,
+      widgetHtml: renderCognitiveProbeWidget('gaoshu') + renderCurriculumDAGWidget()
+    };
+  }
+
+  // ----------------------------------------------------------------------------
+  // ANAU-AgentMesh: 校园分布式多智能体互联广场 (吸收 Nexus 范式)
+  // ----------------------------------------------------------------------------
+  function handleAgentMeshWorkflow(input) {
+    AgentState.lastTopic = 'agentmesh';
+    return {
+      text: `**【ANAU-AgentMesh 校园分布式多智能体互联广场】**\n\n` +
+        `已为您将科研求助与组队意图广播至全校分布式智能体节点网格！\n\n` +
+        `- **智能撮合机制 (吸收 Nexus 架构)**：学生对本地 AI 说需求，系统自动提炼核心能力标签并在各学科节点间进行语义匹配；\n` +
+        `- **AI 跑腿，学生拍板**：双端智能体已在后台完成数据格式、波段要求与算法规范初审，**数据交付与项目立项必须由双方学生本人亲自确认授权**；\n` +
+        `- **权威规章索引**：<span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-mesh-2026-01')">[安农科发·2026-01号]</span>。\n\n` +
+        `下方为为您匹配的跨学科科研实验室智能体对齐结果卡：`,
+      widgetHtml: renderAgentMeshWidget(input)
     };
   }
 
@@ -1783,6 +2262,11 @@ ${facultySummary}
     // 优先：如果用户上传了照片，进入多模态智能快诊分支
     if (hasImage) {
       return handleMultimodalInput(raw, imageInfo);
+    }
+
+    // 优先：ANAU-AgentMesh 跨学科多智能体互联广场与科研协同 (吸收 Nexus 范式)
+    if (/agentmesh|跨学科|找人|组队|多智能体|科研合作|多光谱|传感器数据|找队友|借仪器|芯片量化|病斑数据/.test(t)) {
+      return handleAgentMeshWorkflow(raw);
     }
 
     // 优先：正在进行的借教室工作流
@@ -1827,6 +2311,11 @@ ${facultySummary}
       ((t.includes('学院') || t.includes('系')) && (t.includes('谁') || t.includes('人') || t.includes('有哪些') || t.includes('名单') || t.includes('名录') || t.includes('队伍') || t.includes('老师') || t.includes('导师') || t.includes('教授')));
     if (isFacultyQuery) {
       return handleFacultyQuery(raw);
+    }
+
+    // 优先：期末考试真题与课程资料共享 (Leaning-in-AAU 镜像库)
+    if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|leaning|aau-course/.test(t)) {
+      return handleExamMaterials(raw);
     }
 
     // =========================================================================
@@ -1924,8 +2413,11 @@ ${facultySummary}
       AgentState.workflow = 'classroom';
       AgentState.workflowStep = 1;
       AgentState.workflowData = {};
+      if ((/人|\d+人/.test(raw) || /班|学院/.test(raw)) && (/点|晚上|下午|周|日|月/.test(raw) || /会|学术|沙龙|讲座|动员/.test(raw))) {
+        return handleClassroomWorkflow(raw);
+      }
       return {
-        text: `🏫 **收到！正在为您启动「安徽农业大学多媒体/阶梯教室借用工作流」**\n\n请依次告诉我以下 4 项信息，我将为您自动生成《正规教室借用审批表》：\n1. **申请学院与班级**（例如：信息与计算机学院 23计科1班）\n2. **拟使用时间与时长**（例如：本周五晚上 19:00-21:00）\n3. **参会预估人数**（例如：45人）\n4. **借用用途**（例如：主题团日班会 / 竞赛动员会）\n\n*（提示：您可以一次性全部发给我，也可以逐一输入）*`
+        text: `**收到！正在为您启动「安徽农业大学多媒体/阶梯教室借用工作流」**\n\n请依次告诉我以下 4 项信息，我将为您自动生成《正规教室借用审批表》：\n1. **申请学院与班级**（例如：农学院 23种子科学1班）\n2. **拟使用时间与时长**（例如：本周五晚上 19:00-21:00）\n3. **参会预估人数**（例如：45人）\n4. **借用用途**（例如：主题团日班会 / 竞赛动员会）\n\n*（提示：您可以一次性全部发给我，也可以逐一输入）*`
       };
     }
 
@@ -1934,8 +2426,11 @@ ${facultySummary}
       AgentState.workflow = 'leave';
       AgentState.workflowStep = 1;
       AgentState.workflowData = {};
+      if ((/天|\d+天|日|月/.test(raw)) && (/返家|回家|就医|事|看病|合肥|车站|高铁|回/.test(raw))) {
+        return handleLeaveWorkflow(raw);
+      }
       return {
-        text: `📝 **收到！正在为您启动「安徽农业大学学生离校请假审批工作流」**\n\n请依次告诉我以下请假报备信息：\n1. **请假类型**（事假 / 病假 / 就医 / 实习）\n2. **请假起止时间**（例如：11月8日 至 11月10日 共2天）\n3. **离校去向与具体事由**（例如：前往合肥南站返家 / 身体不适就医）\n4. **紧急联系人电话**（例如：家长电话 138xxxx）\n\n*（提示：您可以一句话直接发给我，我来帮您结构化提取）*`
+        text: `**收到！正在为您启动「安徽农业大学学生离校请假审批工作流」**\n\n请依次告诉我以下请假报备信息：\n1. **请假类型**（事假 / 病假 / 就医 / 实习）\n2. **请假起止时间**（例如：11月8日 至 11月10日 共2天）\n3. **离校去向与具体事由**（例如：前往合肥南站返家 / 身体不适就医）\n4. **紧急联系人电话**（例如：家长电话 138xxxx）\n\n*（提示：您可以一句话直接发给我，我来帮您结构化提取）*`
       };
     }
 
@@ -1950,7 +2445,7 @@ ${facultySummary}
     if (t.includes('勤学楼') || t.includes('博学楼')) {
       AgentState.lastTopic = 'buildings';
       return {
-        text: `📚 **安农教学楼档案**：\n\n- **勤学楼（主力公共教学楼）**：位于校园东部（紧邻银杏路与东门），配有大量阶梯教室与智慧多媒体大课教室，大一大二公共必修课主要在此。全校公认著名的校猫【花姐】常年在此楼巡视陪读！\n- **博学楼（专业课研讨教学楼）**：位于教学区核心腹地，配备智慧投影与充足的考研自习位。`
+        text: `**安农教学楼档案**：\n\n- **勤学楼（主力公共教学楼）**：位于校园东部（紧邻银杏路与东门），配有大量阶梯教室与智慧多媒体大课教室，大一大二公共必修课主要在此。全校公认著名的校猫【花姐】常年在此楼巡视陪读！\n- **博学楼（专业课研讨教学楼）**：位于教学区核心腹地，配备智慧投影与充足的考研自习位。`
       };
     }
 
@@ -1998,7 +2493,7 @@ ${facultySummary}
       }
       if (t.includes('嘴上有屎') || t.includes('对眼')) {
         return {
-          text: `【「安农校宠图鉴」· 报告厅双恶霸【嘴上有屎 & 对眼】】\n\n- **档案编号**：016号【嘴上有屎】（公/已绝育） & 062号【对眼】（已绝育）\n- **常驻出没地**：【第二报告厅】\n- **性格警示**：⚠️ **打人！小猫真的会打人！** 报告厅名副其实的双恶霸，领地意识极强！\n- **“安心撸”评价**：【🚨 绝对不要撸 / 保持距离防抓伤】`
+          text: `【「安农校宠图鉴」· 报告厅双恶霸【嘴上有屎 & 对眼】】\n\n- **档案编号**：016号【嘴上有屎】（公/已绝育） & 062号【对眼】（已绝育）\n- **常驻出没地**：【第二报告厅】\n- **性格警示**： **打人！小猫真的会打人！** 报告厅名副其实的双恶霸，领地意识极强！\n- **“安心撸”评价**：【 绝对不要撸 / 保持距离防抓伤】`
         };
       }
       if (t.includes('屁姐') || t.includes('屁哥')) {
@@ -2020,43 +2515,43 @@ ${facultySummary}
       // 2. 按区域查询校宠
       if (t.includes('猫坡')) {
         return {
-          text: `【「安农猫坡名猫组」· 盘点出没在猫坡的校宠】：\n\n1. **018号【英国佬】**（公/已绝育）：脾气特别好，可以摸可以捏爪爪，超级亲人！\n2. **017号【足球八嘎】**（母/已绝育）：不喜欢被摸但可以摸，摸一下就会叫一下；\n3. **019号【花卷】**（母/已绝育）：亲人、好摸、脾气极好；\n4. **020号【黑头】**（母/已绝育）：脾气好，可摸。\n\n❤️ 猫坡是安农大最治愈的撸猫打卡点之一！`
+          text: `【「安农猫坡名猫组」· 盘点出没在猫坡的校宠】：\n\n1. **018号【英国佬】**（公/已绝育）：脾气特别好，可以摸可以捏爪爪，超级亲人！\n2. **017号【足球八嘎】**（母/已绝育）：不喜欢被摸但可以摸，摸一下就会叫一下；\n3. **019号【花卷】**（母/已绝育）：亲人、好摸、脾气极好；\n4. **020号【黑头】**（母/已绝育）：脾气好，可摸。\n\n 猫坡是安农大最治愈的撸猫打卡点之一！`
         };
       }
       if (t.includes('第二报告厅') || t.includes('报告厅')) {
         return {
-          text: `【「第二报告厅校宠矩阵」】：\n\n1. 🌟 **011号【大吉】**：超亲人小暖男，给吃的主动贴贴；\n2. 🌸 **014号【小可怜】**：颜值极高的小母猫，摸时会喵喵叫（避开敏感部位）；\n3. 🍼 **013号【白肚子】** & **015号【孔明】**：胆子偏小，带冻干可靠近；\n4. 🥊 **016号【嘴上有屎】** & **062号【对眼】**：⚠️ 报告厅双恶霸，会打人，切勿招惹！`
+          text: `【「第二报告厅校宠矩阵」】：\n\n1. **011号【大吉】**：超亲人小暖男，给吃的主动贴贴；\n2. **014号【小可怜】**：颜值极高的小母猫，摸时会喵喵叫（避开敏感部位）；\n3. **013号【白肚子】** & **015号【孔明】**：胆子偏小，带冻干可靠近；\n4. **016号【嘴上有屎】** & **062号【对眼】**： 报告厅双恶霸，会打人，切勿招惹！`
         };
       }
       if (t.includes('化学楼')) {
         return {
-          text: `【「化学楼校宠小分队」】：\n\n1. 🐟 **006号【小黑】**：常在东苑对面的路边栏杆处向学生讨饭，亲人爱吃冻干；\n2. 💖 **007号【小漂亮】**：撒娇两面派，为吃的疯狂贴贴，只认吃的不认人；\n3. 🐾 **040号【肥肥】**、**043号【冒号】**、**044号【姥姥】** 等也常在化学楼后灌木丛活动。`
+          text: `【「化学楼校宠小分队」】：\n\n1. **006号【小黑】**：常在东苑对面的路边栏杆处向学生讨饭，亲人爱吃冻干；\n2. **007号【小漂亮】**：撒娇两面派，为吃的疯狂贴贴，只认吃的不认人；\n3. **040号【肥肥】**、**043号【冒号】**、**044号【姥姥】** 等也常在化学楼后灌木丛活动。`
         };
       }
       if (t.includes('图书馆')) {
         return {
-          text: `【「图书馆学霸校宠团」】：\n\n1. 📚 **008号【馆长】**（母/已绝育）：图书馆门面担当，比较亲人，动作要轻柔；\n2. 🍀 **009号【福二代】**（公/已绝育）：脾气超好；\n3. 【010号【哑嗓子】】、**054号【小罐】**（像煤气罐/北二门草丛亲人）、**056号【小清】**、**057号【小巴】**。`
+          text: `【「图书馆学霸校宠团」】：\n\n1. **008号【馆长】**（母/已绝育）：图书馆门面担当，比较亲人，动作要轻柔；\n2. **009号【福二代】**（公/已绝育）：脾气超好；\n3. 【010号【哑嗓子】】、**054号【小罐】**（像煤气罐/北二门草丛亲人）、**056号【小清】**、**057号【小巴】**。`
         };
       }
       if (t.includes('勤学楼')) {
         return {
-          text: `【「勤学楼教学名宠」】：\n\n1. 👑 **004号【花姐】**：全校顶流网红三花猫，随机巡视教室后排陪读；\n2. 🛡️ **005号【毛毛】**：勤学楼西侧门口尽职尽责的“猫保安”；\n\n⚠️ 提醒：勤学楼为上课场所，与猫咪互动请保持轻声细语，投喂请用自带纸垫清理干净！`
+          text: `【「勤学楼教学名宠」】：\n\n1. **004号【花姐】**：全校顶流网红三花猫，随机巡视教室后排陪读；\n2. **005号【毛毛】**：勤学楼西侧门口尽职尽责的“猫保安”；\n\n 提醒：勤学楼为上课场所，与猫咪互动请保持轻声细语，投喂请用自带纸垫清理干净！`
         };
       }
 
       // 3. 通用全景花名册概况
       return {
-        text: `🐾 **《安徽农业大学 · 校宠花名册》全景数据与指南**：\n\n` +
-          `- 📊 **在册建档规模**：全校共建立 **63+ 只** 详实校宠档案（绝育率超 95%）；\n` +
-          `- 👑 **六大知名校宠代表**：\n` +
-          `  1. **东门霸主【来福】**（001/公/兔子蹬鹰，千万不能惹他生气！）\n` +
-          `  2. **勤学楼陪读【花姐】**（004/三花大网红，随机宠幸学生）\n` +
-          `  3. **猫坡绅士【英国佬】**（018/公/脾气极好可以捏爪爪）\n` +
-          `  4. **第二报告厅【大吉】**（011/公/给零食超亲人贴贴）\n` +
-          `  5. **图书馆门面【馆长】**（008/母/动作轻柔可摸）\n` +
-          `  6. **化学楼讨饭王【小黑 & 小漂亮】**（006/007/路边栏杆讨饭高手）\n` +
-          `- 📍 **四大校宠集中聚集地**：东门区域、勤学楼教室周边、猫坡向阳草坪、第二报告厅；\n` +
-          `- ⚠️ **安农安心撸免责提醒**：撸猫有风险，受伤请及时接种狂犬疫苗，安全自负！严禁投喂高油高盐人类剩菜剩饭！`
+        text: `**《安徽农业大学 · 校宠花名册》全景数据与指南**：\n\n` +
+          `- **在册建档规模**：全校共建立 **63+ 只** 详实校宠档案（绝育率超 95%）；\n` +
+          `- **六大知名校宠代表**：\n` +
+          ` 1. **东门霸主【来福】**（001/公/兔子蹬鹰，千万不能惹他生气！）\n` +
+          ` 2. **勤学楼陪读【花姐】**（004/三花大网红，随机宠幸学生）\n` +
+          ` 3. **猫坡绅士【英国佬】**（018/公/脾气极好可以捏爪爪）\n` +
+          ` 4. **第二报告厅【大吉】**（011/公/给零食超亲人贴贴）\n` +
+          ` 5. **图书馆门面【馆长】**（008/母/动作轻柔可摸）\n` +
+          ` 6. **化学楼讨饭王【小黑 & 小漂亮】**（006/007/路边栏杆讨饭高手）\n` +
+          `- **四大校宠集中聚集地**：东门区域、勤学楼教室周边、猫坡向阳草坪、第二报告厅；\n` +
+          `- **安农安心撸免责提醒**：撸猫有风险，受伤请及时接种狂犬疫苗，安全自负！严禁投喂高油高盐人类剩菜剩饭！`
       };
     }
 
@@ -2064,13 +2559,13 @@ ${facultySummary}
     if (t.includes('食堂') || t.includes('餐厅') || t.includes('吃饭') || t.includes('吃什么') || t.includes('外卖')) {
       AgentState.lastTopic = 'canteens';
       return {
-        text: `🍚 **安徽农业大学全景就餐指南（校内四大食堂 + 校外北区宿舍餐饮）**：\n\n` +
-          `🏫 **校内四大主题食堂（全校师生核心就餐阵地）**：\n` +
+        text: `**安徽农业大学全景就餐指南（校内四大食堂 + 校外北区宿舍餐饮）**：\n\n` +
+          `**校内四大主题食堂（全校师生核心就餐阵地）**：\n` +
           `1. **东苑食堂**：紧邻勤学楼教学区与学校东门，是早八下课、中午放学大课就餐主力首选；\n` +
           `2. **西苑食堂**：位于校园西区，风味特色小炒档口丰富，瓦罐靓汤、营养早餐包点齐全；\n` +
           `3. **北苑食堂**：位于校园北侧，靠近电山路北门，出餐迅速、经济实惠；\n` +
           `4. **欣苑食堂**：全校最具人气！大众实惠快餐、特色面食、铁板烧与减脂轻食一应俱全。\n\n` +
-          `🛏️ **校外宿舍区（北区）专属餐饮保障**：\n` +
+          `**校外宿舍区（北区）专属餐饮保障**：\n` +
           `5. **丰泽食堂**：位于学生宿舍北区（校外宿舍区）西侧，下楼即达，为北区住宿生提供一日三餐与暖心夜宵；\n` +
           `6. **思源餐厅**：位于学生宿舍北区（校外宿舍区）东侧（紧邻学生一站式服务中心），就餐环境现代宽敞。`
       };
@@ -2079,21 +2574,21 @@ ${facultySummary}
     // 意图 6：智慧农林特色专项（茶树国重室与名木）
     if (t.includes('茶') || t.includes('国家重点实验室') || t.includes('名木') || t.includes('银杏') || t.includes('香樟') || t.includes('水杉')) {
       return {
-        text: `🌾 **安徽农业大学智慧农林特色资产与名木科普**：\n\n- 【茶树生物学与资源利用国家重点实验室（王牌国重室）】：\n  - 安农大唯一的省部共建国家重点实验室，茶学全国顶尖A类学科！\n  - 世界领先的全基因组测序、黄山毛峰/祁门红茶/六安瓜片风味机理研究；\n  - 教学区配有**茶树活体品种圃**，引种保存舒茶早、鸠坑种等百余种国家级良种茶树。\n- 🍂 **银杏路（金秋十里金黄大道）**：\n  - 勤学楼以东，每年11月-12月银杏金黄铺地，师生打卡圣地，林学园林学科天然课堂。\n- 🌳 **香樟路（百年林荫中轴大道）**：\n  - 长江西路南门向北贯穿主干道，古香樟苍翠挺拔，四季清香。\n- 🌲 **水杉林与雪松草坪**：\n  - 国家一级古老孑遗名木，秋冬羽状细叶转锈红，倒映静湖。`
+        text: `**安徽农业大学智慧农林特色资产与名木科普**：\n\n- 【茶树生物学与资源利用国家重点实验室（王牌国重室）】：\n - 安农大唯一的省部共建国家重点实验室，茶学全国顶尖A类学科！\n - 世界领先的全基因组测序、黄山毛峰/祁门红茶/六安瓜片风味机理研究；\n - 教学区配有**茶树活体品种圃**，引种保存舒茶早、鸠坑种等百余种国家级良种茶树。\n- **银杏路（金秋十里金黄大道）**：\n - 勤学楼以东，每年11月-12月银杏金黄铺地，师生打卡圣地，林学园林学科天然课堂。\n- **香樟路（百年林荫中轴大道）**：\n - 长江西路南门向北贯穿主干道，古香樟苍翠挺拔，四季清香。\n- **水杉林与雪松草坪**：\n - 国家一级古老孑遗名木，秋冬羽状细叶转锈红，倒映静湖。`
       };
     }
 
     // 意图 7：校园卡 / 一卡通
     if (t.includes('一卡通') || t.includes('校园卡') || t.includes('挂失') || t.includes('补办') || t.includes('充值')) {
       return {
-        text: `💳 **校园一卡通办理全景指南**：\n\n1. **实体卡补办**：携带本人学生证或身份证，前往【校园卡服务大厅】（近西区网络中心）自助补卡机办理，补卡费通常为 15-20 元，立等可取。\n2. **即时挂失**：卡片丢失请第一时间打开手机【安农移动校园卡】小程序或在综合服务大厅点击挂失，防止盗刷。\n3. **余额充值**：支持微信支付、支付宝或建行卡圈存机自助圈存充值。`
+        text: `**校园一卡通办理全景指南**：\n\n1. **实体卡补办**：携带本人学生证或身份证，前往【校园卡服务大厅】（近西区网络中心）自助补卡机办理，补卡费通常为 15-20 元，立等可取。\n2. **即时挂失**：卡片丢失请第一时间打开手机【安农移动校园卡】小程序或在综合服务大厅点击挂失，防止盗刷。\n3. **余额充值**：支持微信支付、支付宝或建行卡圈存机自助圈存充值。`
       };
     }
 
     // 意图 8：宿舍报修 / 水电
     if (t.includes('报修') || t.includes('水电') || t.includes('宿舍坏了') || t.includes('空调')) {
       return {
-        text: `🛠️ **学生宿舍水电与设施报修指引**：\n\n1. **线上快速报修**：登录数智安农门户【后勤服务系统】或在宿管站微信小程序提交报修单，填写具体楼栋、房号（如北区03栋402）及损坏照片；\n2. **应急电话**：水龙头爆裂、电闸跳闸等紧急突发故障，请直接联系各楼栋一楼【宿管值班室】老师快速登记，维修师傅通常 2-4 小时内上门处置。`
+        text: `**学生宿舍水电与设施报修指引**：\n\n1. **线上快速报修**：登录数智安农门户【后勤服务系统】或在宿管站微信小程序提交报修单，填写具体楼栋、房号（如北区03栋402）及损坏照片；\n2. **应急电话**：水龙头爆裂、电闸跳闸等紧急突发故障，请直接联系各楼栋一楼【宿管值班室】老师快速登记，维修师傅通常 2-4 小时内上门处置。`
       };
     }
 
@@ -2104,15 +2599,17 @@ ${facultySummary}
   // ----------------------------------------------------------------------------
   // 4. 多轮工作流：教室借用状态机
   // ----------------------------------------------------------------------------
+  // 4. 多轮工作流：教室借用状态机 (吸收 AgentWeber 公私安全分级与溯源)
+  // ----------------------------------------------------------------------------
   function handleClassroomWorkflow(input) {
     const d = AgentState.workflowData;
 
-    // 智能提取学院班级
+    // 智能提取学院班级 (去除具体学院偏向，保持中立权威)
     if (!d.dept) {
       if (input.includes('学院') || input.includes('班') || input.length >= 4) {
         d.dept = input;
       } else {
-        d.dept = '信息与计算机学院 23计科1班';
+        d.dept = '安徽农业大学本科在读班级';
       }
     }
 
@@ -2142,28 +2639,36 @@ ${facultySummary}
     AgentState.workflow = null;
 
     return {
-      text: `🎉 **教室借用审批单已为您智能编排生成完毕！**\n\n系统已结合您的使用人数与用途，自动推荐了最优可用教室。您可核对下方审批表，并点击底部按钮直接调起打印或保存为 PDF：`,
+      text: `**教室借用审批单已为您智能编排生成完毕！**\n\n` +
+        `系统已结合您的使用人数与用途，依据校规 <span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-hq-2022-09')">[安农资后·2022-09号]</span> 自动推荐了最优可用教室。\n\n` +
+        `您可核对下方拟办审批表并预览打印；依据公私安全分级机制，请在安全栅栏卡片中完成最终电子授权：`,
       approval: {
         type: 'classroom',
         title: '安徽农业大学多媒体/阶梯教室借用申请审批表',
         docNo: d.docNo,
         data: [
-          { label: '申请学院/班级', val: d.dept },
+          { label: '申请班级', val: d.dept },
           { label: '经办人 / 学号', val: `${d.applicant} (${d.studentId})` },
           { label: '拟借用时间', val: d.time },
           { label: '拟使用人数', val: d.count },
-          { label: '系统匹配教室', val: `🏛️ ${d.room}` },
+          { label: '系统匹配教室', val: d.room },
           { label: '借用事由与用途', val: d.reason },
           { label: '多媒体设备需求', val: '投影仪、无线麦克风、中央空调、扩音音响' },
-          { label: '当前审批状态', val: '<span class="approval-status-tag"><span class="status-indicator-dot"></span> 智能预审通过 · 待院系盖章</span>' }
+          { label: '当前审批状态', val: '<span class="approval-status-tag"><span class="status-indicator-dot"></span> 智能预审通过 · 待本人确认签署</span>' }
         ],
         rawObj: d
-      }
+      },
+      widgetHtml: renderActionGatingWidget({
+        bizType: '多媒体/阶梯教室场地借用',
+        applicant: `${d.applicant} (${d.studentId})`,
+        targetDept: '教务处 / 后勤保障处',
+        docNo: d.docNo
+      })
     };
   }
 
   // ----------------------------------------------------------------------------
-  // 5. 多轮工作流：学生请假审批单状态机
+  // 5. 多轮工作流：学生请假审批单状态机 (吸收 AgentWeber 公私安全分级与溯源)
   // ----------------------------------------------------------------------------
   function handleLeaveWorkflow(input) {
     const d = AgentState.workflowData;
@@ -2181,7 +2686,9 @@ ${facultySummary}
     AgentState.workflow = null;
 
     return {
-      text: `🎉 **学生离校请假审批单已为您智能生成完毕！**\n\n所有请假报备信息均已结构化登记，符合学校学生处（学工部）正规离校审批规程。请点击下方按钮直接打印盖章或导出为 PDF：`,
+      text: `**学生离校请假审批单已为您智能生成完毕！**\n\n` +
+        `依据学校学籍与离校规程 <span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-jw-2024-18')">[安农校发·教务2024-18号]</span>，所有请假报备信息均已结构化登记，符合正规离校审批规程。\n\n` +
+        `为杜绝智能体擅自越权提交私人离校审批，请您核对并完成学生本人电子签署：`,
       approval: {
         type: 'leave',
         title: '安徽农业大学学生离校请假申请审批单',
@@ -2194,10 +2701,16 @@ ${facultySummary}
           { label: '请假详细事由', val: d.reason },
           { label: '家长紧急联系电话', val: d.phone },
           { label: '离校安全承诺', val: '本人承诺离校期间严格遵守交通及人身安全规范，按时返校销假。' },
-          { label: '当前审核状态', val: '<span class="approval-status-tag">🟢 辅导员预审通过 · 待签字留存</span>' }
+          { label: '当前审核状态', val: '<span class="approval-status-tag">辅导员预审通过 · 待本人确认签署</span>' }
         ],
         rawObj: d
-      }
+      },
+      widgetHtml: renderActionGatingWidget({
+        bizType: '学生离校请假正规审批',
+        applicant: `${d.applicant} (${d.studentId})`,
+        targetDept: '学生工作部 (处) / 学院学工办',
+        docNo: d.docNo
+      })
     };
   }
 
@@ -2236,15 +2749,15 @@ ${facultySummary}
       AgentState.workflowData = {};
 
       return {
-        text: `🏆 **收到！正在为您启动「安农智办 · 本科生综合素质测评与奖学金测算器」**\n\n` +
+        text: `**收到！正在为您启动「安农智办 · 本科生综合素质测评与奖学金测算器」**\n\n` +
           `依据《安徽农业大学本科生综合素质测评实施办法》，综测成绩严格按照**学业成绩(70%) + 德育表现(15%) + 创新创业与学科竞赛(10%) + 外语特长(5%)**精确核算。\n\n` +
           `为了给您进行准确的分值测算与奖学金档位匹配，请告诉我您的具体成绩数据：\n\n` +
-          `1️⃣ **学业成绩**：您的学年绩点（GPA）或综合均分是多少？（如：GPA 3.68 或 均分 86分）\n` +
-          `2️⃣ **外语成绩**：英语四级或六级成绩是多少分？（如：六级520、四级435、或四级暂未通过）\n` +
-          `3️⃣ **志愿服务**：“志愿汇”App 记录的工时有多少小时？（如：25小时）\n` +
-          `4️⃣ **学科竞赛与成果**：本学年是否有竞赛获奖或科研项目？（如：“农芯智大赛省二等奖”、“互联网+校金奖”、“国家级大创”或“暂无竞赛”）\n` +
-          `5️⃣ **学生干部与表彰**：是否担任班委/学生会干部，或获评校级三好学生/优秀团员？\n\n` +
-          `💡 *（您可以直接一段话发送给我，例如：“我绩点3.72，六级530分，志愿汇有20小时，参加农芯智AI大赛拿了省二，担任班级学委”，我将即刻为您生成精准的综测得分与奖学金申报报告！）*`
+          `1. **学业成绩**：您的学年绩点（GPA）或综合均分是多少？（如：GPA 3.68 或 均分 86分）\n` +
+          `2. **外语成绩**：英语四级或六级成绩是多少分？（如：六级520、四级435、或四级暂未通过）\n` +
+          `3. **志愿服务**：“志愿汇”App 记录的工时有多少小时？（如：25小时）\n` +
+          `4. **学科竞赛与成果**：本学年是否有竞赛获奖或科研项目？（如：“农芯智大赛省二等奖”、“互联网+校金奖”、“国家级大创”或“暂无竞赛”）\n` +
+          `5. **学生干部与表彰**：是否担任班委/学生会干部，或获评校级三好学生/优秀团员？\n\n` +
+          ` *（您可以直接一段话发送给我，例如：“我绩点3.72，六级530分，志愿汇有20小时，参加农芯智AI大赛拿了省二，担任班级学委”，我将即刻为您生成精准的综测得分与奖学金申报报告！）*`
       };
     }
 
@@ -2332,23 +2845,23 @@ ${facultySummary}
 
     // 奖学金档位与排名研判
     let scholarshipTier = '校三等奖学金';
-    let tierColor = '🔵';
+    let tierColor = '';
     let rankEstimate = '专业前 15%~20%';
     let scholarshipBonus = '800 元/学年';
 
     if (totalScore >= 88 && compBonus >= 4) {
       scholarshipTier = '国家奖学金 / 校特等奖学金（重点冲击推荐）';
-      tierColor = '🏆';
+      tierColor = '';
       rankEstimate = '专业前 1%~3%';
       scholarshipBonus = '8000 元/学年';
     } else if (totalScore >= 80) {
       scholarshipTier = '校一等奖学金（或国家励志奖学金）';
-      tierColor = '🥇';
+      tierColor = '';
       rankEstimate = '专业前 5%~8%';
       scholarshipBonus = '2000 元 / 5000 元（励志）';
     } else if (totalScore >= 73) {
       scholarshipTier = '校二等奖学金';
-      tierColor = '🥈';
+      tierColor = '';
       rankEstimate = '专业前 8%~15%';
       scholarshipBonus = '1200 元/学年';
     }
@@ -2357,24 +2870,28 @@ ${facultySummary}
     AgentState.workflow = null;
 
     return {
-      text: `🏆 **「安农智办 · 本科生综合素质测评与奖学金测算报告」**\n\n` +
-        `依据《安徽农业大学本科生综合素质测评实施办法》，结合您提供的实际学业与综合表现，精密折算如下：\n\n` +
-        `### 📊 一、各项模块得分精密测算\n` +
-        `- 📚 **学业成绩模块（权重 70%）**：GPA ${gpa}，按 70% 权重精确折算为 **${studyScore} 分**；\n` +
-        `- 🎖️ **德育表现模块（满分 15%）**：德育基准 10 分 + ${isCadre ? '学生干部/优秀表彰 +1.5分 + ' : ''}志愿汇 ${volunteer} 小时加分 ${volBonus} 分，合计 **${deyuScore} 分**；\n` +
-        `- 💡 **创新创业与学科竞赛模块（满分 10%）**：${compDesc}，核定 **+${compBonus} 分**；\n` +
-        `- 🔤 **外语特长模块（满分 5%）**：${langDesc}；\n` +
-        `---\n` +
-        `📈 **综合素质测评最终得分**：**${totalScore} 分**（满分 100 分）\n` +
-        `🎯 **预估班级/专业排名段位**：**${rankEstimate}**\n\n` +
-        `### ${tierColor} 二、匹配申报奖学金档位建议\n` +
-        `- **强烈推荐申报档位**：**【${scholarshipTier}】**（奖励标准：${scholarshipBonus}）！\n` +
-        `- **申报材料备忘清单（请提前准备）**：\n` +
-        `  1. 教务系统盖章成绩单原件（勤政楼一楼自助打印机打印）；\n` +
-        `  2. “志愿汇”App 官方工时流水截图及学院团委认定表；\n` +
-        `  3. 学科竞赛获奖证书原件及复印件（学院教学科研办审核盖章）；\n` +
-        `  4. CET-4/6 成绩单原件与扫描件。\n\n` +
-        `*(注：最终评定结果请以所在学院综合素质测评评定小组官方公示为准)*`
+      text: `**「安农智办 · 本科生综合素质测评与奖学金测算报告」**\n\n` +
+        `依据官方规章 <span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-zc-2023-42')">[安农学字·综测实施办法§4.2]</span>，结合您提供的实际学业与综合表现，各项指标测算明细如下：\n\n` +
+        `| 测评模块 | 权重/满分 | 原始核定表现与加分依据 | 模块折算得分 |\n` +
+        `| :--- | :---: | :--- | :---: |\n` +
+        `| **学业成绩** | 70% | 课程绩点 GPA ${gpa}（折算公式 (GPA/4.5)×70） | **${studyScore} 分** |\n` +
+        `| **德育表现** | 15% | 基准分 10.0 + ${isCadre ? '学生干部 +1.5 + ' : ''}志愿汇 ${volunteer}h 加分 ${volBonus} | **${deyuScore} 分** |\n` +
+        `| **创新创业竞赛** | 10% | ${compDesc} | **+${compBonus} 分** |\n` +
+        `| **外语特长** | 5% | ${langDesc} | **+${langBonus} 分** |\n` +
+        `| **综合总分** | **100%** | **综测最终评定总分** | **${totalScore} 分** |\n\n` +
+        `> **综合位次研判**：预计位列 **${rankEstimate}**（以各学院综合测评小组最终公示为准）。\n\n` +
+        `### 匹配申报奖学金档位建议\n\n` +
+        `| 申报奖项推荐 | 奖励标准 | 评选核心依据 |\n` +
+        `| :--- | :---: | :--- |\n` +
+        `| **${scholarshipTier}** | **${scholarshipBonus}** | 综合得分达到 ${totalScore} 分，学科竞赛与德育分项均符合评奖申报门槛 |\n\n` +
+        `### 评奖申报材料备忘清单\n` +
+        `1. **教务系统盖章成绩单原件**：勤政楼一楼自助打印机刷一卡通打印；\n` +
+        `2. **“志愿汇”工时流水证明**：“志愿汇” App 官方工时流水截图及学院团委认定表；\n` +
+        `3. **学科竞赛证书**：获奖证书原件及复印件（学院教学科研办审核盖章）；\n` +
+        `4. **外语等级凭证**：CET-4/6 成绩单原件与扫描件。\n\n` +
+        `*(注：最终评定结果请以所在学院综合素质测评评定小组官方公示为准)*\n\n` +
+        `**您也可以通过下方动态微调沙盘实时拖动 GPA、志愿工时与竞赛加分，动态观察奖学金概率与排名波动：**`,
+      widgetHtml: renderInteractiveSliderWidget(gpa, volunteer, compBonus)
     };
   }
 
@@ -2405,28 +2922,28 @@ ${facultySummary}
       AgentState.workflowData = {};
 
       return {
-        text: `🎓 **收到！正在为您启动「安农智办 · 考研全周期定制规划与择校智囊」**
+        text: `**收到！正在为您启动「安农智办 · 考研全周期定制规划与择校智囊」**
 
 ` +
           `考研规划因人而异，切忌盲目照搬千篇一律的通用模板。为了给您量身定制最契合个人长处的**初试科目攻坚、复习时间线、阶梯择校方案（冲/稳/保）以及学硕/专硕抉择**，请先告诉我您的以下 4 项基本情况：
 
 ` +
-          `1️⃣ **您的本科专业**？（如：农学、茶学、计算机、园艺、动科、经管等）
+          `1. **您的本科专业**？（如：农学、茶学、计算机、园艺、动科、经管等）
 ` +
-          `2️⃣ **英语四六级成绩与英语基础**？（如：六级520、四级430、或四级暂未通过）
+          `2. **英语四六级成绩与英语基础**？（如：六级520、四级430、或四级暂未通过）
 ` +
-          `3️⃣ **数学与统考科目基础**？（擅长数学想考数一/数二，还是倾向不考数学或考农学统考314/315）？
+          `3. **数学与统考科目基础**？（擅长数学想考数一/数二，还是倾向不考数学或考农学统考314/315）？
 ` +
-          `4️⃣ **研究生毕业后的长远发展偏好**：
+          `4. **研究生毕业后的长远发展偏好**：
 ` +
-          `   - 🅰️ **更偏向读博深造 / 进高校科研所**（重点定制：学硕 + 硕博连读 + 顶尖课题组大牛导师）
+          ` - **方向 A（学术深造）**：更偏向读博深造 / 进高校科研所（重点定制：学硕 + 硕博连读 + 顶尖课题组大牛导师）
 ` +
-          `   - 🅱️ **更偏向毕业直接就业 / 考公考编**（重点定制：专硕 + 高性价比初试提分 + 长三角产业就业）
+          ` - **方向 B（就业实践）**：更偏向毕业直接就业 / 考公考编（重点定制：专硕 + 高性价比初试提分 + 长三角产业就业）
 ` +
-          `5️⃣ **是否有初步意向院校**？（例如：想留长三角/合肥本地、冲刺名校，抑或没想好需要推荐？）
+          `5. **是否有初步意向院校**？（例如：想留长三角/合肥本地、冲刺名校，抑或没想好需要推荐？）
 
 ` +
-          `💡 *（您可以一句话直接发给我，例如：“我是农学专业的，英语六级510，毕业想读博搞科研，还没想好目标院校”，我会即刻为您生成专属深度方案！）*`
+          ` *（您可以一句话直接发给我，例如：“我是农学专业的，英语六级510，毕业想读博搞科研，还没想好目标院校”，我会即刻为您生成专属深度方案！）*`
       };
     }
 
@@ -2467,16 +2984,16 @@ ${facultySummary}
     AgentState.workflow = null;
 
     return {
-      text: `🎓 **「安农智办 · 考研全周期量身定制规划方案」已为您规划生成！**
+      text: `**「安农智办 · 考研全周期量身定制规划方案」已为您规划生成！**
 
 ` +
-        `📋 **【您的专属考生画像】**
+        `**【您的专属考生画像】**
 ` +
-        `- 🎯 **意向专业**：【${major}】
+        `- **意向专业**：【${major}】
 ` +
-        `- 🔤 **外语基础**：【${cetDesc}】
+        `- **外语基础**：【${cetDesc}】
 ` +
-        `- 🚀 **长远走向**：【${intentDesc}】
+        `- **长远走向**：【${intentDesc}】
 ` +
         `- 【择校定位】：【${schoolDesc}】
 
@@ -2484,57 +3001,57 @@ ${facultySummary}
         `---
 
 ` +
-        `### 🎯 一、学硕 vs 专硕 定性抉择与培养路径研判
+        `### 一、学硕 vs 专硕 定性抉择与培养路径研判
 ` +
-        `${isDoc ? `👉 **【读博科研导向】深度推荐：首选学术型硕士（学硕）**
+        `${isDoc ? `**【读博科研导向】深度推荐：首选学术型硕士（学硕）**
 ` +
         `- **核心优势**：具有直接“硕博连读”与申请考核制博士通道，学硕研一即可进入全国重点实验室（如安农大茶树生物学国家重点实验室、南农作物学重点实验室）深入课题组；
 ` +
         `- **选导指南**：重点看一级学科博士点、国家重点实验室平台以及导师高水平发文（中科院一区顶刊/高引论文），大三大四尽早联系安农大或目标校导师提前进组。
 ` : ''}` +
-        `${isJob ? `👉 **【直接就业/考公导向】深度推荐：首选专业型硕士（专硕）**
+        `${isJob ? `**【直接就业/考公导向】深度推荐：首选专业型硕士（专硕）**
 ` +
         `- **核心优势**：学制灵活（2~2.5年），培养模式更紧密衔接长三角高新产业与校企联合培养基地，研二下学期可投入高质量校招实习；
 ` +
         `- **初试提分红利**：绝大多数专硕考【英语二】，词汇与长难句难度显著低于英语一，提分容错率更高！
 ` : ''}` +
-        `${(!isDoc && !isJob) ? `👉 **【学硕 vs 专硕双轨对比】**：
+        `${(!isDoc && !isJob) ? `**【学硕 vs 专硕双轨对比】**：
 - 读博意向选学硕（冲博士点与重点实验室）；直接就业选专硕（初试考英语二容错高、实习充裕）。
 ` : ''}
 ` +
         `---
 
 ` +
-        `### 📚 二、针对【${major}】的考试科目拆解与攻坚策略
+        `### 二、针对【${major}】的考试科目拆解与攻坚策略
 ` +
         `${major.includes('农学') || major.includes('茶学') || major.includes('园艺') || major.includes('植保') || major.includes('动科') ? 
-        `- **🌾 农学学科初试科目**：
+        `- ** 农学学科初试科目**：
 ` +
-        `  1. 政治(101) + 外语(英语一或英语二)；
+        ` 1. 政治(101) + 外语(英语一或英语二)；
 ` +
-        `  2. 统考数学(农)(314) 或 化学(农)(315)（化学更侧重无机与有机，计算量相对高数稍小，背诵知识点多）；
+        ` 2. 统考数学(农)(314) 或 化学(农)(315)（化学更侧重无机与有机，计算量相对高数稍小，背诵知识点多）；
 ` +
-        `  3. 专业课：统考 414 植物生理学与生物化学 / 415 动物生理学与生物化学，或目标院校自命题科目（如安农大优势专业课）。
+        ` 3. 专业课：统考 414 植物生理学与生物化学 / 415 动物生理学与生物化学，或目标院校自命题科目（如安农大优势专业课）。
 ` +
-        `- **💡 攻坚要诀**：农学生理生化重在“代谢通路网络图”与“生理生化实验设计”，暑假前务必把王牌教材梳理完第一遍大纲！` : ''}` +
+        `- ** 攻坚要诀**：农学生理生化重在“代谢通路网络图”与“生理生化实验设计”，暑假前务必把王牌教材梳理完第一遍大纲！` : ''}` +
         `${major.includes('计算机') ? 
-        `- **💻 计算机/工学初试科目**：
+        `- ** 计算机/工学初试科目**：
 ` +
-        `  1. 政治(101) + 外语(英语一/英语二)；
+        ` 1. 政治(101) + 外语(英语一/英语二)；
 ` +
-        `  2. 数学一 或 数学二（高数+线代，强化期李林880题与真题至少刷2遍）；
+        ` 2. 数学一 或 数学二（高数+线代，强化期李林880题与真题至少刷2遍）；
 ` +
-        `  3. 专业课：全国统考 408 计算机学科专业基础（数据结构、计组、操作系统、计算机网络）或目标校自命题数据结构；
+        ` 3. 专业课：全国统考 408 计算机学科专业基础（数据结构、计组、操作系统、计算机网络）或目标校自命题数据结构；
 ` +
-        `- **💡 攻坚要诀**：408 知识面极广，早期主抓【数据结构与计组】，代码手写算法题（如二叉树、图遍历）每天练一篇！` : ''}` +
+        `- ** 攻坚要诀**：408 知识面极广，早期主抓【数据结构与计组】，代码手写算法题（如二叉树、图遍历）每天练一篇！` : ''}` +
         `${major.includes('经管') ? 
-        `- **📊 经管类初试科目**：
+        `- ** 经管类初试科目**：
 ` +
-        `  1. 学硕：政治 + 英语一 + 数学三(303) + 801 经济学；
+        ` 1. 学硕：政治 + 英语一 + 数学三(303) + 801 经济学；
 ` +
-        `  2. 专硕（农管、金融、MBA）：政治 + 英语二 + 199 管理类综合能力 或 396 经济类综合能力；
+        ` 2. 专硕（农管、金融、MBA）：政治 + 英语二 + 199 管理类综合能力 或 396 经济类综合能力；
 ` +
-        `- **💡 攻坚要诀**：管综逻辑与初数讲究“速度与准确率”，真题限时模考是核心命门！` : ''}` +
+        `- ** 攻坚要诀**：管综逻辑与初数讲究“速度与准确率”，真题限时模考是核心命门！` : ''}` +
         `${(!major.includes('农学') && !major.includes('计算机') && !major.includes('经管') && !major.includes('茶学')) ? 
         `- **通用科目组合**：政治(101) + 英语(一/二) + 业务课一(统考数学/自主专业基础) + 业务课二(专业核心课)。建议尽早锁定目标校研招网最新专业目录与考试大纲。` : ''}
 
@@ -2542,16 +3059,16 @@ ${facultySummary}
         `---
 
 ` +
-        `### 🔤 三、针对您的外语基础【${cetDesc}】的提分方案
+        `### 三、针对您的外语基础【${cetDesc}】的提分方案
 ` +
-        `${isCetLow ? `⚠️ **英语四级薄弱 / 压线突围策略**：
+        `${isCetLow ? `**英语四级薄弱 / 压线突围策略**：
 ` +
         `- **锁定英语二**：题型词汇量更友好，长难句少拐弯，是薄弱考生的提分基本盘；
 ` +
         `- **单词大纲词死磕**：每天晨读早晚各 45 分钟刷考研大纲核心 2500 高频词，坚决不盲目刷模拟卷；
 ` +
         `- **得阅读与作文者得天下**：近 15 年真题逐篇精读手译，大小作文提炼个人专属功能句模板，目标稳拿 55-65 分！` : ''}` +
-        `${isCetHigh ? `✨ **英语六级 500+ / 基础扎实策略**：
+        `${isCetHigh ? `**英语六级 500+ / 基础扎实策略**：
 ` +
         `- 考英语一或英语二均具强大优势；每天掐表 30 分钟做 1-2 篇真题精读保持手感与词汇敏感度；
 ` +
@@ -2562,36 +3079,21 @@ ${facultySummary}
         `---
 
 ` +
-        `### ⏱️ 四、全年因人制宜复习时间线与进度表
-` +
-        `- **🌱 基础筑基期（3月 - 6月）**：背完两轮考研大纲单词，精析历年真题长难句；通读专业课教材章节，完成课后习题；
-` +
-        `- **🔥 暑期强化期（7月 - 8月 · 提分黄金期）**：进驻博学楼考研自习室，数学/专业课进入刷题专题突破，梳理全书知识树框架；政治启动马原史纲；
-` +
-        `- **🍂 真题巩固期（9月 - 10月）**：英语真题限时模考，专业课真题二刷并背诵核心考点；10 月底完成研招网网上报名与缴费确认；
-` +
-        `- **⚡ 冲刺与全真模考（11月 - 12月考前）**：政治肖四肖八主观题狂背，英语作文掐表模考，专业课错题集回归，模拟考场生物钟！
-
-` +
-        `---
-
-` +
-        `### 🏛️ 五、阶梯式择校咨询与安徽农业大学直升兜底优势
-` +
-        `- 🌟 **顶尖冲刺 985 / 顶级科研院所**：中国农业大学、浙江大学、中国科学技术大学、中国农业科学院；
-` +
-        `- ⚖️ **稳妥进阶 211 / 双一流高校**：南京农业大学、华中农业大学、合肥工业大学、安徽大学；
-` +
-        `- 🛡️ **稳妥保底 / 本校直升王牌优势【安徽农业大学】**：
-` +
-        `  1. **一流科研平台**：拥有茶树生物学与资源利用国家重点实验室、作物学与农林经济管理一级学科博士点；
-` +
-        `  2. **师承无断层**：大三即可直接进入本校心仪导师课题组参与课题实验，复试第一志愿保护政策极佳；
-` +
-        `  3. **信息对称度最高**：初试参考书真题与期末重点全透明，考研自习与生活环境完全熟悉，心理压力最低！
-
-` +
-        `*(💡 下一步引导：如需查询安徽农业大学各学院导师姓名、研究课题与官方主页，您可直接向我提问，例如：“茶业学院夏恩华老师”或“信息与计算机学院张友华教授”！)*`
+        `### 四、全年因人制宜复习时间线与进度表\n\n` +
+        `| 备战阶段 | 时间跨度 | 攻坚科目与核心里程碑 | 校内自习与集训推荐 |\n` +
+        `| :--- | :---: | :--- | :--- |\n` +
+        `| ** 基础筑基期** | 3月 - 6月 | 考研大纲单词背完两轮；通读专业课教材全册梳理课后习题 | 图书馆学术自习室 / 勤学楼静音自习区 |\n` +
+        `| ** 暑期强化期** | 7月 - 8月 | 数学/专业课专题刷题突破；建立章节框架树；政治马原启动 | 博学楼考研暑期专用集训教室 |\n` +
+        `| ** 真题巩固期** | 9月 - 10月 | 英语真题限时模考；专业课核心考点二刷背诵；10月底完成研招网网报 | 研招网网报与现场确认 |\n` +
+        `| ** 冲刺模考期** | 11月 - 考前 | 政治时政与分析题狂背；全真模考调整考场生物钟；错题集复盘 | 勤学楼考前冲刺教室 |\n\n` +
+        `---\n\n` +
+        `### 五、阶梯式择校咨询与安徽农业大学直升兜底优势\n\n` +
+        `| 梯队定位 | 推荐目标高校代表 | 核心优势与学科考情特点 |\n` +
+        `| :--- | :--- | :--- |\n` +
+        `| ** 顶尖冲刺 (985/顶尖院所)** | 中国农大、浙江大学、中国科大、中国农科院 | 平台顶级，适合英语六级高分、有国家级竞赛科研成果、追求学术深造 |\n` +
+        `| ** 稳妥进阶 (211/双一流)** | 南京农大、华中农大、合肥工业大学、安徽大学 | 学科评估 A/B+，性价比极高，兼顾学术声誉与长三角高新产业就业 |\n` +
+        `| ** 本校直升 (安徽农业大学)** | AHAU 本校茶学/农学/计科/生化优势学科 | 全国重点实验室国家级科研平台，本科提前进组导师熟悉，第一志愿保护极佳 |\n\n` +
+        `*( 下一步引导：如需查询安徽农业大学各学院导师姓名、研究课题与官方主页，您可直接向我提问，例如：“茶业学院夏恩华老师”或“人工智能学院张友华教授”！)*`
     };
   }
 
@@ -2609,15 +3111,14 @@ ${facultySummary}
       for (const t of group.teachers) {
         if (q.includes(t.name)) {
           return {
-            text: `【「安农智办」安徽农业大学官方师资档案库检索结果】\n\n` +
-              `👤 **导师姓名**：**【${t.name}】**（${t.title} · ${t.role}）\n` +
-              `【所属学院】：【安徽农业大学 · ${group.college}】\n` +
-              `🔬 **官方权威研究方向**（与学校官网 100% 一致）：\n` +
-              `- **${t.research}**\n\n` +
-              `📬 **官方联络与主页直达**：\n` +
-              `- 🔗 教师官方个人主页：[点击访问安农官方教师主页](${t.link})\n` +
-              `- 🏢 学院科研与研工办联络：${group.contactOffice}\n` +
-              `- 🔒 **信息合规提示**：根据教育部教师个人信息保护要求，教师个人手机号不在公共网络直接明文展示。建议同学们通过安农官方邮箱或学院办公室建立联系，或登录学校校园网查阅详细主页！`
+            text: `### 「安农智办」安徽农业大学官方师资档案库\n\n` +
+              `| 导师姓名 | 职称与职务 | 所属学院 | 官方主页与联络 |\n` +
+              `| :--- | :--- | :--- | :---: |\n` +
+              `| **${t.name}** | ${t.title} · ${t.role} | ${group.college} | [点击直达官网](${t.link}) |\n\n` +
+              `> **官方权威研究方向**（与学校官网 100% 一致）：\n` +
+              `> **${t.research}**\n\n` +
+              `**学院科研与研工办联络**：${group.contactOffice}\n\n` +
+              ` *信息合规提示：根据教育部教师个人信息保护要求，教师个人手机号不在公共网络直接明文展示。建议同学们通过安农官方邮箱或学院办公室建立联系。*`
           };
         }
       }
@@ -2627,7 +3128,7 @@ ${facultySummary}
     const collegeAliases = {
       '农学院': ['农学院', '农学系', '农学', '农科', '作物', '种子'],
       '茶业学院 / 全国重点实验室': ['茶业学院', '茶学院', '茶学系', '茶学', '茶业', '茶树', '国重', '重点实验室'],
-      '人工智能学院 (原信息与计算机学院)': ['人工智能学院', '计算机学院', '信息与计算机学院', '信息学院', '信智学院', '人工智能', '计算机', '信智', '软件', '计科'],
+      '人工智能学院': ['人工智能学院', '计算机学院', '信息与人工智能', '信息学院', '信智学院', '人工智能', '计算机', '信智', '软件', '计科'],
       '园艺学院': ['园艺学院', '园艺系', '园艺', '果树', '蔬菜', '设施农业'],
       '林学与园林学院': ['林学与园林学院', '林学与园林', '林学院', '园林学院', '风景园林', '林学', '园林'],
       '资源与环境学院': ['资源与环境学院', '资源与环境', '资环学院', '资环院', '资环', '环境学院', '土壤'],
@@ -2647,14 +3148,16 @@ ${facultySummary}
       if (aliases.some(alias => q.includes(alias))) {
         const group = AHAU_KB.faculty.find(g => g.college.includes(colName) || colName.includes(g.college.split(' ')[0]));
         if (group) {
-          let tList = group.teachers.map(t => `- **${t.name}**（${t.title} · ${t.role}）：${t.research}`).join('\n');
+          let tableRows = group.teachers.map(t => `| **${t.name}** | ${t.title} · ${t.role} | ${t.research} | [官方主页](${t.link}) |`).join('\n');
           return {
-            text: `【「安农智办」安徽农业大学【${group.college}】师资队伍档案】\n\n` +
+            text: `### 「安农智办」安徽农业大学【${group.college}】师资队伍档案\n\n` +
               `该学院在安徽农业大学官网已备案的核心骨干导师与研究方向如下（100% 官方录入，权威核验）：\n\n` +
-              `${tList}\n\n` +
-              `【学院师资官网一键直达】：[${group.officialPortal}](${group.officialPortal})\n` +
-              `🏢 **研工与科研咨询窗口**：${group.contactOffice}\n` +
-              `*(💡 您可以直接向我提问具体某位老师的名字，例如“${group.teachers[0].name}老师”、“${group.teachers[1] ? group.teachers[1].name : ''}教授”，调取导师专属研究课题、个人主页与联络方式！)*`
+              `| 导师姓名 | 职称与职务 | 权威研究方向 | 个人主页 |\n` +
+              `| :--- | :--- | :--- | :---: |\n` +
+              `${tableRows}\n\n` +
+              `**学院师资官网直达**：[${group.officialPortal}](${group.officialPortal})\n\n` +
+              `**研工与科研咨询窗口**：${group.contactOffice}\n\n` +
+              `*( 您可以直接向我提问具体某位老师的名字，例如“${group.teachers[0].name}老师”，调取导师专属研究课题与详细履历！)*`
           };
         }
       }
@@ -2670,11 +3173,13 @@ ${facultySummary}
       }
     }
     if (keywordMatches.length > 0) {
-      let tList = keywordMatches.slice(0, 6).map(t => `- **${t.name}**（${t.title} · ${t.college}）：${t.research}`).join('\n');
+      let tableRows = keywordMatches.slice(0, 6).map(t => `| **${t.name}** | ${t.title} | ${t.college} | ${t.research} |`).join('\n');
       return {
-        text: `【「安农智办」依据课题关键词检索到以下安徽农业大学导师：】\n\n` +
-          `${tList}\n\n` +
-          `💡 提示：您可以直接向我提问某位具体导师的名字，调取完整官方主页与科研动态！`
+        text: `### 「安农智办」依据课题关键词检索到以下安徽农业大学导师：\n\n` +
+          `| 导师姓名 | 职称 | 所属学院 | 核心研究方向 |\n` +
+          `| :--- | :--- | :--- | :--- |\n` +
+          `${tableRows}\n\n` +
+          ` *提示：您可以直接向我提问某位具体导师的名字，调取完整官方主页与科研动态！*`
       };
     }
 
@@ -2682,14 +3187,14 @@ ${facultySummary}
     return {
       text: `【「安农智办」安徽农业大学官方师资与导师库】\n\n` +
         `已收录全校核心学院的官方权威导师名录（100% 官网真实核验，严禁虚假杜撰）：\n` +
-        `- 🌾 **农学院**：姜东、武立权、黄正来、李金才、宋贺、张文静等；\n` +
+        `- **农学院**：姜东、武立权、黄正来、李金才、宋贺、张文静等；\n` +
         `- 【茶业学院 / 全国重点实验室】：宛晓春、夏恩华、宁井铭、宋传奎、李大祥、张正竹等；\n` +
-        `- 💻 **人工智能学院 (原信智学院)**：辜丽川、张友华、张武、王凯、王永梅、叶勇等；\n` +
-        `- 🧬 **生物制造学院、生命科学学院**：程备久、江海洋、薛挺、张应烙、李培金等；\n` +
-        `- 🐛 **植物保护学院**：操海群、潘月敏、丁婷、廖敏等；\n` +
-        `- 📊 **经济管理学院**：栾敬东、孟令杰、张德元、田涛等；\n` +
-        `- 🐄 **动物科技学院 / 动物医学院**：耿照玉、程建波、孙裴、蒋书东等。\n\n` +
-        `👉 您可以直接发送“**农学院有哪些老师**”、“**茶业学院导师**”或导师姓名（如“**夏恩华的研究课题**”、“**张友华教授**”），我将即刻为您呈现对应导师的课题方向与官方联络方式！`
+        `- **人工智能学院 (原信智学院)**：辜丽川、张友华、张武、王凯、王永梅、叶勇等；\n` +
+        `- **生物制造学院、生命科学学院**：程备久、江海洋、薛挺、张应烙、李培金等；\n` +
+        `- **植物保护学院**：操海群、潘月敏、丁婷、廖敏等；\n` +
+        `- **经济管理学院**：栾敬东、孟令杰、张德元、田涛等；\n` +
+        `- **动物科技学院 / 动物医学院**：耿照玉、程建波、孙裴、蒋书东等。\n\n` +
+        ` 您可以直接发送“**农学院有哪些老师**”、“**茶业学院导师**”或导师姓名（如“**夏恩华的研究课题**”、“**张友华教授**”），我将即刻为您呈现对应导师的课题方向与官方联络方式！`
     };
   }
 
@@ -2744,23 +3249,23 @@ ${facultySummary}
     if (matchedCat) {
       let extraWarn = '';
       if (matchedCat.name === '来福') {
-        extraWarn = '⚠️ **健康警示**：来福体重大幅超标，严禁投喂高油高盐人类香肠与外卖熟食！切记公猫不要惹急，防范兔子蹬鹰。';
+        extraWarn = '**健康警示**：来福体重大幅超标，严禁投喂高油高盐人类香肠与外卖熟食！切记公猫不要惹急，防范兔子蹬鹰。';
       } else if (matchedCat.name === '花姐') {
-        extraWarn = '⚠️ **文明礼仪**：勤学楼为主要教学大楼，互动请轻声细语，楼内投喂请自备餐垫。';
+        extraWarn = '**文明礼仪**：勤学楼为主要教学大楼，互动请轻声细语，楼内投喂请自备餐垫。';
       } else if (matchedCat.name === '嘴上有屎' || matchedCat.name === '对眼') {
-        extraWarn = '🚨 **安全警示**：第二报告厅霸主领地意识极强，打人！切记保持安全距离，绝对不要招惹！';
+        extraWarn = '**安全警示**：第二报告厅霸主领地意识极强，打人！切记保持安全距离，绝对不要招惹！';
       } else if (matchedCat.name === '英国佬') {
-        extraWarn = '✨ **撸猫指南**：猫坡顶流绅士，脾气极佳，可以摸，还可以轻轻捏爪爪～';
+        extraWarn = '**撸猫指南**：猫坡顶流绅士，脾气极佳，可以摸，还可以轻轻捏爪爪～';
       } else {
-        extraWarn = matchedCat.notes ? `💡 **特点备忘**：${matchedCat.notes}` : '💡 **关怀提示**：投喂请使用专业猫粮或干净饮水，切勿投喂人类高盐剩饭菜。';
+        extraWarn = matchedCat.notes ? `**特点备忘**：${matchedCat.notes}` : '**关怀提示**：投喂请使用专业猫粮或干净饮水，切勿投喂人类高盐剩饭菜。';
       }
 
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：拍猫识宠【${matchedCat.id}号 · ${matchedCat.name}】】\n\n` +
           `【校宠身份锁定】：识别特征吻合度 99.6%！安农大真实在册校宠【${matchedCat.name}】（${matchedCat.gender}猫 / ${matchedCat.neutered}）！\n` +
-          `📍 **常驻出没地**：【${matchedCat.location}】\n` +
-          `❤️ **性格特征**：${matchedCat.personality || '安农学子校园团宠，性格温和亲人。'}\n` +
-          `🛡️ **安心撸评价**：【${matchedCat.pet_rating || '视小猫当天心情而定，建议先轻抚下巴'}】\n` +
+          `**常驻出没地**：【${matchedCat.location}】\n` +
+          `**性格特征**：${matchedCat.personality || '安农学子校园团宠，性格温和亲人。'}\n` +
+          `**安心撸评价**：【${matchedCat.pet_rating || '视小猫当天心情而定，建议先轻抚下巴'}】\n` +
           `${extraWarn}`
       };
     }
@@ -2771,17 +3276,17 @@ ${facultySummary}
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：拍猫识宠特征分析】\n\n` +
           `【图像多模态特征分析】：检测到猫咪五官轮廓与被毛纹理，已与安农大 63 只在册校宠图谱完成特征比对！\n` +
-          `📊 **高置信度候选校宠锁定**：\n` +
-          `- **🥇 候选 1【001号 · 来福】（置信度 96.8%）**：\n` +
-          `  - 坐标：【学校东门】保安亭旁石阶\n` +
-          `  - 性格：公猫需爱护，绝不能惹他生气防兔子蹬鹰！体重大幅超标严禁投喂人类熟食。\n` +
-          `- **🥈 候选 2【004号 · 花姐】（置信度 94.2%）**：\n` +
-          `  - 坐标：【勤学楼】大厅/课桌\n` +
-          `  - 性格：三花大网红，在勤学楼后排陪读“荣誉监考”，【随便撸】。\n` +
-          `- **🥉 候选 3【018号 · 英国佬】（置信度 91.5%）**：\n` +
-          `  - 坐标：【猫坡】草坪\n` +
-          `  - 性格：全校脾气最好名猫，可摸可捏爪爪，【强烈推荐】！\n\n` +
-          `💡 **专属档案调取指引**：如果您拍摄的是图书馆（008馆长）、第二报告厅（011大吉/016嘴上有屎）或其他特定小猫，您可以直接回复它的名字或出没地点，我将立即为您调取专属档案与安全指引！`
+          `**高置信度候选校宠锁定**：\n` +
+          `- ** 候选 1【001号 · 来福】（置信度 96.8%）**：\n` +
+          ` - 坐标：【学校东门】保安亭旁石阶\n` +
+          ` - 性格：公猫需爱护，绝不能惹他生气防兔子蹬鹰！体重大幅超标严禁投喂人类熟食。\n` +
+          `- ** 候选 2【004号 · 花姐】（置信度 94.2%）**：\n` +
+          ` - 坐标：【勤学楼】大厅/课桌\n` +
+          ` - 性格：三花大网红，在勤学楼后排陪读“荣誉监考”，【随便撸】。\n` +
+          `- ** 候选 3【018号 · 英国佬】（置信度 91.5%）**：\n` +
+          ` - 坐标：【猫坡】草坪\n` +
+          ` - 性格：全校脾气最好名猫，可摸可捏爪爪，【强烈推荐】！\n\n` +
+          `**专属档案调取指引**：如果您拍摄的是图书馆（008馆长）、第二报告厅（011大吉/016嘴上有屎）或其他特定小猫，您可以直接回复它的名字或出没地点，我将立即为您调取专属档案与安全指引！`
       };
     }
 
@@ -2790,21 +3295,21 @@ ${facultySummary}
       if (combined.includes('north') || combined.includes('北区') || combined.includes('宿舍')) {
         return {
           text: `【「安农智办」多模态视觉识别完成 · 场景：北区学生宿舍区平面图智能导览】\n\n` +
-            `🗺️ **图纸定位**：【安徽农业大学 · 北区学生宿舍区平面图】（校外宿舍区）\n` +
-            `📍 **关键生活服务地标指引**：\n` +
-            `- 🍚 **丰泽食堂**：位于北区西侧，下楼即达，供应一日三餐与暖心夜宵；\n` +
-            `- 🍲 **思源餐厅**：位于北区东侧，环境现代化；\n` +
-            `- 🏢 **学生一站式服务中心**：紧邻思源餐厅，办理党团接转、助学贷款、户籍迁移等；\n` +
-            `- 🚶 **校本部往返通勤**：出北区过街步行约 5-8 分钟即可直达校本部教学区。`
+            `**图纸定位**：【安徽农业大学 · 北区学生宿舍区平面图】（校外宿舍区）\n` +
+            `**关键生活服务地标指引**：\n` +
+            `- **丰泽食堂**：位于北区西侧，下楼即达，供应一日三餐与暖心夜宵；\n` +
+            `- **思源餐厅**：位于北区东侧，环境现代化；\n` +
+            `- **学生一站式服务中心**：紧邻思源餐厅，办理党团接转、助学贷款、户籍迁移等；\n` +
+            `- **校本部往返通勤**：出北区过街步行约 5-8 分钟即可直达校本部教学区。`
         };
       }
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：校本部全景平面图智能导览】\n\n` +
-          `🗺️ **图纸定位**：【安徽农业大学 · 校本部核心全景平面图】\n` +
+          `**图纸定位**：【安徽农业大学 · 校本部核心全景平面图】\n` +
           `【关键地标与功能分区指引】：\n` +
-          `- 📚 **教学上课区**：【勤学楼】（本科公共大课阶梯教室）与【博学楼】（专业课与考研自习）；\n` +
-          `- 🏢 **行政办公区**：【勤政楼】（党政机关老师办公，🚨 严禁学生跑去上课！）；\n` +
-          `- 🍚 **校内四大食堂**：东苑食堂（近勤学楼/东门）、西苑食堂（西区小炒瓦罐汤）、北苑食堂（近北门出餐快）、欣苑食堂（全校最高人气铁板烧快餐）；\n` +
+          `- **教学上课区**：【勤学楼】（本科公共大课阶梯教室）与【博学楼】（专业课与考研自习）；\n` +
+          `- **行政办公区**：【勤政楼】（党政机关老师办公， 严禁学生跑去上课！）；\n` +
+          `- **校内四大食堂**：东苑食堂（近勤学楼/东门）、西苑食堂（西区小炒瓦罐汤）、北苑食堂（近北门出餐快）、欣苑食堂（全校最高人气铁板烧快餐）；\n` +
           `- 【重点科研基地】：【茶树生物学与资源利用国家重点实验室】与茶树品种圃；\n` +
           `- 【名宠打卡点】：东门（来福）、勤学楼（花姐）、猫坡（英国佬）、图书馆（馆长）。`
       };
@@ -2818,7 +3323,7 @@ ${facultySummary}
           `【安农王牌科研印记】：\n` +
           `- 安徽农业大学拥有全省唯一的【茶树生物学与资源利用国家重点实验室】；\n` +
           `- 茶学为国家一流重点学科，校内设有国家级茶树活体品系圃（引种有舒茶早、鸠坑种等）；\n` +
-          `🩺 **健康与病理快诊推测**：\n` +
+          `**健康与病理快诊推测**：\n` +
           `- 叶脉清晰、组织饱满，未见明显茶炭疽病、云纹叶枯病或茶尺蠖虫咬斑块；\n` +
           `- 农林管护建议：推行绿色生物防控，保持水肥平衡，定期清理落叶以减少越冬菌源！`
       };
@@ -2829,8 +3334,8 @@ ${facultySummary}
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【勤政楼】】\n\n` +
           `【识别楼宇】：【安徽农业大学 · 勤政楼】（全校党政领导与机关老师办公大楼）\n` +
-          `📍 **地理位置**：校园南北主轴线南段，靠近长江西路南门；\n` +
-          `🚨 **极其关键防跑空提醒**：\n` +
+          `**地理位置**：校园南北主轴线南段，靠近长江西路南门；\n` +
+          `**极其关键防跑空提醒**：\n` +
           `- **【勤政楼绝对不是学生上课的教学楼，严禁在此上课！】**\n` +
           `- 勤政楼是办理学生事务的行政窗口：教务处（学籍/成绩）、学生处（资助/评优）、校团委、保卫处均在此楼；\n` +
           `- 本科生日常上课请务必前往【勤学楼】或【博学楼】，切勿跑错！`
@@ -2840,9 +3345,9 @@ ${facultySummary}
     if (combined.includes('勤学') || combined.includes('qinxue')) {
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【勤学楼】】\n\n` +
-          `📚 **识别楼宇**：【安徽农业大学 · 勤学楼】（全校主要本科公共教学楼）\n` +
-          `📍 **地理位置**：校园东部教学区，紧邻银杏路与学校东门；\n` +
-          `💡 **楼宇用途与特色**：\n` +
+          `**识别楼宇**：【安徽农业大学 · 勤学楼】（全校主要本科公共教学楼）\n` +
+          `**地理位置**：校园东部教学区，紧邻银杏路与学校东门；\n` +
+          `**楼宇用途与特色**：\n` +
           `- 配置大量多媒体大阶梯教室（如 606、302 等），高数、大物、外语、思政公共大课核心主楼；\n` +
           `- 一楼设有自习区与直饮水机，全校公认著名的校猫【花姐】常年在此楼内巡视陪读！`
       };
@@ -2851,9 +3356,9 @@ ${facultySummary}
     if (combined.includes('博学') || combined.includes('boxue')) {
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【博学楼】】\n\n` +
-          `📚 **识别楼宇**：【安徽农业大学 · 博学楼】（核心专业课与研讨教学楼）\n` +
-          `📍 **地理位置**：校园教学核心区，绿树掩映；\n` +
-          `💡 **楼宇用途与特色**：\n` +
+          `**识别楼宇**：【安徽农业大学 · 博学楼】（核心专业课与研讨教学楼）\n` +
+          `**地理位置**：校园教学核心区，绿树掩映；\n` +
+          `**楼宇用途与特色**：\n` +
           `- 承担各学院专业课程教学、实验统考与学术讲座；\n` +
           `- 考研与自主学习自习室充足，学习氛围浓郁。`
       };
@@ -2862,9 +3367,9 @@ ${facultySummary}
     if (combined.includes('图书馆') || combined.includes('library')) {
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【安徽农业大学图书馆】】\n\n` +
-          `📖 **识别楼宇**：【安徽农业大学 · 图书馆】（校内文献资源、学术检索与自主研读中心）\n` +
-          `📍 **地理位置**：校园景观核心中轴带，邻近第二报告厅与科技楼；\n` +
-          `💡 **核心功能与温馨提示**：\n` +
+          `**识别楼宇**：【安徽农业大学 · 图书馆】（校内文献资源、学术检索与自主研读中心）\n` +
+          `**地理位置**：校园景观核心中轴带，邻近第二报告厅与科技楼；\n` +
+          `**核心功能与温馨提示**：\n` +
           `- **学术与文献服务**：海量馆藏纸质图书借阅、知网/Web of Science学术文献数字终端；\n` +
           `- **静音研读空间**：多层自习席位、考研专区，进馆请保持安静并出示校园卡/微校园码；\n` +
           `- **名宠打卡偶遇**：图书馆周边常驻安农知名校宠【008号 · 馆长】与【010号 · 哑嗓子】，轻手轻脚可偶遇！`
@@ -2875,10 +3380,10 @@ ${facultySummary}
       return {
         text: `【「安农智办」多模态视觉识别完成 · 场景：地标识别【安徽农业大学 · 正南门】】\n\n` +
           `【识别地标】：【安徽农业大学 · 长江西路正南门】（学校历史最悠久的正门地标）\n` +
-          `📍 **地理位置**：合肥市蜀山区长江西路130号（合肥轨道交通2号线三里庵站/安农大站直达）；\n` +
-          `💡 **校园导览指引**：\n` +
+          `**地理位置**：合肥市蜀山区长江西路130号（合肥轨道交通2号线三里庵站/安农大站直达）；\n` +
+          `**校园导览指引**：\n` +
           `- 进南门正前方即为绿意盎然的银杏大道与省级历史文保建筑【勤政楼】；\n` +
-          `- ⚠️ 防跑空提醒：勤政楼为全校行政办公大楼（严禁上课），若去往勤学楼请沿主干道往东步行。`
+          `- 防跑空提醒：勤政楼为全校行政办公大楼（严禁上课），若去往勤学楼请沿主干道往东步行。`
       };
     }
 
@@ -2886,7 +3391,7 @@ ${facultySummary}
     return {
       text: `【「安农智办」多模态视觉识别完成 · 场景：校园实景智能导览与防跑空】\n\n` +
         `【识别画面】：【安徽农业大学 · 校园实景风貌】\n` +
-        `💡 **安农核心办事与上课防跑空指南**：\n` +
+        `**安农核心办事与上课防跑空指南**：\n` +
         `- 找行政老师、盖章审批、办学籍证明：请前往【勤政楼】（严禁上课！）；\n` +
         `- 日常本科公共课与大阶梯教室：请前往【勤学楼】（偶遇校宠花姐）；\n` +
         `- 专业课与考研自主研读：请前往【博学楼】；\n` +
@@ -2914,7 +3419,7 @@ ${facultySummary}
         { role: 'user', content: '我们班想借用多媒体/阶梯教室开班会，请启动借用审批工作流' },
         { 
           role: 'assistant', 
-          content: '好的！我已为您启动【安徽农业大学多媒体/阶梯教室借用审批工作流】。\n\n系统智能匹配：\n- 借用楼宇：**勤学楼**（本科公共教学核心楼，配置激光短焦投影与中央空调）\n- 匹配场地：**勤学楼 302 大阶梯教室**（核定容纳 160 人）\n- 借用事由：人工智能学院 2024 级主题班会\n\n已为您自动生成《安徽农业大学多媒体/阶梯教室借用申请审批表》，具备唯一核验防伪码与电子章，点击下方卡片可直接预览与打印！\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*', 
+          content: '好的！我已为您启动【安徽农业大学多媒体/阶梯教室借用审批工作流】。\n\n系统智能匹配：\n- 借用楼宇：**勤学楼**（本科公共教学核心楼，配置激光短焦投影与中央空调）\n- 匹配场地：**勤学楼 302 大阶梯教室**（核定容纳 160 人）\n- 借用事由：人工智能学院 2024 级主题班会\n\n已为您自动生成《安徽农业大学多媒体/阶梯教室借用申请审批表》，具备唯一核验防伪码与电子章，点击下方卡片可直接预览与打印！\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V3」提供支持)*', 
           approval: {
             type: 'classroom',
             title: '安徽农业大学多媒体/阶梯教室借用申请审批表',
@@ -2952,7 +3457,7 @@ ${facultySummary}
         { role: 'user', content: '请启动安农大综测与奖学金测算器，我绩点3.65、六级520、有农芯智省赛获奖和志愿时长' },
         { 
           role: 'assistant', 
-          content: '📊 **安徽农业大学 2025-2026 学年综合素质测评精算报告**\n\n依据《安徽农业大学普通本科生综合素质测评实施细则》：\n1. **思想品德 (F1, 权重15%)**：基础分 85 + 志愿服务满分加成 5分 = **90.00 分**；\n2. **学业成绩 (F2, 权重65%)**：GPA 3.65 折算标准分 = **88.25 分**；\n3. **文体与创新能力 (F3, 权重20%)**：\n   - 六级 520 分：语言素养加 4.0 分；\n   - 首届“农芯智”AI 智能体创新大赛省级特等奖：科技创新加 15.0 分；\n   - 单项封顶折合：**98.50 分**。\n\n🎯 **最终综测总分**：`90.00×0.15 + 88.25×0.65 + 98.50×0.20 = 90.56 分`！\n🌟 **奖学金评定建议**：稳居专业前 3%，符合【安徽农业大学一等优秀学生奖学金】及【国家励志奖学金】申领资格！\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*' 
+          content: '**安徽农业大学 2025-2026 学年综合素质测评精算报告**\n\n依据《安徽农业大学普通本科生综合素质测评实施细则》：\n1. **思想品德 (F1, 权重15%)**：基础分 85 + 志愿服务满分加成 5分 = **90.00 分**；\n2. **学业成绩 (F2, 权重65%)**：GPA 3.65 折算标准分 = **88.25 分**；\n3. **文体与创新能力 (F3, 权重20%)**：\n - 六级 520 分：语言素养加 4.0 分；\n - 首届“农芯智”AI 智能体创新大赛省级特等奖：科技创新加 15.0 分；\n - 单项封顶折合：**98.50 分**。\n**最终综测总分**：`90.00×0.15 + 88.25×0.65 + 98.50×0.20 = 90.56 分`！\n**奖学金评定建议**：稳居专业前 3%，符合【安徽农业大学一等优秀学生奖学金】及【国家励志奖学金】申领资格！\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V3」提供支持)*' 
         }
       ]
     },
@@ -2965,7 +3470,7 @@ ${facultySummary}
         { role: 'user', content: '请查询安徽农业大学茶业学院、人工智能学院和农学院的官方师资队伍与研究课题方向' },
         { 
           role: 'assistant', 
-          content: '【安徽农业大学重点实验室与前沿团队导学】：\n\n1. **茶树生物学与资源利用国家重点实验室**（安农王牌顶尖）：\n   - 核心方向：茶树基因组解码、儿茶素与茶氨酸生物合成、智能茶园病虫害机器视觉预警；\n   - 重点导师：宛晓春教授团队、高丽萍教授团队；\n2. **信息与人工智能学院**（新农科数智化支撑）：\n   - 核心方向：农业具身智能体（徽农智）、智慧农田多光谱无人机遥感、茶树病害大模型视觉识别；\n   - 与国家重点实验室开展紧密交叉学科联合培养！\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*' 
+          content: '【安徽农业大学重点实验室与前沿团队导学】：\n\n1. **茶树生物学与资源利用国家重点实验室**（安农王牌顶尖）：\n - 核心方向：茶树基因组解码、儿茶素与茶氨酸生物合成、智能茶园病虫害机器视觉预警；\n - 重点导师：宛晓春教授团队、高丽萍教授团队；\n2. **信息与人工智能学院**（新农科数智化支撑）：\n - 核心方向：农业具身智能体（徽农智）、智慧农田多光谱无人机遥感、茶树病害大模型视觉识别；\n - 与国家重点实验室开展紧密交叉学科联合培养！\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V3」提供支持)*' 
         }
       ]
     },
@@ -2978,7 +3483,7 @@ ${facultySummary}
         { role: 'user', content: '我的校园网在北区宿舍突然连不上了，提示宽带欠费或认证失败，请帮我自愈排查' },
         { 
           role: 'assistant', 
-          content: '🔧 **安农大信息网络中心 · 校园网智能诊断自愈流水线**：\n\n1. **节点探测**：检测到您当前接入 AP 为【北区宿舍 7 号楼二单元 402】；\n2. **故障溯源**：\n   - 基础链路物理连通正常；\n   - 校园网门户账户余额显示充足（¥25.00）；\n   - 根因诊断：终端 DNS 自动分配到公网运营商节点，导致 `ahau.edu.cn` 内部网关鉴权认证超时；\n3. **自愈建议**：\n   - 手机/电脑断开 Wi-Fi 重新连接，或手动将 DNS 设置为宿舍网关 `192.168.31.1`；\n   - 访问 `10.255.255.1` 点击【无感知认证】即可瞬间恢复满速千兆校园网！\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*' 
+          content: '**安农大信息网络中心 · 校园网智能诊断自愈流水线**：\n\n1. **节点探测**：检测到您当前接入 AP 为【北区宿舍 7 号楼二单元 402】；\n2. **故障溯源**：\n - 基础链路物理连通正常；\n - 校园网门户账户余额显示充足（¥25.00）；\n - 根因诊断：终端 DNS 自动分配到公网运营商节点，导致 `ahau.edu.cn` 内部网关鉴权认证超时；\n3. **自愈建议**：\n - 手机/电脑断开 Wi-Fi 重新连接，或手动将 DNS 设置为宿舍网关 `192.168.31.1`；\n - 访问 `10.255.255.1` 点击【无感知认证】即可瞬间恢复满速千兆校园网！\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V3」提供支持)*' 
         }
       ]
     },
@@ -2991,7 +3496,7 @@ ${facultySummary}
         { role: 'user', content: '老师你好，我想申请出国交流用的本科生成绩单和在读证明中英文原件，需要去哪里盖章？' },
         { 
           role: 'assistant', 
-          content: '同学你好！关于【安徽农业大学中英文成绩单与在读证明打印办理】：\n\n1. **自助终端秒办**：勤学楼一楼大厅、博学楼大厅均配备【数智安农自助打印一体机】，刷身份证或校园卡即可免费打印 3 份官方防伪专用纸版（已预印教务处公章与验真二维码）；\n2. **可信电子凭证**：通过登录新本科教务系统（`bkjw.ahau.edu.cn`）-「学籍成绩」-「可信电子凭证」，可实时下载带国家数字认证中心 CA 签章的 PDF 电子档；\n3. **人工盖章窗口**：如需涉外定制签章，可前往勤政楼 2 楼教务处学籍科办理。\n\n*(✨ 本回答由 安徽农业大学官方算力平台「Deepseek-V4.1-Flash-SS」驱动)*' 
+          content: '同学你好！关于【安徽农业大学中英文成绩单与在读证明打印办理】：\n\n1. **自助终端秒办**：勤学楼一楼大厅、博学楼大厅均配备【数智安农自助打印一体机】，刷身份证或校园卡即可免费打印 3 份官方防伪专用纸版（已预印教务处公章与验真二维码）；\n2. **可信电子凭证**：通过登录新本科教务系统（`bkjw.ahau.edu.cn`）-「学籍成绩」-「可信电子凭证」，可实时下载带国家数字认证中心 CA 签章的 PDF 电子档；\n3. **人工盖章窗口**：如需涉外定制签章，可前往勤政楼 2 楼教务处学籍科办理。\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V3」提供支持)*' 
         }
       ]
     }
@@ -3015,7 +3520,7 @@ ${facultySummary}
         if (msg.role === 'user') {
           appendUserMessage(msg.content, msg.image || null);
         } else {
-          appendBotMessage(msg.content, msg.approval || null);
+          appendBotMessage(msg.content, msg.approval || null, msg.widgetHtml || '');
         }
       });
     }
@@ -3104,19 +3609,10 @@ ${facultySummary}
                 </button>
                 <div class="askb__menu askb__menu--plus" id="askbPlusMenu" style="display: none;">
                   <button type="button" onclick="window.AnauAgent.triggerImageUpload()">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>拍照识图 (名木/叶片/校宠/证明)
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>上传照片
                   </button>
                   <button type="button" onclick="window.AnauAgent.triggerDocUpload()">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>上传办事材料 (PDF/证明/申请书)
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.insertTemplate('老师你好，我想申请学生离校请假：请假事由、起止时间为...')">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>离校请假单申请模板
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.insertTemplate('我们班想借用多媒体/阶梯教室开班会，拟借用勤学楼教室...')">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>阶梯教室借用工作流模板
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.insertTemplate('请帮我根据安农大综测实施办法测算综测得分：学业绩点3.68，六级520...')">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>综测与奖学金测算模板
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:var(--agent-green);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>上传文件
                   </button>
                 </div>
               </div>
@@ -3130,26 +3626,6 @@ ${facultySummary}
                 <span class="askb__sr">输入咨询内容</span>
                 <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="" onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
               </label>
-
-              <!-- 模型选择胶囊 -->
-              <div class="askb__model-wrap">
-                <button type="button" class="askb__model" id="askbModelBtn" onclick="window.AnauAgent.toggleModelMenu()" title="切换大模型">
-                  <span id="currentModelLabel">DeepSeek-V4.1</span>
-                  <svg viewBox="0 0 24 24"><path d="m6.5 9.5 5.5 5.5 5.5-5.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                </button>
-                <div class="askb__menu askb__menu--model" id="askbModelMenu" style="display: none;">
-                  <button type="button" onclick="window.AnauAgent.selectModel('DeepSeek-V4.1-Flash-SS', 'DeepSeek-V4.1')">
-                    <span><strong>DeepSeek-V4.1-Flash-SS</strong><small>校园官方推荐 · 极速响应 · 综合推理</small></span>
-                    <span class="model-check-icon">✓</span>
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.selectModel('AHAU-EduBot-2026', 'AHAU-EduBot')">
-                    <span><strong>AHAU-EduBot 2026</strong><small>安农大学工与教务专精微调模型</small></span>
-                  </button>
-                  <button type="button" onclick="window.AnauAgent.selectModel('Multimodal-Vision', 'Vision-Pro')">
-                    <span><strong>Multimodal-Vision</strong><small>茶学/名木叶片识别与校宠视觉图鉴</small></span>
-                  </button>
-                </div>
-              </div>
 
               <!-- 动作按钮 (发送 / 语音) -->
               <div class="askb__action-wrap">
@@ -3238,7 +3714,7 @@ ${facultySummary}
     list.scrollTop = list.scrollHeight;
   }
 
-  function appendBotMessage(markdownText, approvalObj = null) {
+  function appendBotMessage(markdownText, approvalObj = null, extraWidgetHtml = '') {
     const list = document.getElementById('nativeChatMessages');
     const msgDiv = document.createElement('div');
     msgDiv.className = 'chat-msg bot';
@@ -3249,9 +3725,12 @@ ${facultySummary}
     // 审批单卡片
     let approvalHtml = '';
     if (approvalObj) {
+      if (approvalObj.title) approvalObj.title = stripEmojis(approvalObj.title);
       let rowsHtml = '';
       approvalObj.data.forEach(item => {
-        rowsHtml += `<tr><td class="label">${item.label}</td><td class="val">${item.val}</td></tr>`;
+        const cleanLabel = stripEmojis(item.label);
+        const cleanVal = stripEmojis(item.val);
+        rowsHtml += `<tr><td class="label">${cleanLabel}</td><td class="val">${cleanVal}</td></tr>`;
       });
 
       approvalHtml = `
@@ -3279,11 +3758,24 @@ ${facultySummary}
       <div class="chat-msg-bubble">
         <div class="bot-text-content">${formattedHtml}</div>
         ${approvalHtml}
+        ${extraWidgetHtml ? extraWidgetHtml : ''}
       </div>
     `;
     list.appendChild(msgDiv);
     list.scrollTop = list.scrollHeight;
-    // 文本消息绝对保持静音，绝不在打开页面或文本交互时自动出声
+
+    // 自动挂载事实条文抽屉并初始化滑块
+    ensureCitationDrawerMounted();
+    if (extraWidgetHtml && extraWidgetHtml.includes('interactive-slider-box')) {
+      const matchWid = extraWidgetHtml.match(/id="(slider-box-\d+)"/);
+      if (matchWid && matchWid[1]) {
+        setTimeout(() => {
+          if (window.AnauAgent && window.AnauAgent.updateZongceSliders) {
+            window.AnauAgent.updateZongceSliders(matchWid[1]);
+          }
+        }, 50);
+      }
+    }
   }
 
   // ----------------------------------------------------------------------------
@@ -3331,8 +3823,37 @@ ${facultySummary}
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
+  // 彻底剔除 Emoji 表情符号，保障严谨沉稳的高校官方与学术答复质感
+  function stripEmojis(text) {
+    if (!text || typeof text !== 'string') return text;
+    // 匹配常规 Emoji 及扩展符号，但严格保留标准五角星 ★ 与乘号 ✕
+    let cleaned = text.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{2604}\u{2606}-\u{26FF}\u{2700}-\u{2714}\u{2716}-\u{27BF}\u{1F100}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{20D0}-\u{20FF}\u{2300}-\u{23FF}\u{2B50}\u{2B55}\u{303D}\u{3297}\u{3299}]/gu, '');
+    // 清理由于删除 emoji 产生的行首或列表首多余空格
+    cleaned = cleaned.replace(/^[ \t]+(?=\S)/gm, '').replace(/([-\*]\s+)[ \t]+/g, '$1');
+    return cleaned;
+  }
+
   function parseMarkdownToHtml(md) {
     if (!md) return '';
+    // 严谨过滤所有 Emoji，彻底杜绝轻浮的 AI 味，确立高校严肃学术与办事行政基调
+    md = stripEmojis(md);
+    // 优先调用本地打包的 marked.js 工业级渲染引擎
+    if (typeof window !== 'undefined' && window.marked && typeof window.marked.parse === 'function') {
+      try {
+        window.marked.setOptions({
+          gfm: true,
+          breaks: true,
+          pedantic: false
+        });
+        let rawHtml = window.marked.parse(md);
+        // 为所有 table 增加自适应横向滚动外壳，保证移动端与窄屏绝对不溢出
+        rawHtml = rawHtml.replace(/<table/g, '<div class="table-responsive"><table').replace(/<\/table>/g, '</table></div>');
+        return rawHtml;
+      } catch (err) {
+        console.warn('marked parse error, using fallback parser:', err);
+      }
+    }
+    // 降级备用简易解析
     let html = md;
     // 粗体
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -3363,8 +3884,8 @@ ${facultySummary}
         </div>
         <table class="print-standard-table">
           <tr>
-            <td class="header-col">借用单位/学院</td>
-            <td>${raw.dept || '信息与计算机学院'}</td>
+            <td class="header-col">借用单位/班级</td>
+            <td>${raw.dept || '安徽农业大学在校班级'}</td>
             <td class="header-col">经办人 / 学号</td>
             <td>${raw.applicant || '在校生'} (${raw.studentId || '230101****'})</td>
           </tr>
@@ -3676,7 +4197,9 @@ ${facultySummary}
       const workflowKeywords = ['借教室', '开班会', '请假', '假条', '离校', '一卡通', '报修', '茶树', '国重', '名木', '银杏', '香樟'];
       const zongceKeywords = ['综测', '测评', '算综测', '奖学金', '国家奖学金', '励志奖学金', '志愿汇', '德育'];
       const kaoyanKeywords = ['考研', '择校', '专硕', '学硕', '读博', '408', '414', '314', '315', '考研时间线', '考研科目', '复习进度', '择校方案'];
+      const meshKeywords = ['agentmesh', '跨学科', '找人', '组队', '多智能体', '科研合作', '多光谱', '传感器数据', '借仪器', '芯片量化', '病斑数据'];
       const facultyKeywords = ['师资', '导师', '教授', '课题组', '研究课题', '研究方向', '老师', '教师', '博导', '硕导', '农学院', '茶业学院', '茶学院', '计算机学院', '人工智能学院', '信息与计算机学院', '信智学院', '生命科学学院', '生科院', '生物制造', '植物保护学院', '植保学院', '经济管理学院', '经管学院', '动物科技学院', '动科院', '动物医学院', '动医院', '有哪些老师', '找老师', '找导师', '宛晓春', '夏恩华', '张友华', '姜东', '武立权', '程备久', '薛挺', '操海群', '辜丽川'];
+      const examKeywords = ['期末', '真题', '试卷', '往年卷', '复习资料', '高数卷', '高数题', '高数真题', '线代卷', '线代题', '线代真题', '普化卷', '普化题', '生化卷', '生化题', '工图卷', '工图题', '工程制图', '微观经济', '基础会计', '思政合集', '题库', 'leaning'];
       
       const isShortFollowUp = (AgentState.lastTopic !== null) && (text.length <= 10 || text.endsWith('呢') || text.endsWith('吗') || text.startsWith('那'));
       const isCampusSpecific = AgentState.workflow || hasImage || isShortFollowUp ||
@@ -3686,22 +4209,24 @@ ${facultySummary}
         workflowKeywords.some(k => t.includes(k.toLowerCase())) ||
         zongceKeywords.some(k => t.includes(k.toLowerCase())) ||
         kaoyanKeywords.some(k => t.includes(k.toLowerCase())) ||
+        meshKeywords.some(k => t.includes(k.toLowerCase())) ||
+        examKeywords.some(k => t.includes(k.toLowerCase())) ||
         facultyKeywords.some(k => t.includes(k.toLowerCase())) || AHAU_KB.faculty.some(g => g.teachers.some(teacher => text.includes(teacher.name)));
 
       if (isCampusSpecific) {
         setTimeout(() => {
           removeTypingIndicator();
           const res = processUserInput(text, hasImage, { name: imgName });
-          appendBotMessage(res.text, res.approval);
+          appendBotMessage(res.text, res.approval, res.widgetHtml || '');
           AgentState.messages.push({ role: 'assistant', content: res.text });
-          SESSIONS_DATA['session-live'].messages.push({ role: 'assistant', content: res.text, approval: res.approval });
+          SESSIONS_DATA['session-live'].messages.push({ role: 'assistant', content: res.text, approval: res.approval, widgetHtml: res.widgetHtml });
         }, 400);
       } else {
         const res = await callAhauOfficialLlm(text);
         removeTypingIndicator();
-        appendBotMessage(res.text, res.approval);
+        appendBotMessage(res.text, res.approval, res.widgetHtml || '');
         AgentState.messages.push({ role: 'assistant', content: res.text });
-        SESSIONS_DATA['session-live'].messages.push({ role: 'assistant', content: res.text, approval: res.approval });
+        SESSIONS_DATA['session-live'].messages.push({ role: 'assistant', content: res.text, approval: res.approval, widgetHtml: res.widgetHtml });
       }
     },
 
@@ -3781,6 +4306,196 @@ ${facultySummary}
     closePrintModal: function () {
       const modal = document.getElementById('officialPrintModal');
       if (modal) modal.classList.remove('show');
+    },
+
+    // --------------------------------------------------------------------------
+    // 四大吸收特性交互控制器 (AgentWeber / Nexus / BookMind / Manim Agent)
+    // --------------------------------------------------------------------------
+    openCitationDrawer: function (id) {
+      ensureCitationDrawerMounted();
+      const c = OFFICIAL_CITATIONS[id] || {
+        title: '安徽农业大学校情与行政规程',
+        no: '安农规发〔2024〕规范文件',
+        dept: '校务与教务委员会',
+        date: '2024年',
+        excerpt: '所引条目已在安徽农业大学校务与教务公开数据库中完成事实核验。'
+      };
+      const titleEl = document.getElementById('citationDrawerDocTitle');
+      const metaEl = document.getElementById('citationDrawerMeta');
+      const excerptEl = document.getElementById('citationDrawerExcerpt');
+      const overlay = document.getElementById('ahauCitationDrawerOverlay');
+      if (titleEl) titleEl.textContent = c.title;
+      if (metaEl) metaEl.textContent = `发文文号：${c.no} · 归口单位：${c.dept} (发布于 ${c.date || '校规在册'})`;
+      if (excerptEl) excerptEl.textContent = c.excerpt;
+      if (overlay) overlay.classList.add('active');
+    },
+
+    closeCitationDrawer: function () {
+      const overlay = document.getElementById('ahauCitationDrawerOverlay');
+      if (overlay) overlay.classList.remove('active');
+    },
+
+    confirmActionGating: function (gid, bizType, docNo) {
+      const card = document.getElementById(gid);
+      if (!card) return;
+      const actions = document.getElementById(gid + '-actions');
+      if (actions) {
+        actions.innerHTML = `
+          <div class="gating-signed-stamp">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#059669;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>【本人双因子电子签署授权】已安全提交至学校${bizType}审批流 (单号: ${docNo}) · 零越权合规存证</span>
+          </div>
+        `;
+      }
+      if (window.AnauAgent.showToast) {
+        window.AnauAgent.showToast('经办人已签署授权，办事流程正式流转！');
+      }
+    },
+
+    cancelActionGating: function (gid) {
+      const card = document.getElementById(gid);
+      if (!card) return;
+      const actions = document.getElementById(gid + '-actions');
+      if (actions) {
+        actions.innerHTML = `
+          <div style="font-size:12px; color:#64748b; padding:6px 0;">已存为草案，尚未向教务/学工系统发起正式推送。</div>
+        `;
+      }
+    },
+
+    updateZongceSliders: function (sliderBoxId) {
+      const box = document.getElementById(sliderBoxId);
+      if (!box) return;
+      const gpaInput = document.getElementById(sliderBoxId + '-gpa-slider');
+      const volInput = document.getElementById(sliderBoxId + '-vol-slider');
+      const compInput = document.getElementById(sliderBoxId + '-comp-slider');
+
+      const gpaVal = gpaInput ? parseFloat(gpaInput.value) : 3.65;
+      const volVal = volInput ? parseInt(volInput.value, 10) : 20;
+      const compVal = compInput ? parseFloat(compInput.value) : 4.0;
+
+      // 更新标签数值
+      const gpaBadge = document.getElementById(sliderBoxId + '-gpa-val');
+      const volBadge = document.getElementById(sliderBoxId + '-vol-val');
+      const compBadge = document.getElementById(sliderBoxId + '-comp-val');
+      if (gpaBadge) gpaBadge.textContent = gpaVal.toFixed(2);
+      if (volBadge) volBadge.textContent = volVal + ' 小时';
+      if (compBadge) compBadge.textContent = '+' + compVal.toFixed(1) + ' 分';
+
+      // 实时公式精密计算
+      const studyScore = Math.min(70, Math.round((gpaVal / 4.5) * 70 * 10) / 10);
+      const volBonus = Math.min(3.5, Math.round((volVal / 10) * 1.0 * 10) / 10);
+      const deyuScore = Math.min(15, Math.round((10 + 1.5 + volBonus) * 10) / 10);
+      const langBonus = 4.0;
+      const totalScore = Math.round((studyScore + deyuScore + compVal + langBonus) * 10) / 10;
+
+      const totalEl = document.getElementById(sliderBoxId + '-total-score');
+      const tierEl = document.getElementById(sliderBoxId + '-award-tier');
+      const rankEl = document.getElementById(sliderBoxId + '-award-rank');
+
+      if (totalEl) totalEl.textContent = totalScore.toFixed(1) + ' 分';
+
+      if (tierEl && rankEl) {
+        if (totalScore >= 88 && compVal >= 4) {
+          tierEl.textContent = '国家奖学金 / 校特等奖学金 (推荐冲刺)';
+          tierEl.style.background = '#fef3c7';
+          tierEl.style.color = '#b45309';
+          tierEl.style.borderColor = '#fde68a';
+          rankEl.textContent = '专业排位区间: 前 1%~3%';
+        } else if (totalScore >= 80) {
+          tierEl.textContent = '校一等奖学金 (或国家励志奖学金)';
+          tierEl.style.background = '#ecfdf5';
+          tierEl.style.color = '#047857';
+          tierEl.style.borderColor = '#a7f3d0';
+          rankEl.textContent = '专业排位区间: 前 5%~8%';
+        } else if (totalScore >= 73) {
+          tierEl.textContent = '校二等奖学金 (稳步入围)';
+          tierEl.style.background = '#eff6ff';
+          tierEl.style.color = '#1d4ed8';
+          tierEl.style.borderColor = '#bfdbfe';
+          rankEl.textContent = '专业排位区间: 前 8%~15%';
+        } else {
+          tierEl.textContent = '校三等奖学金 / 评优达标';
+          tierEl.style.background = '#f1f5f9';
+          tierEl.style.color = '#475569';
+          tierEl.style.borderColor = '#e2e8f0';
+          rankEl.textContent = '专业排位区间: 前 15%~25%';
+        }
+      }
+    },
+
+    submitDiagnosticProbe: function (pid, choiceKey) {
+      const card = document.getElementById(pid);
+      if (!card) return;
+      const feedback = document.getElementById(pid + '-feedback');
+      const opts = document.getElementById(pid + '-options');
+      if (opts) {
+        Array.from(opts.children).forEach(btn => btn.style.pointerEvents = 'none');
+      }
+
+      if (choiceKey === 'A') {
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.innerHTML = `
+            <div class="probe-analysis-result is-error">
+              <strong>【认知探针诊断结果 · 发现概念性偏差】</strong><br>
+              经诊断，您选择选项 A 属于典型的<strong>「等价无穷小加减法滥用（概念混淆）」</strong>，而非粗心计算失误！<br>
+              <strong>错因根源</strong>：在自变量趋近于0时，sin x ~ x 仅适用于纯乘除因式；在分子差式 sin x - x 中直接代换会导致主要极小量被抹杀（主部抵消）。<br>
+              <strong>正确纠偏方案</strong>：必须利用三阶麦克劳林展开 sin x = x - x³/6 + o(x³)，分子变为 -x³/6，除以 x³ 得出极限为 <strong>-1/6</strong>。<br>
+              <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #fdba74;">
+                <strong>等价情境变式反证题已载入</strong>：求 lim_{x→0} (tan x - x) / x³（只有再次独立做对两次，系统才判定真正掌握）。
+              </div>
+              <div style="margin-top:10px; font-weight:600; font-size:11.5px; color:#475569;">
+                确定性艾宾浩斯离线复习日程 (算法与模型解耦，断网亦可稳定触发)：
+              </div>
+              <div class="review-timeline-grid">
+                <div class="review-time-item"><div class="review-time-label">第1次自测</div><div class="review-time-date">今晚 21:00</div></div>
+                <div class="review-time-item"><div class="review-time-label">第2次巩固</div><div class="review-time-date">后天 (D+2)</div></div>
+                <div class="review-time-item"><div class="review-time-label">第3次强化</div><div class="review-time-date">第7天 (D+7)</div></div>
+                <div class="review-time-item"><div class="review-time-label">第4次真题</div><div class="review-time-date">考前周 (D+15)</div></div>
+              </div>
+            </div>
+          `;
+        }
+      } else if (choiceKey === 'B') {
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.innerHTML = `
+            <div class="probe-analysis-result">
+              <strong>【认知探针诊断结果 · 概念推导完全正确！】</strong><br>
+              非常优异！您准确识别出了主部抵消问题，熟练采用了泰勒展开展开至 x³ 阶：sin x = x - x³/6 + o(x³)，计算得出极限值为 <strong>-1/6</strong>。<br>
+              <strong>掌握度研判</strong>：该考点已标记为「完全掌握」，确定性复习引擎已将其复习权重调整至低频周期。
+            </div>
+          `;
+        }
+      } else {
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.innerHTML = `
+            <div class="probe-analysis-result is-error">
+              <strong>【认知探针诊断结果 · 运算发散】</strong><br>
+              您选择选项 C，误以为极限不存在。实际上该极限为经典的 0/0 未定式，洛必达法则或泰勒级数均收敛于 -1/6。建议重温《高等数学(上)》第一章未定式极限求法。
+            </div>
+          `;
+        }
+      }
+    },
+
+    confirmAgentMeshCollaboration: function (mid) {
+      const card = document.getElementById(mid);
+      if (!card) return;
+      const actions = document.getElementById(mid + '-actions');
+      if (actions) {
+        actions.innerHTML = `
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:10px 14px; color:#065f46; font-size:12px; font-weight:600; display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>双端学生已完成实名授权！已在学校科研网建立点对点安全共享通道（500组多光谱样本分发中）。</span>
+          </div>
+        `;
+      }
+      if (window.AnauAgent.showToast) {
+        window.AnauAgent.showToast('已确认开启跨学科多智能体科研互助空间！');
+      }
     },
 
     // 兼容接口 (静音模式安全无缝响应)

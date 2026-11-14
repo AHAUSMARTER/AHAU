@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>安徽农业大学 · 数智安农综合服务大厅</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" href="anau_ai_logo.png">
+  <link rel="apple-touch-icon" href="anau_ai_logo.png">
+  <link rel="stylesheet" href="anau_agent.css?v=39.0">
+  <style>
+    :root {
+      /* Apple + AHAU 经典雅致安农绿 */
+      --ahau-green: #1f5e39;
+      --ahau-green-deep: #143e26;
+      --ahau-green-vibrant: #237346;
+      --ahau-green-tint: #f0f7f3;
+      --ahau-green-border: rgba(31, 94, 57, 0.15);
+      
+      /* Apple 精致纯净设计语言系统 */
+      --apple-canvas: #f5f5f7;
+      --apple-card: #ffffff;
+      --apple-card-subtle: #fbfbfd;
+      --text-primary: #1d1d1f;
+      --text-secondary: #515154;
+      --text-tertiary: #86868b;
+      --apple-border: rgba(0, 0, 0, 0.08);
+      --apple-border-light: rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 32px rgba(31, 94, 57, 0.08);
+      /* Apple + shadcn + unslop 极致丝滑物理动效曲线 */
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-apple-spring: cubic-bezier(0.32, 0.72, 0, 1);
+      --ease-apple-exit: cubic-bezier(0.25, 1, 0.5, 1);
+      --duration-enter: 0.36s;
+      --duration-exit: 0.28s;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden; /* 彻底去除外部滚动条，留一页！ */
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: #f4f7f5;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(35, 115, 70, 0.10) 0%, transparent 65%),
+        linear-gradient(180deg, rgba(246, 248, 246, 0.88) 0%, rgba(242, 247, 244, 0.93) 480px, rgba(245, 248, 246, 0.97) 100%),
+        url('ahau_library.jpg');
+      background-position: center top, center top, center 20%;
+      background-repeat: no-repeat;
+      background-size: 100% 700px, 100% 100%, cover;
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* 1. 顶栏：Apple 风格磨砂玻璃 + 安农缎面深绿 */
+    header {
+      background: rgba(27, 77, 46, 0.84);
+      backdrop-filter: blur(32px) saturate(190%);
+      -webkit-backdrop-filter: blur(32px) saturate(190%);
+      color: white;
+      height: 66px;
+      padding: 0 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 4px 20px rgba(15, 45, 27, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-emblem-wrap {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255,255,255,0.9);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .logo-emblem {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+      letter-spacing: -0.01em;
+      font-weight: 600;
+      margin: 0;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-text p {
+      font-size: 10.5px;
+      opacity: 0.82;
+      letter-spacing: 0.5px;
+      margin: 1px 0 0 0;
+    }
+
+    .eco-badge {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(6px);
+    }
+
+
+    /* 顶部右侧安徽农业大学校名字标 */
+    .header-school-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-school-name-white {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+      display: block;
+    }
+
+    /* 移动端或备选微胶囊展示 */
+    .header-school-name-badge {
+      display: none;
+      height: 34px;
+      width: auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 3px 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+      .header-school-name-white {
+        height: 28px;
+      }
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-tag {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      color: white;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 3. 主体工作台区域：主流 IDE / Antigravity 左右分屏架构 (中间偏右主对话) */
+    .workspace-wrapper {
+      padding: 12px 20px 18px 20px;
+      max-width: 1760px;
+      margin: 0 auto;
+      height: calc(100vh - 84px);
+      min-height: 600px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 一体化工作台无界画框：侧边栏与主对话无缝融合，消除割裂感 */
+    .workspace-container {
+      display: flex;
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(36px) saturate(190%);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(20, 50, 30, 0.07), inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+      overflow: hidden;
+    }
+
+    /* 左侧控制面板：现代生产力 IDE 分屏架构 · 290px 标准空间 · 硬件加速平滑滑动 */
+    .sidebar-panel {
+      width: 290px;
+      min-width: 290px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: rgba(247, 249, 247, 0.72);
+      border: none;
+      border-right: 1px solid rgba(0, 0, 0, 0.07);
+      border-radius: 0;
+      box-shadow: none;
+      overflow: hidden;
+      will-change: margin-left, transform, opacity;
+      transition: margin-left var(--duration-enter) var(--ease-apple),
+                  transform var(--duration-enter) var(--ease-apple),
+                  opacity 0.26s var(--ease-apple),
+                  border-color 0.26s ease !important;
+    }
+
+    /* shadcn 风格侧边栏顶部品牌标识与工作台状态 */
+    .sidebar-brand-header {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .brand-badge-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1f5e39 0%, #143d24 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(20, 61, 36, 0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-text-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ahau-green-deep);
+      line-height: 1.25;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-subtitle {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-status-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(22, 163, 74, 0.1);
+      border: 1px solid rgba(22, 163, 74, 0.2);
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-size: 10.5px;
+      color: #15803d;
+      font-weight: 600;
+    }
+
+    .brand-status-tag .online-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #16a34a;
+      box-shadow: 0 0 5px #16a34a;
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* 侧边栏主体综合滚动区域 */
+    .sidebar-scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(31, 94, 57, 0.2) transparent;
+    }
+
+    /* 侧边栏首屏极简双项可展开手风琴 (未展开前仅两项) */
+    .sidebar-accordion-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 12px;
+    }
+
+    .accordion-trigger-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      padding: 15px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.28s var(--ease-apple);
+      box-shadow: 0 4px 16px rgba(20, 50, 30, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+      user-select: none;
+    }
+
+    .accordion-trigger-card:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      border-color: rgba(31, 94, 57, 0.3);
+      box-shadow: 0 8px 24px rgba(31, 94, 57, 0.12), inset 0 1px 1px rgba(255, 255, 255, 1);
+    }
+
+    .accordion-trigger-card.active {
+      background: #ffffff;
+      border-color: var(--ahau-green);
+      box-shadow: 0 6px 20px rgba(31, 94, 57, 0.14);
+    }
+
+    .accordion-trigger-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .accordion-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(31, 94, 57, 0.12) 0%, rgba(31, 94, 57, 0.05) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .accordion-label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ahau-green-deep);
+      letter-spacing: -0.2px;
+    }
+
+    .accordion-arrow {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ahau-green);
+      background: rgba(31, 94, 57, 0.08);
+      border: 1px solid rgba(31, 94, 57, 0.15);
+      padding: 3.5px 10px;
+      border-radius: 9999px;
+      transition: all 0.22s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .accordion-trigger-card:hover .accordion-arrow,
+    .accordion-trigger-card.active .accordion-arrow {
+      background: var(--ahau-green);
+      color: #ffffff;
+    }
+
+    .accordion-collapse-panel {
+      max-height: 850px;
+      opacity: 1;
+      visibility: visible;
+      transform: translate3d(0, 0, 0);
+      will-change: max-height, opacity, transform;
+      transition: max-height 0.36s var(--ease-apple),
+                  opacity 0.28s var(--ease-apple),
+                  transform 0.28s var(--ease-apple),
+                  margin-top 0.28s ease,
+                  visibility 0s linear 0s;
+      overflow: hidden;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .accordion-collapse-panel.collapsed {
+      max-height: 0;
+      opacity: 0;
+      transform: translate3d(0, -6px, 0);
+      margin-top: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: max-height 0.28s var(--ease-apple-exit),
+                  opacity 0.2s ease,
+                  transform 0.2s ease,
+                  margin-top 0.26s ease,
+                  visibility 0s linear 0.28s;
+    }
+
+    .user-profile-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      width: 100%;
+    }
+
+    .user-avatar-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #237346 0%, #143d24 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(20, 61, 36, 0.25);
+      flex-shrink: 0;
+    }
+
+    .user-info-text {
+      flex: 1;
+      min-width: 0;
+      text-align: left;
+    }
+
+    .user-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .user-org {
+      font-size: 10px;
+      color: var(--ahau-green);
+      line-height: 1.2;
+    }
+
+    /* 搜索过滤框 */
+    .sidebar-search-box {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding-bottom: 6px;
+    }
+
+    .sidebar-search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(31, 94, 57, 0.16);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 12.5px;
+      color: var(--text-primary);
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s;
+    }
+
+    .sidebar-search-input:focus {
+      border-color: var(--ahau-green);
+      box-shadow: 0 0 0 3px rgba(31, 94, 57, 0.12);
+    }
+
+    .service-vertical-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* 竖向一条一条的业务项 (Service Row) */
+    .service-item-row {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.24s var(--ease-apple);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+      user-select: none;
+    }
+
+    .service-item-row:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px);
+      border-color: rgba(31, 94, 57, 0.3);
+      box-shadow: 0 6px 18px rgba(31, 94, 57, 0.1), inset 0 1px 1px rgba(255, 255, 255, 1);
+    }
+
+    .service-row-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    /* 具有安农绿与 Apple 现代色彩结合的精致渐变 */
+    .icon-emerald  { background: linear-gradient(135deg, #34d399, #059669); color: #fff; }
+    .icon-forest   { background: linear-gradient(135deg, #4ade80, #15803d); color: #fff; }
+    .icon-indigo   { background: linear-gradient(135deg, #818cf8, #4f46e5); color: #fff; }
+    .icon-amber    { background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; }
+    .icon-coral    { background: linear-gradient(135deg, #fb7185, #e11d48); color: #fff; }
+    .icon-cyan     { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; }
+    .icon-purple   { background: linear-gradient(135deg, #c084fc, #7c3aed); color: #fff; }
+    .icon-orange   { background: linear-gradient(135deg, #fb923c, #ea580c); color: #fff; }
+    .icon-teal     { background: linear-gradient(135deg, #2dd4bf, #0f766e); color: #fff; }
+    .icon-blue     { background: linear-gradient(135deg, #60a5fa, #2563eb); color: #fff; }
+
+    .service-row-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .service-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+
+    .service-row-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .service-dept-badge {
+      font-size: 10.5px;
+      color: var(--ahau-green);
+      background: var(--ahau-green-tint);
+      border: 1px solid var(--ahau-green-border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .service-row-desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    .service-action-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ahau-green);
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      cursor: pointer;
+    }
+
+    .service-item-row:hover .service-action-pill {
+      background: var(--ahau-green);
+      color: #ffffff;
+    }
+
+    /* 历史会话项 (History Session Row - Like Antigravity) */
+    .btn-new-chat-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #237346 0%, #1f5e39 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(31, 94, 57, 0.2);
+    }
+
+    .btn-new-chat-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(31, 94, 57, 0.3);
+    }
+
+    .history-vertical-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-session-item {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 14px;
+      padding: 11px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.22s var(--ease-apple);
+      user-select: none;
+      position: relative;
+    }
+
+    .history-session-item:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateX(2px);
+      border-color: rgba(31, 94, 57, 0.25);
+    }
+
+    .history-session-item.active {
+      background: rgba(240, 247, 242, 0.95);
+      border: 1.5px solid var(--ahau-green);
+      box-shadow: 0 4px 14px rgba(31, 94, 57, 0.12);
+    }
+
+    .history-session-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 3.5px;
+      border-radius: 0 4px 4px 0;
+      background: var(--ahau-green);
+    }
+
+    .history-session-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .history-session-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-session-time {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    .history-session-badge {
+      font-size: 11px;
+      color: var(--ahau-green-deep);
+      background: rgba(31, 94, 57, 0.08);
+      padding: 2px 7px;
+      border-radius: 6px;
+      display: inline-block;
+      align-self: flex-start;
+      font-weight: 500;
+    }
+
+    /* 中间偏右主舞台：自适应撑满剩余宽度的 AI 对话画框 */
+    .chat-main-stage {
+      flex: 1 !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+
+    .chat-mount-container {
+      width: 100% !important;
+      height: 100% !important;
+      flex: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+    /* 6. 模态弹窗：Apple 质感毛玻璃 */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 9999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      opacity: 0;
+      transition: opacity 0.24s ease;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(36px) saturate(200%);
+      -webkit-backdrop-filter: blur(36px) saturate(200%);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 490px;
+      padding: 28px 30px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      animation: modalPop 0.28s var(--ease-apple);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.94); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding-bottom: 14px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 17px;
+      color: var(--ahau-green-deep);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .modal-close-btn {
+      background: #f5f5f7;
+      border: none;
+      font-size: 16px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .modal-close-btn:hover {
+      background: #e5e5ea;
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .modal-url-card {
+      background: #fbfbfd;
+      border: 1px solid var(--apple-border);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-url-text {
+      color: #1d4ed8;
+      font-family: ui-monospace, Menlo, Monaco, monospace;
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+
+    .modal-url-tag {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-modal-ai {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      border: 1px solid var(--ahau-green-border);
+      padding: 9px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-ai:hover {
+      background: #dceee2;
+    }
+
+    .btn-modal-direct {
+      background: var(--ahau-green);
+      color: #ffffff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(31, 94, 57, 0.25);
+      transition: all 0.2s;
+    }
+
+    .btn-modal-direct:hover {
+      background: var(--ahau-green-deep);
+      transform: translateY(-1px);
+    }
+
+    /* 7. 右下角 AI 智能体专属呼唤卡 - Apple 毛玻璃浮窗 */
+    .ai-callout-bubble {
+      position: fixed;
+      bottom: 96px;
+      right: 28px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 28px rgba(31, 94, 57, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+      z-index: 9999;
+      cursor: pointer;
+      user-select: none;
+      animation: aiFloatBounce 3s ease-in-out infinite;
+      transition: all 0.25s var(--ease-apple);
+    }
+
+    .ai-callout-bubble:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(31, 94, 57, 0.25);
+    }
+
+    @keyframes aiFloatBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .ai-callout-avatar {
+      width: 38px;
+      height: 38px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      border: 1.5px solid var(--ahau-green);
+      overflow: hidden;
+    }
+
+    .ai-callout-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ai-callout-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-callout-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ahau-green-deep);
+    }
+
+    .ai-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      color: #15803d;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #16a34a;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 6px #16a34a;
+      animation: dotBlink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes dotBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .ai-callout-desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .ai-callout-arrow {
+      position: absolute;
+      bottom: -8px;
+      right: 26px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid rgba(31, 94, 57, 0.4);
+    }
+
+    .ai-callout-arrow::after {
+      content: "";
+      position: absolute;
+      bottom: 1.5px;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #ffffff;
+    }
+
+    /* 8. 底部版权：Apple 极简浅灰毛玻璃 */
+    
+
+    @media (max-width: 960px) {
+      .ticker-more {
+        display: none;
+      }
+    }
+  
+    /* 视觉对齐强化与图标通用样式 */
+    .session-type-icon {
+      color: var(--ahau-green);
+      flex-shrink: 0;
+      vertical-align: -2px;
+      margin-right: 6px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .search-input-icon {
+      position: absolute;
+      left: 12px;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .sidebar-search-input {
+      width: 100%;
+      height: 36px;
+      padding: 0 12px 0 34px !important;
+      border-radius: 10px;
+      border: 1px solid rgba(31, 94, 57, 0.16);
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 12.5px;
+      color: var(--text-primary);
+      outline: none;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-search-input:focus {
+      border-color: var(--ahau-green);
+      box-shadow: 0 0 0 3px rgba(31, 94, 57, 0.12);
+    }
+
+    .accordion-trigger-card {
+      height: 52px;
+      box-sizing: border-box;
+      padding: 0 16px;
+    }
+
+    .accordion-trigger-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .history-session-title {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12.5px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .service-row-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .service-item-row {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .service-action-pill {
+      height: 24px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+
+    /* ==========================================================================
+       Antigravity Unified Workspace Shell Styles
+       ========================================================================== */
+    .sidebar-new-chat-wrap {
+      padding: 8px 10px 4px 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-antigravity-new {
+      width: 100%;
+      height: 32px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ahau-green-deep);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 10px;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      font-family: inherit;
+    }
+
+    .btn-antigravity-new:hover {
+      background: #ffffff;
+      border-color: rgba(31, 94, 57, 0.3);
+      box-shadow: 0 2px 6px rgba(31, 94, 57, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-scroll-container {
+      padding: 6px 10px 10px 10px !important;
+      gap: 8px !important;
+    }
+
+    .accordion-trigger-card {
+      height: 42px !important;
+      padding: 0 10px !important;
+      border-radius: 9px !important;
+      background: rgba(255, 255, 255, 0.7) !important;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      box-shadow: none !important;
+    }
+
+    .accordion-trigger-card:hover {
+      background: #ffffff !important;
+      border-color: rgba(31, 94, 57, 0.2) !important;
+    }
+
+    .accordion-icon-wrap {
+      width: 26px !important;
+      height: 26px !important;
+      border-radius: 6px !important;
+    }
+
+    .accordion-label {
+      font-size: 12.5px !important;
+    }
+
+    .accordion-arrow {
+      font-size: 10.5px !important;
+      padding: 2px 7px !important;
+    }
+
+    .history-session-item {
+      padding: 7px 10px !important;
+      border-radius: 8px !important;
+      background: rgba(255, 255, 255, 0.5) !important;
+      border: 1px solid transparent !important;
+      box-shadow: none !important;
+      gap: 3px !important;
+    }
+
+    .history-session-item:hover {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border-color: rgba(31, 94, 57, 0.15) !important;
+      transform: none !important;
+    }
+
+    .history-session-item.active {
+      background: rgba(31, 94, 57, 0.09) !important;
+      border: 1px solid rgba(31, 94, 57, 0.22) !important;
+      box-shadow: none !important;
+    }
+
+    .history-session-item.active::before {
+      display: none !important;
+    }
+
+    .history-session-title {
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      color: var(--text-primary) !important;
+    }
+
+    .history-session-item.active .history-session-title {
+      font-weight: 700 !important;
+      color: var(--ahau-green-deep) !important;
+    }
+
+    .history-session-time {
+      font-size: 10.5px !important;
+    }
+
+    .history-session-badge {
+      font-size: 10px !important;
+      padding: 1px 5px !important;
+      border-radius: 4px !important;
+    }
+
+    .sidebar-antigravity-bottom {
+      height: 48px;
+      padding: 0 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
+
+    .profile-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .profile-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1f5e39 0%, #143d24 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .profile-meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .profile-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .profile-role {
+      font-size: 9.5px;
+      color: var(--ahau-green);
+      line-height: 1.2;
+    }
+
+    .profile-gear-icon {
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .profile-gear-icon:hover {
+      color: var(--ahau-green-deep);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .service-row-icon {
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 8px !important;
+    }
+
+    .service-row-icon svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    .service-row-title {
+      font-size: 12px !important;
+    }
+
+    .service-dept-badge {
+      font-size: 9.5px !important;
+      padding: 0 4px !important;
+    }
+
+    .service-item-row {
+      padding: 8px 10px !important;
+      gap: 9px !important;
+      border-radius: 9px !important;
+    }
+
+    .service-action-pill {
+      font-size: 10px !important;
+      padding: 0 7px !important;
+      height: 22px !important;
+    }
+
+
+    /* 侧边栏折叠/展开专用切换按钮 (触感级微交互与流畅状态回馈) */
+    .sidebar-toggle-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      will-change: transform, background, border-color, box-shadow;
+      transition: background 0.2s var(--ease-apple),
+                  border-color 0.2s var(--ease-apple),
+                  transform 0.16s var(--ease-apple),
+                  box-shadow 0.2s ease;
+    }
+
+    .sidebar-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.45);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .sidebar-toggle-btn:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .toggle-icon-img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+      will-change: transform, opacity;
+      transition: transform 0.32s var(--ease-apple), opacity 0.2s ease;
+    }
+
+    .sidebar-toggle-btn.is-collapsed .toggle-icon-img {
+      transform: scale(0.92) rotate(180deg);
+      opacity: 0.85;
+    }
+
+    /* 侧边栏移动端抽屉遮罩：Apple Liquid Frosted Glass 渐隐渐现，消灭 display:none 闪烁 */
+    .sidebar-mobile-backdrop {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(15, 23, 42, 0.45) !important;
+      backdrop-filter: blur(12px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+      z-index: 999998 !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      will-change: opacity, backdrop-filter, visibility;
+      transition: opacity var(--duration-enter) var(--ease-apple),
+                  backdrop-filter var(--duration-enter) var(--ease-apple),
+                  visibility var(--duration-enter) var(--ease-apple) !important;
+    }
+
+    .sidebar-mobile-backdrop.show {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    /* 桌面端极度丝滑收起：基于硬件加速位移与负边距滑出，内容内部完全不折行、无任何布局抖动 */
+    .sidebar-panel.desktop-collapsed {
+      margin-left: -290px !important;
+      transform: translate3d(-8px, 0, 0) !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      border-color: transparent !important;
+      visibility: hidden !important;
+      transition: margin-left var(--duration-exit) var(--ease-apple),
+                  transform var(--duration-exit) var(--ease-apple),
+                  opacity 0.2s ease,
+                  border-color 0.2s ease,
+                  visibility 0s linear var(--duration-exit) !important;
+    }
+
+    /* 移动端专属媒体查询：顶栏置顶防挡，字体等比微缩，侧边栏专属顶层抽屉 */
+    @media (max-width: 768px) {
+      /* 手机端禁用弹性下拉晃动与视口漂移 */
+      html, body {
+        overscroll-behavior: none !important;
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* 1. 顶栏：绝对固定置顶，点击打字框弹出键盘时绝不被遮挡或滚出视口 */
+      header {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999 !important;
+        height: 52px !important;
+        padding: 0 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
+        box-sizing: border-box !important;
+      }
+
+      .logo-area {
+        display: flex !important;
+        align-items: center !important;
+        gap: 7px !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+      }
+
+      /* 侧边栏专属切换按钮移动端尺寸 */
+      .sidebar-toggle-btn {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .toggle-icon-img {
+        width: 17px !important;
+        height: 17px !important;
+      }
+
+      /* 校徽小尺寸 */
+      .logo-emblem-wrap {
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 8px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .logo-emblem {
+        width: 28px !important;
+        height: 28px !important;
+      }
+
+      /* 手机端顶部字体等比缩小，消除臃肿堆叠，单行整洁 */
+      .logo-text {
+        flex: 1 !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+      }
+
+      .logo-text h1 {
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        letter-spacing: -0.2px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      .eco-badge {
+        font-size: 8.5px !important;
+        font-weight: 600 !important;
+        padding: 1px 5px !important;
+        border-radius: 4px !important;
+        line-height: 1.2 !important;
+        flex-shrink: 0 !important;
+        vertical-align: middle !important;
+      }
+
+      .logo-text p {
+        font-size: 7.5px !important;
+        letter-spacing: 0.3px !important;
+        margin-top: 1px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        opacity: 0.82 !important;
+      }
+
+      /* 顶栏右侧毛笔书法校名字标等比缩小 */
+      .header-school-name-wrap {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+      }
+
+      .header-school-name-white {
+        height: 22px !important;
+        width: auto !important;
+        object-fit: contain !important;
+        display: block !important;
+      }
+
+      .header-school-name-badge {
+        display: none !important;
+      }
+
+      /* 2. 主工作台画框移动端居中对齐与四周边距对称，紧贴置顶顶栏下方 */
+      .workspace-wrapper {
+        margin-top: 52px !important;
+        padding: 8px 10px 10px 10px !important;
+        height: calc(100vh - 52px) !important;
+        height: calc(100dvh - 52px) !important;
+        min-height: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+      }
+
+      .workspace-container {
+        border-radius: 14px !important;
+        height: 100% !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+      }
+
+      .chat-main-stage {
+        width: 100% !important;
+        height: 100% !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+      }
+
+      /* 4. 手机端侧边栏：脱离容器文档流，独立全屏高质感抽屉，物理加速滑入 */
+      .sidebar-panel {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 82vw !important;
+        max-width: 310px !important;
+        height: 100% !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        z-index: 999999 !important;
+        background: rgba(255, 255, 255, 0.96) !important;
+        backdrop-filter: blur(48px) saturate(190%) !important;
+        -webkit-backdrop-filter: blur(48px) saturate(190%) !important;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
+        margin-left: 0 !important;
+        transform: translate3d(-102%, 0, 0) !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border-radius: 0 20px 20px 0 !important;
+        visibility: hidden !important;
+        will-change: transform, box-shadow, visibility;
+        transition: transform var(--duration-exit) var(--ease-apple-exit),
+                    box-shadow var(--duration-exit) ease,
+                    visibility 0s linear var(--duration-exit) !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      .sidebar-panel.mobile-open {
+        transform: translate3d(0, 0, 0) !important;
+        visibility: visible !important;
+        box-shadow: 12px 0 42px -6px rgba(10, 35, 20, 0.24), 4px 0 16px rgba(0, 0, 0, 0.06) !important;
+        transition: transform var(--duration-enter) var(--ease-apple),
+                    box-shadow var(--duration-enter) var(--ease-apple),
+                    visibility 0s linear 0s !important;
+      }
+    }
+
+  
+    .sidebar-inner-close-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.85);
+      color: #64748b;
+      cursor: pointer;
+      margin-left: 6px;
+      padding: 0;
+      will-change: transform, background, color;
+      transition: background 0.18s ease,
+                  color 0.18s ease,
+                  border-color 0.18s ease,
+                  transform 0.18s var(--ease-apple);
+    }
+    .sidebar-inner-close-btn:hover {
+      background: #ffffff;
+      color: #1e293b;
+      border-color: rgba(0, 0, 0, 0.16);
+      transform: rotate(90deg);
+    }
+    .sidebar-inner-close-btn:active {
+      transform: scale(0.9) rotate(90deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sidebar-panel,
+      .sidebar-mobile-backdrop,
+      .accordion-collapse-panel,
+      .sidebar-toggle-btn,
+      .toggle-icon-img,
+      .sidebar-inner-close-btn {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+  
+    /* 侧边栏底部版权与大赛署名 (小字规范) */
+    .sidebar-copyright-note {
+      padding: 7px 10px 9px 10px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.5);
+      font-size: 9.5px;
+      line-height: 1.45;
+      color: var(--text-tertiary);
+      text-align: center;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .sidebar-copyright-note p {
+      margin: 0;
+      padding: 0;
+    }
+    .sidebar-copyright-note p + p {
+      margin-top: 3px;
+      color: #94a3b8;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- 手机端侧边栏抽屉遮罩层 -->
+  <div class="sidebar-mobile-backdrop" id="sidebarBackdrop" onclick="toggleSidebarView()"></div>
+
+
+  <!-- 顶部导航：Apple 风格磨砂玻璃 + 安农大缎面深绿 -->
+  <header>
+    <div class="logo-area">
+      <!-- 侧边栏折叠/展开主切换按钮 (用户指定专属图标) -->
+      <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarView()" title="展开/收起侧边栏" aria-label="切换侧边栏">
+        <img src="sidebar_toggle_icon.png" alt="Toggle Sidebar" class="toggle-icon-img">
+      </button>
+      <div class="logo-emblem-wrap" title="安徽农业大学校徽">
+        <img class="logo-emblem" 
+             src="https://upload.wikimedia.org/wikipedia/en/e/ed/Anhui_Agricultural_University_seal.svg" 
+             alt="安徽农业大学校徽"
+             onerror="this.style.display='none'; document.getElementById('ahau-svg-fallback').style.display='block';">
+        <svg id="ahau-svg-fallback" class="logo-emblem" style="display:none;" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="48" fill="#1f5e39" stroke="#ffffff" stroke-width="2"/>
+          <text x="50" y="55" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">AHAU</text>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>数智安农 · 综合服务大厅 <span class="eco-badge">徽农智生态</span></h1>
+        <p>ANHUI AGRICULTURAL UNIVERSITY DIGITAL PORTAL</p>
+      </div>
+    </div>
+    <!-- 顶部右侧：安徽农业大学校名 (书法标识) -->
+    <div class="header-school-name-wrap" title="安徽农业大学 Anhui Agricultural University">
+      <img class="header-school-name-white" src="ahau_name_white.png" alt="安徽农业大学校名">
+      <img class="header-school-name-badge" src="ahau_name_green.png" alt="安徽农业大学校名">
+    </div>
+  </header>
+
+  <!-- 主体工作台：左右分屏现代 IDE 布局架构 (中间偏右主对话) -->
+  <div class="workspace-wrapper">
+    <div class="workspace-container">
+      
+      <!-- 左半边: 390px 宽度，数智应用与历史对话面板 -->
+      <aside class="sidebar-panel">
+        
+        <!-- 侧边栏顶部品牌信息区 (Antigravity 风格) -->
+        <div class="sidebar-brand-header">
+          <div class="brand-badge-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#ffffff;"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+          </div>
+          <div class="brand-text-col">
+            <div class="brand-title">安农智办 · 工作台</div>
+            <div class="brand-subtitle">AHAU Intelligent Agent</div>
+          </div>
+          <div class="brand-status-tag">
+            <span class="online-dot"></span>
+            <span>在线</span>
+          </div>
+          <button class="sidebar-inner-close-btn" onclick="toggleSidebarView()" title="收起侧边栏">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- 顶部主动作按钮：开启新办事任务 (+ New Conversation 规范) -->
+        <div class="sidebar-new-chat-wrap">
+          <button class="btn-antigravity-new" onclick="window.AnauAgent.createNewSession()" title="开启新的办事任务对话">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span>新办事任务</span>
+          </button>
+        </div>
+
+        <!-- 侧边栏主体区域：未展开前仅呈现两个模块入口 (任务 / 常见应用) -->
+        <div class="sidebar-scroll-container">
+
+          <!-- 模块 1: 任务 (办事对话记录) - 未展开前仅一行卡片 -->
+          <div class="sidebar-accordion-group" id="groupTasks">
+            <div class="accordion-trigger-card" id="triggerTasks" onclick="toggleSidebarAccordion('tasks')">
+              <div class="accordion-trigger-left">
+                <div class="accordion-icon-wrap">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                </div>
+                <span class="accordion-label">任务 (对话记录)</span>
+                <span class="group-count-badge">6</span>
+              </div>
+              <span class="accordion-arrow" id="arrowTasks">▸ 展开</span>
+            </div>
+
+            <!-- 展开后展示：6 项对话记录 (Antigravity 会话列表行风格) -->
+            <div class="accordion-collapse-panel collapsed" id="panelTasks">
+              <div class="history-vertical-list">
+                <!-- Session 1: 当前会话 -->
+                <div class="history-session-item active" data-session="session-live" onclick="window.AnauAgent.loadSession('session-live')">
+                  <div class="history-session-top">
+                    <span class="history-session-title">
+                      <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                      当前会话 · 实时帮办
+                    </span>
+                    <span class="history-session-time">now</span>
+                  </div>
+                  <div class="history-session-badge">在线交互中</div>
+                </div>
+
+                <!-- Session 2: 勤学楼借教室 -->
+                <div class="history-session-item" data-session="session-classroom" onclick="window.AnauAgent.loadSession('session-classroom')">
+                  <div class="history-session-top">
+                    <span class="history-session-title">
+                      <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+                      勤学楼阶梯教室借用
+                    </span>
+                    <span class="history-session-time">15:42</span>
+                  </div>
+                  <div class="history-session-badge">已获审批单</div>
+                </div>
+
+                <!-- Session 3: 综测测算 -->
+                <div class="history-session-item" data-session="session-zongce" onclick="window.AnauAgent.loadSession('session-zongce')">
+                  <div class="history-session-top">
+                    <span class="history-session-title">
+                      <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                      2026综测奖学金精算
+                    </span>
+                    <span class="history-session-time">11:20</span>
+                  </div>
+                  <div class="history-session-badge">得分 90.56</div>
+                </div>
+
+                <!-- Session 4: 茶学国家重点实验室 -->
+                <div class="history-session-item" data-session="session-kaoyan" onclick="window.AnauAgent.loadSession('session-kaoyan')">
+                  <div class="history-session-top">
+                    <span class="history-session-title">
+                      <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                      茶学重点实验室导学
+                    </span>
+                    <span class="history-session-time">昨天</span>
+                  </div>
+                  <div class="history-session-badge">导师库匹配</div>
+                </div>
+
+                <!-- Session 5: 校园网故障自愈 -->
+                <div class="history-session-item" data-session="session-network" onclick="window.AnauAgent.loadSession('session-network')">
+                  <div class="history-session-top">
+                    <span class="history-session-title">
+                      <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+                      北区宿舍网络自愈
+                    </span>
+                    <span class="history-session-time">11/10</span>
+                  </div>
+                  <div class="history-session-badge">自愈已完成</div>
+                </div>
+
+                <!-- Session 6: 成绩单打印与授权 -->
+                <div class="history-session-item" data-session="session-archives" onclick="window.AnauAgent.loadSession('session-archives')">
+                  <div class="history-session-top">
+                    <span class="history-session-title">
+                      <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                      成绩单在读证明打印
+                    </span>
+                    <span class="history-session-time">11/08</span>
+                  </div>
+                  <div class="history-session-badge">防伪存根已立</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 模块 2: 常见应用 (校园综合服务) - 未展开前仅一行卡片 -->
+          <div class="sidebar-accordion-group" id="groupCommonApps">
+            <div class="accordion-trigger-card" id="triggerApps" onclick="toggleSidebarAccordion('apps')">
+              <div class="accordion-trigger-left">
+                <div class="accordion-icon-wrap">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
+                </div>
+                <span class="accordion-label">常见应用 (直达)</span>
+                <span class="group-count-badge">13</span>
+              </div>
+              <span class="accordion-arrow" id="arrowApps">▸ 展开</span>
+            </div>
+
+            <!-- 展开后展示：搜索框 ＋ 13 项高频校园应用 -->
+            <div class="accordion-collapse-panel collapsed" id="panelApps">
+              <div class="sidebar-search-box">
+                <div class="search-input-wrapper">
+                  <svg class="search-input-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" class="sidebar-search-input" id="serviceSearchInput" placeholder="检索校园业务服务..." oninput="filterServices(this.value)">
+                </div>
+              </div>
+
+              <div class="service-vertical-list" id="serviceVerticalList">
+            <!-- 1. 学生离校请假审批 -->
+            <div class="service-item-row" data-keyword="请假 离校 假条 审批 学工" onclick="handleCardClick('学生离校请假', '老师你好，我想申请学生离校请假，请帮我生成正规的审批单')">
+              <div class="service-row-icon icon-coral"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">学生离校请假正规审批</h4>
+                  <span class="service-dept-badge">学工部</span>
+                </div>
+                <p class="service-row-desc">规范请假单自动生成，支持系统在线打印与导出 PDF 归档</p>
+              </div>
+              <button class="service-action-pill">办理 ›</button>
+            </div>
+
+            <!-- 2. 多媒体/阶梯教室借用 -->
+            <div class="service-item-row" data-keyword="教室 借用 班会 勤学楼 博学楼 多媒体 场地" onclick="handleCardClick('教室场地借用', '我们班想借用多媒体/阶梯教室开班会，请启动借用审批工作流')">
+              <div class="service-row-icon icon-teal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">多媒体/阶梯教室借用</h4>
+                  <span class="service-dept-badge">教务处</span>
+                </div>
+                <p class="service-row-desc">自研多轮状态机，智能核配勤学楼与博学楼场地并生成审批单</p>
+              </div>
+              <button class="service-action-pill">申请 ›</button>
+            </div>
+
+            <!-- 3. 安农大综测与奖学金测算 -->
+            <div class="service-item-row" data-keyword="综测 测算 奖学金 绩点 测评 德育 六级" onclick="handleCardClick('安农大综测测算', '老师你好，请帮我根据安徽农业大学综合素质测评实施办法，测算我的德育、学业、竞赛与外语综测加分')">
+              <div class="service-row-icon icon-amber"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">安农大综测与奖学金测算</h4>
+                  <span class="service-dept-badge">资助中心</span>
+                </div>
+                <p class="service-row-desc">严格遵循安农综测实施办法：70%学业+15%德育+10%竞赛+5%外语</p>
+              </div>
+              <button class="service-action-pill">测算 ›</button>
+            </div>
+
+            <!-- 4. 考研全周期规划与择校 -->
+            <div class="service-item-row" data-keyword="考研 择校 专硕 学硕 读博 408 314 315" onclick="handleCardClick('考研择校规划', '老师你好，我想咨询考研全周期规划与择校方案')">
+              <div class="service-row-icon icon-indigo"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">考研全周期规划与择校</h4>
+                  <span class="service-dept-badge">学业发展</span>
+                </div>
+                <p class="service-row-desc">专业科目时间线、四六级基础与学硕读博/专硕就业双轨方案</p>
+              </div>
+              <button class="service-action-pill">规划 ›</button>
+            </div>
+
+            <!-- 5. 官网真实师资与课题方向 -->
+            <div class="service-item-row" data-keyword="师资 导师 教授 课题 团队 宛晓春 茶学 农学" onclick="handleCardClick('师资队伍与课题', '请帮我查询安徽农业大学各学院骨干导师师资队伍、研究课题方向与联系方式')">
+              <div class="service-row-icon icon-cyan"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">官网真实师资与课题方向</h4>
+                  <span class="service-dept-badge">研究生院</span>
+                </div>
+                <p class="service-row-desc">100% 官网核验，茶与食品/农学/信息等7大王牌学院骨干导师直链</p>
+              </div>
+              <button class="service-action-pill">查阅 ›</button>
+            </div>
+
+            <!-- 6. 茶树国重室与名木导览 -->
+            <div class="service-item-row" data-keyword="茶国重 重点实验室 银杏路 名木 古树 路线" onclick="handleCardClick('茶国重与名木导览', '请问安农大茶树生物学国家重点实验室在哪里？校园银杏路、香樟路名木科普路线怎么走？')">
+              <div class="service-row-icon icon-forest"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">茶树国重室与名木导览</h4>
+                  <span class="service-dept-badge">重点实验室</span>
+                </div>
+                <p class="service-row-desc">茶树生物学国家重点实验室图谱，银杏路金秋打卡与古树名木快识</p>
+              </div>
+              <button class="service-action-pill">导览 ›</button>
+            </div>
+
+            <!-- 7. 校园建筑导览 · 防跑空 -->
+            <div class="service-item-row" data-keyword="建筑 勤政楼 勤学楼 博学楼 图书馆 食堂 报告厅" onclick="handleCardClick('校园建筑导览', '请问勤政楼是学生上课的教学楼吗？大一新生去哪里上公共课和实验课？')">
+              <div class="service-row-icon icon-purple"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">校园建筑导览 · 防跑空</h4>
+                  <span class="service-dept-badge">后勤资产</span>
+                </div>
+                <p class="service-row-desc">严厉提示勤政楼为党政大楼严禁上课，勤学楼/博学楼上课防走错</p>
+              </div>
+              <button class="service-action-pill">查看 ›</button>
+            </div>
+
+            <!-- 8. 校宠在册档案 (63+只) -->
+            <div class="service-item-row" data-keyword="猫 校宠 来福 花姐 拍照识猫 动物 档案" onclick="handleCardClick('校宠档案识猫', '我想了解安农大校园在册校猫档案（东门来福、勤学楼花姐等），以及如何通过拍照识别校猫？')">
+              <div class="service-row-icon icon-orange"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">校宠在册档案 (63+只)</h4>
+                  <span class="service-dept-badge">校园生态</span>
+                </div>
+                <p class="service-row-desc">东门来福、勤学楼花姐出没地，绝育安心撸指数与拍照识猫</p>
+              </div>
+              <button class="service-action-pill">图鉴 ›</button>
+            </div>
+
+            <!-- 9. 新本科教务系统直通 -->
+            <div class="service-item-row" data-keyword="教务 选课 成绩 课表 缓考 bkjw" onclick="openJwxtModal()">
+              <div class="service-row-icon icon-blue"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">新本科教务系统直通</h4>
+                  <span class="service-dept-badge">教务处</span>
+                </div>
+                <p class="service-row-desc">课表查询、选课成绩与缓考申诉，校园网与 WebVPN 双通道直达</p>
+              </div>
+              <button class="service-action-pill">直达 ›</button>
+            </div>
+
+            <!-- 10. 校园一卡通与网络报修 -->
+            <div class="service-item-row" data-keyword="一卡通 饭卡 水电 空调 报修 校园网 宽带" onclick="handleCardClick('一卡通与后勤报修', '我的校园一卡通丢了，宿舍空调也需要报修，请告诉我办理地点和报修电话')">
+              <div class="service-row-icon icon-emerald"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">校园一卡通与网络报修</h4>
+                  <span class="service-dept-badge">信息中心</span>
+                </div>
+                <p class="service-row-desc">一卡通补办充值、宿舍水电报修、校园网故障与报障服务</p>
+              </div>
+              <button class="service-action-pill">办理 ›</button>
+            </div>
+
+            <!-- 11. 期末真题与课程资料共享 (Leaning in AAU) -->
+            <div class="service-item-row" data-keyword="期末 试卷 真题 往年卷 题库 复习 高数 线代 普化 生化 工图 微观经济 资料 共享 leaning" onclick="handleCardClick('期末真题库', '请帮我检索安徽农业大学历年期末考试真题与课程资料共享库（包含高数、线代、普化、工图、微观经济等）')">
+              <div class="service-row-icon icon-amber"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">期末真题与课程资料共享</h4>
+                  <span class="service-dept-badge">学业共享</span>
+                </div>
+                <p class="service-row-desc">收录278+份历年原卷与详解，涵盖高数/线代/普化/微观经济等</p>
+              </div>
+              <button class="service-action-pill">查卷 ›</button>
+            </div>
+
+            <!-- 12. ANAU-AgentMesh 跨学科多智能体科研撮合 (吸收 Nexus) -->
+            <div class="service-item-row" data-keyword="agentmesh 跨学科 找人 组队 重点实验室 多光谱 传感器 协同 撮合 互助" onclick="handleCardClick('多智能体科研撮合', '我想在全校跨学科智能体广场寻找合作：需要50组安农大茶园龙井43号多光谱病斑图像做轻量化算法验证')">
+              <div class="service-row-icon icon-blue"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">ANAU-AgentMesh 跨学科撮合</h4>
+                  <span class="service-dept-badge" style="background:#eff6ff; color:#1d4ed8;">分布式智能体</span>
+                </div>
+                <p class="service-row-desc">农科与工科实验室数据/算法/仪器智能握手，AI跑腿双端本人拍板</p>
+              </div>
+              <button class="service-action-pill">撮合 ›</button>
+            </div>
+
+            <!-- 13. 期末真题认知错因诊断靶场 (吸收 BookMind & Manim Agent) -->
+            <div class="service-item-row" data-keyword="错因 诊断 探针 靶场 考点 知识依赖 拓扑 高数 离线复习" onclick="handleCardClick('错因诊断靶场', '请开启安徽农业大学期末统考真题智能认知诊断靶场与课程先后依赖拓扑图')">
+              <div class="service-row-icon icon-emerald"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="service-row-info">
+                <div class="service-row-header">
+                  <h4 class="service-row-title">真题认知诊断与知识拓扑</h4>
+                  <span class="service-dept-badge" style="background:#ecfdf5; color:#047857;">教学心理</span>
+                </div>
+                <p class="service-row-desc">错因双轨剖析（概念偏差vs粗心），课程拓扑DAG与确定性离线复习</p>
+              </div>
+              <button class="service-action-pill">靶场 ›</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 侧边栏底部版权与参赛说明 (小字) -->
+        <div class="sidebar-copyright-note">
+          <p>版权所有 © 2026 安徽农业大学 · 现代教育技术中心 / 网络信息中心 运维保障</p>
+          <p>2026“农芯智”AI智能体大赛参赛成果 · 徽农智生态「安农智办」团队 (原创代码类作品)</p>
+        </div>
+
+      </aside>
+
+      <!-- 中间偏右主舞台: 占据屏幕绝大部分宽度的 AI 对话框 -->
+      <main class="chat-main-stage">
+        <div id="chatMountPoint" class="chat-mount-container"></div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Apple 风格模态弹窗：新本科教务系统直达 -->
+  <div class="modal-backdrop" id="jwxtModal" onclick="if(event.target===this) closeJwxtModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>安徽农业大学 · 新本科教务系统</h3>
+        <button class="modal-close-btn" onclick="closeJwxtModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin: 0 0 10px 0; color: var(--text-primary); font-weight: 500;">您正在通过「数智安农 · 综合服务大厅」访问学校核心教务系统：</p>
+        
+        <div class="modal-url-card">
+          <div>
+            <div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">校园网官方直通 (校内 WiFi / 有线网直达)</div>
+            <span class="modal-url-text">https://bkjw.ahau.edu.cn/home/#/home</span>
+          </div>
+          <span class="modal-url-tag">校园网</span>
+        </div>
+
+        <div class="modal-url-card">
+          <div>
+            <div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px;">WebVPN 官方通道 (校外/流量免客户端直达)</div>
+            <span class="modal-url-text">https://bkjw-ahau-edu-cn.myvpn.ahau.edu.cn/home/#/home</span>
+          </div>
+          <span class="modal-url-tag" style="background:#fef3c7; color:#b45309;">WebVPN</span>
+        </div>
+
+        <p style="margin: 12px 0 0 0; font-size: 12.5px; color: var(--text-tertiary); line-height: 1.6;">
+          <strong>智能帮办：</strong>如需查询<strong>本学期课表、考试成绩、缓考申请或选课退课</strong>，您可直接选择对应通道进入，或向「安农智办」AI 助手咨询操作指引。
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-ai" onclick="closeJwxtModal(); sendQuickPrompt('请告诉我新本科教务系统的登录入口，以及如何查看本学期课表和考试成绩？')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>咨询 AI 指引
+        </button>
+        <button class="btn-modal-direct" style="background: #1d4ed8;" onclick="closeJwxtModal(); window.open('https://bkjw-ahau-edu-cn.myvpn.ahau.edu.cn/home/#/home', '_blank');">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>WebVPN 通道
+        </button>
+        <button class="btn-modal-direct" onclick="closeJwxtModal(); window.open('https://bkjw.ahau.edu.cn/home/#/home', '_blank');">
+          校园网直达
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 浮动智能提示胶囊 -->
+  <div class="portal-toast" id="portalToast" style="display:none;"></div>
+
+  <!-- 右下角 AI 智能体专属呼唤卡 -->
+  <div class="ai-callout-bubble" id="aiCalloutBubble" onclick="triggerCozeOpen()" title="点击即可快速打开 AI 办事助理">
+    <div class="ai-callout-avatar">
+      <img src="anau_ai_logo.png" alt="徽农智Logo" style="width: 100%; height: 100%; object-fit: contain;">
+    </div>
+    <div class="ai-callout-text">
+      <div class="ai-callout-header">
+        <span class="ai-callout-title">徽农智 · 安农智办</span>
+        <span class="ai-live-badge"><span class="live-dot"></span>在线</span>
+      </div>
+      <div class="ai-callout-desc">快速请假 · 借教室 · 考研规划 · 查师资</div>
+    </div>
+    <div class="ai-callout-arrow"></div>
+  </div>
+
+
+
+  <!-- 离线 Markdown 渲染器 -->
+  <script src="lib/marked.min.js"></script>
+  <!-- 徽农智 · 安农智办 原创全栈智能体引擎 -->
+  <script src="anau_agent.js?v=39.0"></script>
+
+  <script>
+    function switchSidebarTab(tabName) {
+      const btnServices = document.getElementById('tabBtnServices');
+      const btnHistory = document.getElementById('tabBtnHistory');
+      const contentServices = document.getElementById('tabServicesContent');
+      const contentHistory = document.getElementById('tabHistoryContent');
+
+      if (tabName === 'services') {
+        if (btnServices) btnServices.classList.add('active');
+        if (btnHistory) btnHistory.classList.remove('active');
+        if (contentServices) contentServices.style.display = 'flex';
+        if (contentHistory) contentHistory.style.display = 'none';
+      } else {
+        if (btnServices) btnServices.classList.remove('active');
+        if (btnHistory) btnHistory.classList.add('active');
+        if (contentServices) contentServices.style.display = 'none';
+        if (contentHistory) contentHistory.style.display = 'flex';
+      }
+    }
+
+        function toggleSidebarAccordion(type) {
+      const panelTasks = document.getElementById('panelTasks');
+      const triggerTasks = document.getElementById('triggerTasks');
+      const arrowTasks = document.getElementById('arrowTasks');
+
+      const panelApps = document.getElementById('panelApps');
+      const triggerApps = document.getElementById('triggerApps');
+      const arrowApps = document.getElementById('arrowApps');
+
+      if (type === 'tasks') {
+        const isClosed = panelTasks.classList.contains('collapsed');
+        if (isClosed) {
+          panelTasks.classList.remove('collapsed');
+          triggerTasks.classList.add('active');
+          arrowTasks.textContent = '▾ 收起';
+        } else {
+          panelTasks.classList.add('collapsed');
+          triggerTasks.classList.remove('active');
+          arrowTasks.textContent = '▸ 展开';
+        }
+      } else if (type === 'apps') {
+        const isClosed = panelApps.classList.contains('collapsed');
+        if (isClosed) {
+          panelApps.classList.remove('collapsed');
+          triggerApps.classList.add('active');
+          arrowApps.textContent = '▾ 收起';
+        } else {
+          panelApps.classList.add('collapsed');
+          triggerApps.classList.remove('active');
+          arrowApps.textContent = '▸ 展开';
+        }
+      }
+    }
+
+function filterServices(query) {
+      const q = (query || '').trim().toLowerCase();
+      const rows = document.querySelectorAll('.service-item-row');
+      rows.forEach(row => {
+        const text = (row.textContent + ' ' + (row.getAttribute('data-keyword') || '')).toLowerCase();
+        if (!q || text.includes(q)) {
+          row.style.display = 'flex';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function openJwxtModal() {
+      const modal = document.getElementById('jwxtModal');
+      if (modal) modal.classList.add('show');
+    }
+
+    function closeJwxtModal() {
+      const modal = document.getElementById('jwxtModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function sendQuickPrompt(promptText) {
+      if (window.AnauAgent) {
+        window.AnauAgent.sendUserMsg(promptText); autoCloseSidebarOnMobile();
+      }
+    }
+
+    function handleCardClick(serviceName, defaultPrompt) {
+      if (defaultPrompt) {
+        if (window.AnauAgent) {
+          window.AnauAgent.sendUserMsg(defaultPrompt);
+        }
+      } else {
+        if (window.AnauAgent) {
+          window.AnauAgent.sendUserMsg(`老师你好，我想咨询办理【${serviceName}】业务`);
+        }
+      }
+      autoCloseSidebarOnMobile();
+    }
+
+    function showToast(msg) {
+      if (window.AnauAgent && window.AnauAgent.showToast) {
+        window.AnauAgent.showToast(msg);
+      } else {
+        alert(msg);
+      }
+    }
+
+    function triggerCozeOpen() {
+      if (window.AnauAgent) {
+        window.AnauAgent.openChat();
+      }
+    }
+
+    function checkDrawerPlacement() {
+      const sidebar = document.querySelector('.sidebar-panel');
+      const container = document.querySelector('.workspace-container');
+      const chatStage = document.querySelector('.chat-main-stage');
+      if (!sidebar) return;
+
+      if (window.innerWidth <= 768) {
+        if (sidebar.parentElement !== document.body) {
+          document.body.appendChild(sidebar);
+        }
+      } else {
+        if (container && chatStage && sidebar.parentElement !== container) {
+          container.insertBefore(sidebar, chatStage);
+        }
+      }
+    }
+
+    function toggleSidebarView() {
+      checkDrawerPlacement();
+      const sidebar = document.querySelector('.sidebar-panel');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const toggleBtn = document.getElementById('sidebarToggleBtn');
+      if (!sidebar) return;
+
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        const isOpen = sidebar.classList.contains('mobile-open');
+        if (isOpen) {
+          sidebar.classList.remove('mobile-open');
+          if (backdrop) backdrop.classList.remove('show');
+          if (toggleBtn) toggleBtn.classList.remove('is-open');
+        } else {
+          sidebar.classList.add('mobile-open');
+          if (backdrop) backdrop.classList.add('show');
+          if (toggleBtn) toggleBtn.classList.add('is-open');
+        }
+      } else {
+        const isCollapsed = sidebar.classList.toggle('desktop-collapsed');
+        if (toggleBtn) {
+          if (isCollapsed) {
+            toggleBtn.classList.add('is-collapsed');
+          } else {
+            toggleBtn.classList.remove('is-collapsed');
+          }
+        }
+      }
+    }
+
+    function autoCloseSidebarOnMobile() {
+      if (window.innerWidth <= 768) {
+        const sidebar = document.querySelector('.sidebar-panel');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        if (sidebar) sidebar.classList.remove('mobile-open');
+        if (backdrop) backdrop.classList.remove('show');
+        if (toggleBtn) toggleBtn.classList.remove('is-open');
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        autoCloseSidebarOnMobile();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', checkDrawerPlacement);
+    window.addEventListener('resize', function() {
+      checkDrawerPlacement();
+      const sidebar = document.querySelector('.sidebar-panel');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const toggleBtn = document.getElementById('sidebarToggleBtn');
+      if (window.innerWidth > 768) {
+        if (sidebar) sidebar.classList.remove('mobile-open');
+        if (backdrop) backdrop.classList.remove('show');
+        if (toggleBtn) toggleBtn.classList.remove('is-open');
+      }
+    });
+  </script>
+
+</body>
+</html>

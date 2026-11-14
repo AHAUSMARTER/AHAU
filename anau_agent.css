@@ -338,11 +338,152 @@
   box-shadow: 0 4px 18px rgba(35, 100, 60, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-/* 气泡内样式格式化 */
-.chat-msg-bubble p { margin: 0 0 8px 0; }
-.chat-msg-bubble p:last-child { margin-bottom: 0; }
-.chat-msg-bubble strong { color: var(--agent-green-dark); font-weight: 700; }
-.chat-msg.user .chat-msg-bubble strong { color: #fef08a; }
+/* 气泡内样式格式化与 Notion / Linear 极简科技黑白排版规范 */
+.chat-msg-bubble p {
+  margin: 0 0 10px 0;
+  line-height: 1.68;
+}
+.chat-msg-bubble p:last-child {
+  margin-bottom: 0;
+}
+.chat-msg-bubble strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+.chat-msg.user .chat-msg-bubble strong {
+  color: #fef08a;
+}
+
+/* 标题体系 (h1, h2, h3, h4) */
+.chat-msg-bubble h1,
+.chat-msg-bubble h2,
+.chat-msg-bubble h3,
+.chat-msg-bubble h4 {
+  color: #0f172a;
+  font-weight: 700;
+  margin: 14px 0 8px 0;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.chat-msg-bubble h1:first-child,
+.chat-msg-bubble h2:first-child,
+.chat-msg-bubble h3:first-child {
+  margin-top: 0;
+}
+.chat-msg-bubble h1 { font-size: 16px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); padding-bottom: 6px; }
+.chat-msg-bubble h2 { font-size: 15px; }
+.chat-msg-bubble h3 { font-size: 14px; }
+.chat-msg-bubble h4 { font-size: 13.5px; }
+
+/* 细灰线分割线 */
+.chat-msg-bubble hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 14px 0;
+}
+
+/* 极简科技黑白表格 (Notion / Linear 风格，移动端自适应平滑滚动) */
+.chat-msg-bubble .table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 10px 0 14px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+.chat-msg-bubble table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  text-align: left;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.chat-msg-bubble th,
+.chat-msg-bubble td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.chat-msg-bubble th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.chat-msg-bubble tr:last-child td {
+  border-bottom: none;
+}
+.chat-msg-bubble tr:nth-child(even) td {
+  background: rgba(248, 250, 252, 0.6);
+}
+.chat-msg-bubble tr:hover td {
+  background: rgba(241, 245, 249, 0.8);
+}
+
+/* 结构化列表 */
+.chat-msg-bubble ul,
+.chat-msg-bubble ol {
+  margin: 6px 0 10px 0;
+  padding-left: 20px;
+}
+.chat-msg-bubble ul li {
+  list-style-type: disc;
+  margin-bottom: 4px;
+}
+.chat-msg-bubble ol li {
+  list-style-type: decimal;
+  margin-bottom: 4px;
+}
+.chat-msg-bubble li::marker {
+  color: #64748b;
+}
+
+/* 极简提要引用块 (Blockquote) */
+.chat-msg-bubble blockquote {
+  margin: 10px 0;
+  padding: 8px 14px;
+  border-left: 3px solid #64748b;
+  background: rgba(248, 250, 252, 0.85);
+  border-radius: 0 8px 8px 0;
+  color: #334155;
+  font-size: 13px;
+}
+.chat-msg-bubble blockquote p {
+  margin: 0;
+}
+
+/* 代码标签与代码块 (Inline Code & Pre) */
+.chat-msg-bubble code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  padding: 2px 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: #0f172a;
+}
+.chat-msg-bubble pre {
+  margin: 10px 0;
+  padding: 12px 14px;
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.chat-msg-bubble pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
 
 .chat-badge {
   display: inline-block;
@@ -1591,4 +1732,797 @@ body.embedded-active .ai-callout-bubble {
     padding-bottom: 170px !important;
     scroll-padding-bottom: 170px !important;
   }
+}
+
+
+/* ==========================================================================
+   四大获奖作品吸收升级样式组件库 (AgentWeber / Nexus / BookMind / Manim Agent)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 吸收 AgentWeber: 公私分级安全栅栏 (Action Gating) & 事实来源溯源角标
+   -------------------------------------------------------------------------- */
+.security-gating-card {
+  margin: 14px 0 6px 0;
+  padding: 16px 18px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(234, 88, 12, 0.28);
+  box-shadow: 0 4px 18px rgba(234, 88, 12, 0.08);
+  transition: all 0.3s ease;
+}
+
+.security-gating-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(234, 88, 12, 0.2);
+}
+
+.gating-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #c2410c;
+}
+
+.gating-title-wrap svg {
+  color: #ea580c;
+}
+
+.gating-badge-promise {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  background: #fff7ed;
+  color: #c2410c;
+  border-radius: 9999px;
+  border: 1px solid #ffedd5;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.gating-desc {
+  font-size: 12.5px;
+  color: #4b5563;
+  line-height: 1.55;
+  margin: 0 0 12px 0;
+}
+
+.gating-details-box {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+}
+
+.gating-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #334155;
+}
+
+.gating-detail-row .label {
+  color: #64748b;
+}
+
+.gating-detail-row .val {
+  font-weight: 500;
+}
+
+.gating-actions-wrap {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-gating-confirm {
+  flex: 1;
+  padding: 9px 16px;
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.28);
+  transition: all 0.2s ease;
+}
+
+.btn-gating-confirm:hover {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  transform: translateY(-1px);
+}
+
+.btn-gating-cancel {
+  padding: 9px 14px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-gating-cancel:hover {
+  background: #e2e8f0;
+}
+
+.gating-signed-stamp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 事实来源角标 (Citations) */
+.fact-citation-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  margin: 0 2px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  color: #166534;
+  font-size: 11px;
+  font-family: -apple-system, BlinkMacSystemFont, monospace;
+  font-weight: 600;
+  cursor: pointer;
+  vertical-align: baseline;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.fact-citation-tag:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(22, 101, 52, 0.15);
+}
+
+/* 事实条文抽屉 (Citation Drawer) */
+.citation-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100000;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.citation-drawer-overlay.active {
+  display: flex;
+}
+
+.citation-drawer-panel {
+  width: 100%;
+  max-width: 580px;
+  max-height: 80vh;
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUpDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpDrawer {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.citation-drawer-header {
+  padding: 18px 22px 14px 22px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.citation-drawer-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.citation-drawer-close {
+  background: #f1f5f9;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.citation-drawer-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.citation-drawer-body {
+  padding: 20px 22px 30px 22px;
+  overflow-y: auto;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #334155;
+}
+
+.citation-meta-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #475569;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.citation-excerpt-quote {
+  background: #f8fafc;
+  border-left: 3px solid #16a34a;
+  padding: 12px 16px;
+  border-radius: 0 10px 10px 0;
+  margin: 12px 0;
+  font-style: normal;
+  color: #1e293b;
+}
+
+/* --------------------------------------------------------------------------
+   2. 吸收 Nexus: ANAU-AgentMesh 跨学科多智能体互联广场
+   -------------------------------------------------------------------------- */
+.agentmesh-card {
+  margin: 14px 0 8px 0;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+.agentmesh-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.agentmesh-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.agentmesh-status-badge {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  border-radius: 9999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.agentmesh-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2563eb;
+  animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.9); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+  100% { transform: scale(0.9); opacity: 1; }
+}
+
+.agentmesh-topology {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  gap: 8px;
+}
+
+.agentmesh-node {
+  flex: 1;
+  text-align: center;
+  padding: 8px 6px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+}
+
+.agentmesh-node.origin {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.agentmesh-node.target {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.agentmesh-node-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.agentmesh-node-role {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.agentmesh-bus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.agentmesh-bus-line {
+  width: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%);
+  position: relative;
+  margin: 4px 0;
+}
+
+.agentmesh-bus-tag {
+  font-size: 9.5px;
+  color: #64748b;
+  letter-spacing: 0.2px;
+}
+
+.agentmesh-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.agentmesh-tag {
+  font-size: 11px;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, monospace;
+}
+
+.agentmesh-match-result {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #334155;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.agentmesh-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-agentmesh-accept {
+  flex: 1;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-agentmesh-accept:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+/* --------------------------------------------------------------------------
+   3. 吸收 Manim Agent: 综测与奖学金动态参数微调滑盘 (Interactive Sliders)
+   -------------------------------------------------------------------------- */
+.interactive-slider-box {
+  margin: 16px 0 10px 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 6px 24px rgba(31, 94, 57, 0.08);
+}
+
+.slider-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.slider-box-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.slider-box-pill {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.slider-controls-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.slider-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.slider-label-title {
+  font-weight: 500;
+}
+
+.slider-val-badge {
+  font-family: -apple-system, BlinkMacSystemFont, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #15803d;
+  background: #f0fdf4;
+  padding: 1px 8px;
+  border-radius: 6px;
+  border: 1px solid #bbf7d0;
+}
+
+.slider-range-input {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.slider-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #15803d;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(21, 128, 61, 0.35);
+  border: 2px solid #ffffff;
+  transition: all 0.15s ease;
+}
+
+.slider-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+  background: #166534;
+}
+
+.slider-live-dashboard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.slider-total-score-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.slider-total-label {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.slider-total-number {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.slider-award-wrap {
+  flex: 1;
+  text-align: right;
+}
+
+.slider-award-tier {
+  font-size: 13px;
+  font-weight: 700;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #fde68a;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.slider-award-rank {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* 课程知识先后依赖拓扑图 (Curriculum Precedence DAG) */
+.curriculum-dag-card {
+  margin: 14px 0 10px 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.dag-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dag-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dag-chain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 4px;
+}
+
+.dag-node {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+
+.dag-node.passed {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.dag-node.current {
+  background: #fff7ed;
+  border: 1.5px solid #fdba74;
+  color: #c2410c;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15);
+}
+
+.dag-node.future {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+.dag-arrow {
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   4. 吸收 BookMind: 错因认知诊断探针 & 确定性复习树
+   -------------------------------------------------------------------------- */
+.probe-diagnostic-card {
+  margin: 14px 0 10px 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.probe-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.probe-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.probe-rule-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  font-weight: 500;
+}
+
+.probe-question-box {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #1e293b;
+  line-height: 1.6;
+  border: 1px solid #edf2f7;
+}
+
+.probe-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.probe-option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.probe-option-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateX(2px);
+}
+
+.probe-option-btn.selected-mistake {
+  border-color: #f87171;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.probe-option-btn.selected-correct {
+  border-color: #34d399;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.probe-analysis-result {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #166534;
+  line-height: 1.6;
+}
+
+.probe-analysis-result.is-error {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.review-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-time-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.review-time-label {
+  color: #64748b;
+  font-size: 10px;
+}
+
+.review-time-date {
+  font-weight: 700;
+  color: #15803d;
 }
