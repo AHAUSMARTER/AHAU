@@ -1433,12 +1433,14 @@
 
     /* 移动端专属媒体查询：顶栏置顶防挡，字体等比微缩，侧边栏专属顶层抽屉 */
     @media (max-width: 768px) {
-      /* 手机端禁用弹性下拉晃动与视口漂移 */
+      /* 手机端禁用弹性下拉晃动与视口漂移，保持单页不滚，内部对话框丝滑可滑 */
       html, body {
         overscroll-behavior: none !important;
-        position: fixed !important;
+        overflow: hidden !important;
         width: 100% !important;
         height: 100% !important;
+        height: 100dvh !important;
+        position: relative !important;
       }
 
       /* 1. 顶栏：绝对固定置顶，点击打字框弹出键盘时绝不被遮挡或滚出视口 */
@@ -2013,26 +2015,13 @@
               <button class="service-action-pill">查卷 ›</button>
             </div>
 
-            <!-- 12. ANAU-AgentMesh 跨学科多智能体科研撮合 (吸收 Nexus) -->
-            <div class="service-item-row" data-keyword="agentmesh 跨学科 找人 组队 重点实验室 多光谱 传感器 协同 撮合 互助" onclick="handleCardClick('多智能体科研撮合', '我想在全校跨学科智能体广场寻找合作：需要50组安农大茶园龙井43号多光谱病斑图像做轻量化算法验证')">
-              <div class="service-row-icon icon-blue"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-              <div class="service-row-info">
-                <div class="service-row-header">
-                  <h4 class="service-row-title">ANAU-AgentMesh 跨学科撮合</h4>
-                  <span class="service-dept-badge" style="background:#eff6ff; color:#1d4ed8;">分布式智能体</span>
-                </div>
-                <p class="service-row-desc">农科与工科实验室数据/算法/仪器智能握手，AI跑腿双端本人拍板</p>
-              </div>
-              <button class="service-action-pill">撮合 ›</button>
-            </div>
-
-            <!-- 13. 期末真题认知错因诊断靶场 (吸收 BookMind & Manim Agent) -->
+            <!-- 12. 期末真题认知错因诊断靶场 (认知探针与知识拓扑) -->
             <div class="service-item-row" data-keyword="错因 诊断 探针 靶场 考点 知识依赖 拓扑 高数 离线复习" onclick="handleCardClick('错因诊断靶场', '请开启安徽农业大学期末统考真题智能认知诊断靶场与课程先后依赖拓扑图')">
               <div class="service-row-icon icon-emerald"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
               <div class="service-row-info">
                 <div class="service-row-header">
                   <h4 class="service-row-title">真题认知诊断与知识拓扑</h4>
-                  <span class="service-dept-badge" style="background:#ecfdf5; color:#047857;">教学心理</span>
+                  <span class="service-dept-badge" style="background:#ecfdf5; color:#047857;">认知诊断</span>
                 </div>
                 <p class="service-row-desc">错因双轨剖析（概念偏差vs粗心），课程拓扑DAG与确定性离线复习</p>
               </div>

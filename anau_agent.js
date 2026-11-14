@@ -11,7 +11,7 @@
   'use strict';
 
   // ----------------------------------------------------------------------------
-  // 0. 安徽农业大学 权威规章与事实基座 (吸收 AgentWeber 事实追溯体系)
+  // 0. 安徽农业大学 权威规章与事实基座
   // ----------------------------------------------------------------------------
   const OFFICIAL_CITATIONS = {
     'ahau-jw-2024-18': {
@@ -41,15 +41,6 @@
       excerpt: '第四条 勤学楼、博学楼公共多媒体教室原则上优先保障日常本科教学。班级召开主题班会或学术讲座借用，须由经办人在系统提交借用申请单，注明活动主题与责任人，严禁擅自转借第三方或用于盈利性活动。借用提交须本人确认。',
       lawUrl: 'https://hq.ahau.edu.cn'
     },
-    'ahau-mesh-2026-01': {
-      id: 'ahau-mesh-2026-01',
-      title: '安徽农业大学跨学科多智能体互联与科研资源共享规范 (ANAU-AgentMesh)',
-      no: '安农科发〔2026〕01号',
-      dept: '科学技术处 / 现代教育技术中心',
-      date: '2026年3月1日',
-      excerpt: '第一条 为促进农科与理工学科深度交叉融合，学校部署ANAU-AgentMesh分布式多智能体互联总线。各学科智能体可在校园网内自动化广播科研需求与寻找合作，但涉及科研数据交互、仪器进场交接等实质权责，必须经双方师生本人最终拍板确权。',
-      lawUrl: 'https://kjc.ahau.edu.cn'
-    },
     'ahau-exam-2024-03': {
       id: 'ahau-exam-2024-03',
       title: '安徽农业大学本科课程考核与学业成绩评定规范',
@@ -62,7 +53,7 @@
   };
 
   // ----------------------------------------------------------------------------
-  // 四大吸收组件渲染引擎 (AgentWeber / Nexus / BookMind / Manim Agent)
+  // 核心特色组件渲染引擎 (公私安全栅栏 / 参数推演沙盘 / 错因认知诊断)
   // ----------------------------------------------------------------------------
   function renderActionGatingWidget(g) {
     const gid = 'gating-' + Math.floor(100000 + Math.random() * 900000);
@@ -76,7 +67,7 @@
           <span class="gating-badge-promise">0次越权安全承诺</span>
         </div>
         <p class="gating-desc">
-          <strong>安全合规机制（吸收 AgentWeber 核心范式）</strong>：公开校园规章与可用状态已由 AI 自动核验完成；教务与学工系统<strong>写操作、正式离校报备、场地审批单提交</strong>属于学生私有高敏业务，<strong>AI 绝不越权擅自点击提交</strong>，必须由您本人最终审定签名！
+          <strong>公私分级安全机制（0次擅自越权承诺）</strong>：公开校园规章与可用状态已由 AI 自动核验完成；教务与学工系统<strong>写操作、正式离校报备、场地审批单提交</strong>属于学生私有高敏业务，<strong>AI 绝不越权擅自点击提交</strong>，必须由您本人最终审定签名！
         </p>
         <div class="gating-details-box">
           <div class="gating-detail-row"><span class="label">业务类型:</span><span class="val">${g.bizType}</span></div>
@@ -101,7 +92,7 @@
         <div class="slider-box-header">
           <div class="slider-box-title">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--agent-green);"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-            <span>综测与奖学金动态参数推演沙盘 (吸收 Manim Agent 参数微调)</span>
+            <span>综测与奖学金动态参数推演沙盘 (自主研发参数实时响应系统)</span>
           </div>
           <span class="slider-box-pill">实时拖动推演</span>
         </div>
@@ -149,7 +140,7 @@
         <div class="probe-header">
           <div class="probe-title">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <span>错因认知诊断探针靶场 (吸收 BookMind 教学心理闭环)</span>
+            <span>期末真题错因认知诊断探针靶场 (多维概念漏洞定位闭环)</span>
           </div>
           <span class="probe-rule-badge">确定性离线复习规则</span>
         </div>
@@ -180,7 +171,7 @@
     return `
       <div class="curriculum-dag-card">
         <div class="dag-header">
-          <span class="dag-title">课程知识先后依赖拓扑图 (Curriculum Precedence DAG · 吸收 Manim Agent)</span>
+          <span class="dag-title">课程先修后继依赖拓扑图 (Curriculum Precedence DAG)</span>
           <span style="font-size:11px; color:#64748b;">先修约束 · 知识断层前瞻</span>
         </div>
         <div class="dag-chain">
@@ -203,51 +194,6 @@
             <span>概率论与数理统计 / 农业大数据</span>
             <span style="font-size:10px; opacity:0.8;">大三核心专业基础</span>
           </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderAgentMeshWidget(needKeyword) {
-    const mid = 'mesh-' + Math.floor(100000 + Math.random() * 900000);
-    return `
-      <div class="agentmesh-card" id="${mid}">
-        <div class="agentmesh-header">
-          <div class="agentmesh-title">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            <span>ANAU-AgentMesh 校园多智能体互联广场 (吸收 Nexus 范式)</span>
-          </div>
-          <span class="agentmesh-status-badge"><span class="agentmesh-status-dot"></span>多智能体意图握手完成</span>
-        </div>
-        <div class="agentmesh-topology">
-          <div class="agentmesh-node origin">
-            <div class="agentmesh-node-name">安农智办 · 本地节点</div>
-            <div class="agentmesh-node-role">经办学生端代理</div>
-          </div>
-          <div class="agentmesh-bus">
-            <span class="agentmesh-bus-tag">ANAU-AgentMesh 总线</span>
-            <div class="agentmesh-bus-line"></div>
-            <span class="agentmesh-bus-tag">分布式意图对齐</span>
-          </div>
-          <div class="agentmesh-node target">
-            <div class="agentmesh-node-name">茶学国家重点实验室 · 科研节点</div>
-            <div class="agentmesh-node-role">重点实验室算力与数据代理</div>
-          </div>
-        </div>
-        <div class="agentmesh-tags-wrap">
-          <span class="agentmesh-tag">#茶树白星病</span>
-          <span class="agentmesh-tag">#500组多光谱样本</span>
-          <span class="agentmesh-tag">#轻量化YOLO分割</span>
-          <span class="agentmesh-tag">#交叉科研协作</span>
-        </div>
-        <div class="agentmesh-match-result">
-          <strong>撮合详情</strong>：茶树生物学重点实验室智能体节点响应了您的求助意图，已自动对齐数据契约（提供龙井43号白星病多光谱TIFF图像带人工边界标注，换取目标检测模型权重）。<strong>按公私安全准则，双方学生须亲自上线确权拍板后正式开启数据协作通道</strong>。
-        </div>
-        <div class="agentmesh-actions" id="${mid}-actions">
-          <button class="btn-agentmesh-accept" onclick="window.AnauAgent.confirmAgentMeshCollaboration('${mid}')">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            双端学生本人拍板 · 开启跨学科互助空间
-          </button>
         </div>
       </div>
     `;
@@ -1312,13 +1258,12 @@ canteens: {
       }
     ],
     // ------------------------------------------------------------------------
-    // 1.6 安徽农业大学课程资料共享计划 (Leaning-in-AAU 历年期末真题与复习库)
+    // 1.6 安徽农业大学课程资料共享计划 (历年期末真题与复习库)
     // ------------------------------------------------------------------------
     examRepo: {
-      name: '安徽农业大学课程资料共享计划 (Leaning in AAU)',
+      name: '安徽农业大学课程资料共享计划',
       portalUrl: 'https://ahau-course.pages.dev/',
-      githubUrl: 'https://github.com/lastwejust/Leaning-in-AAU',
-      description: '安农学子开源共建的期末复习宝库，汇集278+份历年考试原卷、复习提纲、实验报告与作业范例。',
+      description: '安农学子共建的期末复习宝库，汇集278+份历年考试原卷、复习提纲、实验报告与作业范例。',
       totalFiles: '278+ 份',
       courses: {
         '高等数学': {
@@ -1445,7 +1390,7 @@ canteens: {
 
       let examSummary = '';
       if (AHAU_KB && AHAU_KB.examRepo) {
-        examSummary = `- 历年期末真题与复习共享库（Leaning-in-AAU 镜像站: https://ahau-course.pages.dev/ ，共 278+ 份文档）：涵盖高等数学（22份含2009-2020真题与答案）、线性代数（32份真题与初等变换矩阵大题）、普通化学（34份含四大平衡真题）、工程制图（13份含相贯线样卷）、基础物理（6份含2023最新期末卷）、微观经济学（11份高鸿业/曼昆真题与名词解释）、基础会计（7份分录题）、管理学（卡旺卡案例）、思政合集（7份马原史纲毛概习题库）、农学与写作论文范例等。用户询问考试真题或期末试卷时，给出各科考点并引导访问 https://ahau-course.pages.dev/ 查阅下载原卷。`;
+        examSummary = `- 历年期末真题与复习共享库（资料共享站: https://ahau-course.pages.dev/ ，共 278+ 份文档）：涵盖高等数学（22份含2009-2020真题与答案）、线性代数（32份真题与初等变换矩阵大题）、普通化学（34份含四大平衡真题）、工程制图（13份含相贯线样卷）、基础物理（6份含2023最新期末卷）、微观经济学（11份高鸿业/曼昆真题与名词解释）、基础会计（7份分录题）、管理学（卡旺卡案例）、思政合集（7份马原史纲毛概习题库）、农学与写作论文范例等。用户询问考试真题或期末试卷时，给出各科考点并引导访问 https://ahau-course.pages.dev/ 查阅下载原卷。`;
       }
 
       const systemPrompt = `你是安徽农业大学官方 AI 办事智能体「徽农智 · 安农智办」，底层由安徽农业大学校级算力平台【Deepseek-V4.1-Flash-SS】大模型强劲驱动。
@@ -2155,7 +2100,7 @@ ${examSummary}
   }
 
   // ----------------------------------------------------------------------------
-  // 3.9 期末历年考试真题与课程资料共享 (Leaning-in-AAU 镜像直链与核心考点解析)
+  // 3.9 期末历年考试真题与课程资料共享 (资料共享直链与核心考点解析)
   // ----------------------------------------------------------------------------
   function handleExamMaterials(raw) {
     const t = (raw || '').toLowerCase();
@@ -2203,9 +2148,8 @@ ${examSummary}
           `- **收录试卷**：共计 **${c.files}** 历年真实期末试卷与权威参考答案\n` +
           `- **期末核心考察重点**：\n ${c.highlights}\n\n` +
           `**原卷在线阅读与下载通道**：\n` +
-          `- [ 点击直达 AHAU-Course 在线共享镜像](${c.url})\n` +
-          `- [ 访问 GitHub 开源项目仓库 (Leaning-in-AAU)](${repo.githubUrl})\n\n` +
-          `**错因认知诊断与知识先后拓扑（吸收 BookMind 与 Manim Agent）**：\n` +
+          `- [https://ahau-course.pages.dev/](${c.url})\n\n` +
+          `**期末真题错因认知诊断与知识先后依赖拓扑**：\n` +
           `下方已为您调起考点错因诊断靶场，拒绝直接报出浅层答案，针对概念漏洞进行探针诊断与离线确定性复习排期：`,
         widgetHtml: renderCognitiveProbeWidget(courseKey) + renderCurriculumDAGWidget()
       };
@@ -2217,33 +2161,16 @@ ${examSummary}
     }).join('\n');
 
     return {
-      text: `**【安徽农业大学课程资料共享计划 (Leaning in AAU) · 期末真题库】**\n\n` +
-        `汇集安农学子开源整理的 **278+ 份** 历年各科期末试卷、复习提纲与实验指导，现已全面并入「安农智办」知识库！\n\n` +
+      text: `**【安徽农业大学课程资料共享计划 · 期末真题库】**\n\n` +
+        `汇集安农学子整理的 **278+ 份** 历年各科期末试卷、复习提纲与实验指导，现已全面并入「安农智办」知识库！\n\n` +
         `| 课程科目 | 分类归属 | 资料数量 | 核心考察亮点 |\n` +
         `| :--- | :--- | :--- | :--- |\n` +
         courseRows + '\n\n' +
         `**一键直达在线真题库**：\n` +
-        `- **免翻墙在线镜像站**：[ahau-course.pages.dev](${repo.portalUrl}) (点击可直接检索并下载 PDF)\n` +
-        `- **GitHub 开源项目**：[lastwejust/Leaning-in-AAU](${repo.githubUrl})\n\n` +
+        `- [https://ahau-course.pages.dev/](${repo.portalUrl})\n\n` +
         `**权威教务索引**：<span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-exam-2024-03')">[安农教·考核规范§9]</span>\n\n` +
         `**备考智能靶场（已为您就绪）**：下方为高数核心考点错因认知诊断探针与课程先后依赖拓扑图：`,
       widgetHtml: renderCognitiveProbeWidget('gaoshu') + renderCurriculumDAGWidget()
-    };
-  }
-
-  // ----------------------------------------------------------------------------
-  // ANAU-AgentMesh: 校园分布式多智能体互联广场 (吸收 Nexus 范式)
-  // ----------------------------------------------------------------------------
-  function handleAgentMeshWorkflow(input) {
-    AgentState.lastTopic = 'agentmesh';
-    return {
-      text: `**【ANAU-AgentMesh 校园分布式多智能体互联广场】**\n\n` +
-        `已为您将科研求助与组队意图广播至全校分布式智能体节点网格！\n\n` +
-        `- **智能撮合机制 (吸收 Nexus 架构)**：学生对本地 AI 说需求，系统自动提炼核心能力标签并在各学科节点间进行语义匹配；\n` +
-        `- **AI 跑腿，学生拍板**：双端智能体已在后台完成数据格式、波段要求与算法规范初审，**数据交付与项目立项必须由双方学生本人亲自确认授权**；\n` +
-        `- **权威规章索引**：<span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-mesh-2026-01')">[安农科发·2026-01号]</span>。\n\n` +
-        `下方为为您匹配的跨学科科研实验室智能体对齐结果卡：`,
-      widgetHtml: renderAgentMeshWidget(input)
     };
   }
 
@@ -2262,11 +2189,6 @@ ${examSummary}
     // 优先：如果用户上传了照片，进入多模态智能快诊分支
     if (hasImage) {
       return handleMultimodalInput(raw, imageInfo);
-    }
-
-    // 优先：ANAU-AgentMesh 跨学科多智能体互联广场与科研协同 (吸收 Nexus 范式)
-    if (/agentmesh|跨学科|找人|组队|多智能体|科研合作|多光谱|传感器数据|找队友|借仪器|芯片量化|病斑数据/.test(t)) {
-      return handleAgentMeshWorkflow(raw);
     }
 
     // 优先：正在进行的借教室工作流
@@ -2313,8 +2235,8 @@ ${examSummary}
       return handleFacultyQuery(raw);
     }
 
-    // 优先：期末考试真题与课程资料共享 (Leaning-in-AAU 镜像库)
-    if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|leaning|aau-course/.test(t)) {
+    // 优先：期末考试真题与课程资料共享 (历年真题库)
+    if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|aau-course/.test(t)) {
       return handleExamMaterials(raw);
     }
 
@@ -2597,9 +2519,7 @@ ${examSummary}
   }
 
   // ----------------------------------------------------------------------------
-  // 4. 多轮工作流：教室借用状态机
-  // ----------------------------------------------------------------------------
-  // 4. 多轮工作流：教室借用状态机 (吸收 AgentWeber 公私安全分级与溯源)
+  // 4. 多轮工作流：教室借用状态机 (公私安全分级与溯源)
   // ----------------------------------------------------------------------------
   function handleClassroomWorkflow(input) {
     const d = AgentState.workflowData;
@@ -2668,7 +2588,7 @@ ${examSummary}
   }
 
   // ----------------------------------------------------------------------------
-  // 5. 多轮工作流：学生请假审批单状态机 (吸收 AgentWeber 公私安全分级与溯源)
+  // 5. 多轮工作流：学生请假审批单状态机 (公私安全分级与溯源)
   // ----------------------------------------------------------------------------
   function handleLeaveWorkflow(input) {
     const d = AgentState.workflowData;
@@ -3677,6 +3597,17 @@ ${examSummary}
       document.body.appendChild(container);
     }
 
+    // 监听舞台滚轮事件，确保全屏任意区域（包含左右空白与底部Dock）滑动滚轮均可驱动消息流滚动
+    const stageEl = document.getElementById('chatStageBody');
+    const msgListEl = document.getElementById('nativeChatMessages');
+    if (stageEl && msgListEl) {
+      stageEl.addEventListener('wheel', function (e) {
+        if (e.target !== msgListEl && !msgListEl.contains(e.target)) {
+          msgListEl.scrollTop += e.deltaY;
+        }
+      }, { passive: true });
+    }
+
     // 初始欢迎语
     setTimeout(() => {
       renderSessionMessages('session-live');
@@ -3688,6 +3619,26 @@ ${examSummary}
   // ----------------------------------------------------------------------------
   let pendingImageBase64 = null;
   let pendingImageName = '';
+
+  function scrollChatToBottom(smooth = false) {
+    const list = document.getElementById('nativeChatMessages');
+    if (!list) return;
+    const runScroll = () => {
+      try {
+        list.scrollTo({
+          top: list.scrollHeight,
+          behavior: smooth ? 'smooth' : 'auto'
+        });
+      } catch (e) {
+        list.scrollTop = list.scrollHeight;
+      }
+    };
+    requestAnimationFrame(runScroll);
+    setTimeout(runScroll, 60);
+    setTimeout(runScroll, 180);
+    setTimeout(runScroll, 400);
+    setTimeout(runScroll, 800);
+  }
 
   function appendUserMessage(text, imageBase64 = null) {
     const hero = document.getElementById('askbHeroCenter');
@@ -3711,7 +3662,7 @@ ${examSummary}
       </div>
     `;
     list.appendChild(msgDiv);
-    list.scrollTop = list.scrollHeight;
+    scrollChatToBottom(true);
   }
 
   function appendBotMessage(markdownText, approvalObj = null, extraWidgetHtml = '') {
@@ -3762,7 +3713,7 @@ ${examSummary}
       </div>
     `;
     list.appendChild(msgDiv);
-    list.scrollTop = list.scrollHeight;
+    scrollChatToBottom(true);
 
     // 自动挂载事实条文抽屉并初始化滑块
     ensureCitationDrawerMounted();
@@ -3773,7 +3724,8 @@ ${examSummary}
           if (window.AnauAgent && window.AnauAgent.updateZongceSliders) {
             window.AnauAgent.updateZongceSliders(matchWid[1]);
           }
-        }, 50);
+          scrollChatToBottom(false);
+        }, 60);
       }
     }
   }
@@ -3807,7 +3759,7 @@ ${examSummary}
       </div>
     `;
     list.appendChild(typingDiv);
-    list.scrollTop = list.scrollHeight;
+    scrollChatToBottom(true);
   }
 
   function removeTypingIndicator() {
@@ -4197,7 +4149,6 @@ ${examSummary}
       const workflowKeywords = ['借教室', '开班会', '请假', '假条', '离校', '一卡通', '报修', '茶树', '国重', '名木', '银杏', '香樟'];
       const zongceKeywords = ['综测', '测评', '算综测', '奖学金', '国家奖学金', '励志奖学金', '志愿汇', '德育'];
       const kaoyanKeywords = ['考研', '择校', '专硕', '学硕', '读博', '408', '414', '314', '315', '考研时间线', '考研科目', '复习进度', '择校方案'];
-      const meshKeywords = ['agentmesh', '跨学科', '找人', '组队', '多智能体', '科研合作', '多光谱', '传感器数据', '借仪器', '芯片量化', '病斑数据'];
       const facultyKeywords = ['师资', '导师', '教授', '课题组', '研究课题', '研究方向', '老师', '教师', '博导', '硕导', '农学院', '茶业学院', '茶学院', '计算机学院', '人工智能学院', '信息与计算机学院', '信智学院', '生命科学学院', '生科院', '生物制造', '植物保护学院', '植保学院', '经济管理学院', '经管学院', '动物科技学院', '动科院', '动物医学院', '动医院', '有哪些老师', '找老师', '找导师', '宛晓春', '夏恩华', '张友华', '姜东', '武立权', '程备久', '薛挺', '操海群', '辜丽川'];
       const examKeywords = ['期末', '真题', '试卷', '往年卷', '复习资料', '高数卷', '高数题', '高数真题', '线代卷', '线代题', '线代真题', '普化卷', '普化题', '生化卷', '生化题', '工图卷', '工图题', '工程制图', '微观经济', '基础会计', '思政合集', '题库', 'leaning'];
       
@@ -4209,7 +4160,6 @@ ${examSummary}
         workflowKeywords.some(k => t.includes(k.toLowerCase())) ||
         zongceKeywords.some(k => t.includes(k.toLowerCase())) ||
         kaoyanKeywords.some(k => t.includes(k.toLowerCase())) ||
-        meshKeywords.some(k => t.includes(k.toLowerCase())) ||
         examKeywords.some(k => t.includes(k.toLowerCase())) ||
         facultyKeywords.some(k => t.includes(k.toLowerCase())) || AHAU_KB.faculty.some(g => g.teachers.some(teacher => text.includes(teacher.name)));
 
@@ -4309,7 +4259,7 @@ ${examSummary}
     },
 
     // --------------------------------------------------------------------------
-    // 四大吸收特性交互控制器 (AgentWeber / Nexus / BookMind / Manim Agent)
+    // 核心扩展特性交互控制器 (公私安全栅栏 / 参数推演沙盘 / 错因探针)
     // --------------------------------------------------------------------------
     openCitationDrawer: function (id) {
       ensureCitationDrawerMounted();
@@ -4478,23 +4428,6 @@ ${examSummary}
             </div>
           `;
         }
-      }
-    },
-
-    confirmAgentMeshCollaboration: function (mid) {
-      const card = document.getElementById(mid);
-      if (!card) return;
-      const actions = document.getElementById(mid + '-actions');
-      if (actions) {
-        actions.innerHTML = `
-          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:10px 14px; color:#065f46; font-size:12px; font-weight:600; display:flex; align-items:center; gap:8px;">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>双端学生已完成实名授权！已在学校科研网建立点对点安全共享通道（500组多光谱样本分发中）。</span>
-          </div>
-        `;
-      }
-      if (window.AnauAgent.showToast) {
-        window.AnauAgent.showToast('已确认开启跨学科多智能体科研互助空间！');
       }
     },
 
