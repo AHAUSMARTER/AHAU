@@ -966,6 +966,315 @@
       color: var(--text-tertiary);
       z-index: 5;
     }
+
+    /* 桌面端隐藏手机端专用布局切换条 */
+    .mobile-layout-bar {
+      display: none;
+    }
+
+    /* ==========================================================================
+       移动端专属响应式设计 (Apple 风格极简实效，桌面端 100% 保持不变)
+       ========================================================================== */
+    @media (max-width: 768px) {
+      header {
+        height: 50px !important;
+        padding: 0 10px !important;
+        gap: 6px !important;
+      }
+      .header-left {
+        gap: 6px !important;
+        min-width: 0;
+        flex: 1;
+      }
+      .back-btn {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+        flex-shrink: 0;
+      }
+      .back-btn span {
+        display: none !important; /* 手机端只保留清晰返回箭头，节约宽度 */
+      }
+      .header-title-box {
+        min-width: 0;
+        flex-shrink: 1;
+      }
+      .header-title {
+        font-size: 13.5px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      /* 坚决隐藏溢出导致叠放重影的长副标题和多余角标 */
+      .header-sub,
+      .apple-badge {
+        display: none !important;
+      }
+      .segmented-control {
+        padding: 2px !important;
+        flex-shrink: 0;
+      }
+      .seg-pill {
+        padding: 4px 8px !important;
+        font-size: 10.5px !important;
+        gap: 4px !important;
+      }
+      .header-actions {
+        gap: 4px !important;
+        flex-shrink: 0;
+      }
+      .action-btn {
+        padding: 4px 7px !important;
+        font-size: 10.5px !important;
+      }
+      .action-btn span {
+        display: none !important; /* 手机端仅保留功能图标 */
+      }
+
+      /* 手机端专用分屏/全屏/调参控制胶囊栏 */
+      .mobile-layout-bar {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 0 10px;
+        z-index: 90;
+        flex-shrink: 0;
+      }
+      .mobile-layout-segmented {
+        display: inline-flex;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 980px;
+        padding: 2px;
+        gap: 2px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .mobile-tab-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 5px 0;
+        border: none;
+        background: transparent;
+        border-radius: 980px;
+        font-size: 11.5px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .mobile-tab-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+      .mobile-tab-btn.active {
+        background: #ffffff;
+        color: var(--ahau-green);
+        font-weight: 600;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 移动端工作台主体：彻底解决横向溢出与画布被挤出问题 */
+      .workbench-container {
+        flex-direction: column !important;
+        height: calc(100vh - 90px) !important;
+        height: calc(100svh - 90px) !important;
+        overflow: hidden !important;
+        position: relative;
+      }
+
+      /* 模式 1：分屏对照 (默认) - 上部实时高精度画布，下部调参滚动卡片 */
+      .workbench-container.mobile-mode-split .stage-scroll-container {
+        display: block !important;
+        order: -1 !important; /* 关键：确保移动端画布在上半区呈现 */
+        height: 42% !important;
+        min-height: 220px !important;
+        flex: none !important;
+        width: 100% !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      .workbench-container.mobile-mode-split .canvas-stage {
+        min-height: 100% !important;
+        height: 100% !important;
+      }
+      .workbench-container.mobile-mode-split .control-pane {
+        display: flex !important;
+        order: 1 !important; /* 关键：调参控制面板在下半区滚动 */
+        height: 58% !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: 1 !important;
+        border-right: none !important;
+        padding: 10px 8px !important;
+        gap: 10px !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* 模式 2：全屏视界画布 - 沉浸式观察图像与 3D 旋转 */
+      .workbench-container.mobile-mode-canvas .stage-scroll-container {
+        display: block !important;
+        order: 1 !important;
+        height: 100% !important;
+        width: 100% !important;
+        flex: 1 !important;
+      }
+      .workbench-container.mobile-mode-canvas .canvas-stage {
+        min-height: 100% !important;
+        height: 100% !important;
+      }
+      .workbench-container.mobile-mode-canvas .control-pane {
+        display: none !important;
+      }
+
+      /* 模式 3：全屏参数调控 - 专注打字、修改自变量、分析定积分数据 */
+      .workbench-container.mobile-mode-panel .stage-scroll-container {
+        display: none !important;
+      }
+      .workbench-container.mobile-mode-panel .control-pane {
+        display: flex !important;
+        order: 1 !important;
+        height: 100% !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: 1 !important;
+        border-right: none !important;
+        padding: 12px 10px !important;
+        gap: 10px !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* 3D 独立视角与高程滚动控制条 - 移动端缩放紧凑防遮挡 */
+      .stage-vertical-scrollbar {
+        right: 6px !important;
+        transform: translateY(-50%) scale(0.8) !important;
+        transform-origin: right center !important;
+        padding: 8px 4px !important;
+        border-radius: 14px !important;
+      }
+      .v-scroll-track {
+        height: 80px !important;
+      }
+
+      /* 画布悬浮 HUD 工具栏 - 移动端纯图标极简胶囊 */
+      .canvas-hud-toolbar {
+        top: 6px !important;
+        right: 6px !important;
+        padding: 3px 5px !important;
+        gap: 3px !important;
+      }
+      .hud-btn {
+        width: 28px !important;
+        height: 28px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 6px !important;
+      }
+      .hud-btn span {
+        display: none !important; /* 隐藏文字，杜绝纵向折行难看问题 */
+      }
+
+      /* 底部状态指示栏 */
+      .canvas-status-bar {
+        height: 20px !important;
+        font-size: 9px !important;
+        padding: 0 6px !important;
+      }
+
+      /* 卡片与表单微调 */
+      .panel-card {
+        padding: 12px 10px !important;
+        border-radius: 14px !important;
+        gap: 8px !important;
+      }
+      .card-header {
+        margin-bottom: 4px;
+      }
+      .card-title {
+        font-size: 12.5px !important;
+      }
+      .card-tag {
+        font-size: 9.5px !important;
+        padding: 1px 5px !important;
+      }
+      .var-selector-row {
+        gap: 4px !important;
+      }
+      .var-pill {
+        font-size: 10.5px !important;
+        padding: 4px 7px !important;
+      }
+      .formula-input-wrapper {
+        padding: 6px 8px !important;
+      }
+      .formula-prefix {
+        font-size: 13.5px !important;
+      }
+      .formula-input {
+        font-size: 14.5px !important;
+      }
+      .virtual-keys {
+        gap: 4px !important;
+      }
+      .key-btn {
+        height: 28px !important;
+        font-size: 11px !important;
+        padding: 0 4px !important;
+      }
+      .integral-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+      }
+      .integral-input {
+        font-size: 11.5px !important;
+        padding: 3px 5px !important;
+      }
+      .integral-stat-box {
+        padding: 6px 8px !important;
+        border-radius: 8px !important;
+      }
+      .stat-label {
+        font-size: 9.5px !important;
+      }
+      .stat-val {
+        font-size: 13px !important;
+      }
+      .param-item {
+        padding: 6px 8px !important;
+        border-radius: 8px !important;
+      }
+      .param-name {
+        font-size: 12px !important;
+      }
+      .param-val-input {
+        width: 44px !important;
+        font-size: 11px !important;
+        padding: 2px 4px !important;
+      }
+      .param-play-btn {
+        font-size: 9.5px !important;
+        padding: 2px 5px !important;
+      }
+      .preset-card {
+        padding: 8px 10px !important;
+      }
+      .preset-name {
+        font-size: 11.5px !important;
+      }
+      .preset-formula {
+        font-size: 10.5px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1016,6 +1325,24 @@
       </button>
     </div>
   </header>
+
+  <!-- 手机端专属布局切换控制栏 (Apple OLED 磨砂分段组件) -->
+  <div class="mobile-layout-bar" id="mobileLayoutBar">
+    <div class="mobile-layout-segmented">
+      <button class="mobile-tab-btn active" id="mTabSplit" onclick="setMobileLayoutMode('split')" title="分屏对照模式">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="12" x2="21" y2="12"></line></svg>
+        <span>分屏对照</span>
+      </button>
+      <button class="mobile-tab-btn" id="mTabCanvas" onclick="setMobileLayoutMode('canvas')" title="全屏视界画布">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
+        <span>全屏画布</span>
+      </button>
+      <button class="mobile-tab-btn" id="mTabPanel" onclick="setMobileLayoutMode('panel')" title="调参配置面板">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        <span>参数控制</span>
+      </button>
+    </div>
+  </div>
 
   <!-- 工作台双栏主体 -->
   <div class="workbench-container">
@@ -2802,12 +3129,140 @@
     }
 
     // ----------------------------------------------------------------------------
+    // 8.5 移动端专属模式切换与触控交互
+    // ----------------------------------------------------------------------------
+    function setMobileLayoutMode(mode) {
+      const wb = document.querySelector('.workbench-container');
+      if (!wb) return;
+      wb.classList.remove('mobile-mode-split', 'mobile-mode-canvas', 'mobile-mode-panel');
+      wb.classList.add('mobile-mode-' + mode);
+
+      document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('mTab' + mode.charAt(0).toUpperCase() + mode.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      setTimeout(() => {
+        resizeCanvas();
+      }, 60);
+    }
+
+    // 移动端多点触控与平移缩放支持
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartDist = 0;
+    let isTouchDragging = false;
+
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isTouchDragging = true;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        if (MathState.mode === '2D') {
+          MathState.view2D.dragStartX = touchStartX;
+          MathState.view2D.dragStartY = touchStartY;
+          MathState.view2D.startViewXMin = MathState.view2D.xMin;
+          MathState.view2D.startViewXMax = MathState.view2D.xMax;
+          MathState.view2D.startViewYMin = MathState.view2D.yMin;
+          MathState.view2D.startViewYMax = MathState.view2D.yMax;
+        } else {
+          MathState.camera3D.lastMouseX = touchStartX;
+          MathState.camera3D.lastMouseY = touchStartY;
+        }
+      } else if (e.touches.length === 2) {
+        isTouchDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchStartDist = Math.hypot(dx, dy);
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault(); // 阻止移动端页面晃动
+      if (e.touches.length === 1 && isTouchDragging) {
+        const curX = e.touches[0].clientX;
+        const curY = e.touches[0].clientY;
+        if (MathState.mode === '2D') {
+          const rect = canvas.getBoundingClientRect();
+          const dx = curX - touchStartX;
+          const dy = curY - touchStartY;
+          const xSpan = MathState.view2D.startViewXMax - MathState.view2D.startViewXMin;
+          const ySpan = MathState.view2D.startViewYMax - MathState.view2D.startViewYMin;
+          MathState.view2D.xMin = MathState.view2D.startViewXMin - (dx / rect.width) * xSpan;
+          MathState.view2D.xMax = MathState.view2D.startViewXMax - (dx / rect.width) * xSpan;
+          MathState.view2D.yMin = MathState.view2D.startViewYMin + (dy / rect.height) * ySpan;
+          MathState.view2D.yMax = MathState.view2D.startViewYMax + (dy / rect.height) * ySpan;
+          requestAnimationFrame(drawScene);
+        } else {
+          const dx = curX - MathState.camera3D.lastMouseX;
+          const dy = curY - MathState.camera3D.lastMouseY;
+          MathState.camera3D.lastMouseX = curX;
+          MathState.camera3D.lastMouseY = curY;
+          MathState.camera3D.yaw += dx * 0.01;
+          MathState.camera3D.pitch = Math.max(0.05, Math.min(Math.PI / 2 - 0.05, MathState.camera3D.pitch - dy * 0.01));
+          update3DScrollThumb();
+          requestAnimationFrame(drawScene);
+        }
+      } else if (e.touches.length === 2 && touchStartDist > 0) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const currentDist = Math.hypot(dx, dy);
+        const factor = touchStartDist / currentDist;
+        touchStartDist = currentDist;
+        if (MathState.mode === '2D') {
+          const midX = (MathState.view2D.xMin + MathState.view2D.xMax) / 2;
+          const midY = (MathState.view2D.yMin + MathState.view2D.yMax) / 2;
+          const halfW = ((MathState.view2D.xMax - MathState.view2D.xMin) / 2) * factor;
+          const halfH = ((MathState.view2D.yMax - MathState.view2D.yMin) / 2) * factor;
+          MathState.view2D.xMin = midX - halfW;
+          MathState.view2D.xMax = midX + halfW;
+          MathState.view2D.yMin = midY - halfH;
+          MathState.view2D.yMax = midY + halfH;
+          requestAnimationFrame(drawScene);
+        } else {
+          MathState.camera3D.zoom = Math.max(0.4, Math.min(3.5, MathState.camera3D.zoom * (currentDist / touchStartDist)));
+          requestAnimationFrame(drawScene);
+        }
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => {
+      isTouchDragging = false;
+      touchStartDist = 0;
+    });
+
+    if (vTrack) {
+      vTrack.addEventListener('touchstart', (e) => {
+        isDraggingVScroll = true;
+        if (e.touches.length > 0) handleVScroll(e.touches[0]);
+      }, { passive: true });
+      window.addEventListener('touchmove', (e) => {
+        if (isDraggingVScroll && e.touches.length > 0) {
+          handleVScroll(e.touches[0]);
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => {
+        isDraggingVScroll = false;
+      });
+    }
+
+    // ----------------------------------------------------------------------------
     // 9. 初始化装载
     // ----------------------------------------------------------------------------
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 768) {
+        const wb = document.querySelector('.workbench-container');
+        if (wb && !wb.classList.contains('mobile-mode-split') && !wb.classList.contains('mobile-mode-canvas') && !wb.classList.contains('mobile-mode-panel')) {
+          setMobileLayoutMode('split');
+        }
+      }
+      resizeCanvas();
+    });
     window.addEventListener('DOMContentLoaded', () => {
       renderPresetList();
       recompileAndRender();
+      if (window.innerWidth <= 768) {
+        setMobileLayoutMode('split');
+      }
       resizeCanvas();
     });
   </script>
