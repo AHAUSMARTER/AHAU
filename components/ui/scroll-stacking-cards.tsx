@@ -43,7 +43,7 @@ export type Project = {
 export const DEFAULT_PROJECTS: Project[] = [
   {
     "name": "茶树叶部病斑多光谱反射率采样与端侧轻量化算法联合验证",
-    "summary": "茶学重点实验室提供40GB茶园高光谱反射率与叶切片标本，寻求端侧轻量化剪枝YOLO算法验证与联合发表。",
+    "summary": "茶学重点实验室提供40GB茶园高光谱反射率与叶切片标本，寻求端侧轻量化剪枝YOLO算法验证与联合发表。（本信息为虚构，仅供比赛展示）",
     "url": "#intention-tea-lab",
     "display": "茶学重点实验室 ‹-› 计算机视觉组",
     "accent": "#38bdf8",
@@ -57,7 +57,7 @@ export const DEFAULT_PROJECTS: Project[] = [
   },
   {
     "name": "轮式拖拉机作业振动传感器时序边缘异常预测",
-    "summary": "工学院农机团队提供拖拉机底盘三轴加速度时序波形，寻求STM32边缘端异常振动实时分类微内核。",
+    "summary": "工学院农机团队提供拖拉机底盘三轴加速度时序波形，寻求STM32边缘端异常振动实时分类微内核。（本信息为虚构，仅供比赛展示）",
     "url": "#intention-tractor-iot",
     "display": "智能农机装备中心 ‹-› 嵌入式物联网组",
     "accent": "#f59e0b",
@@ -71,7 +71,7 @@ export const DEFAULT_PROJECTS: Project[] = [
   },
   {
     "name": "超分辨激光共聚焦显微镜周四晚段与近红外光谱机时互换",
-    "summary": "抗逆团队出让Leica SP8共聚焦激光显微镜周四18:00-22:00机时，置换近红外高通量光谱仪测样配额。",
+    "summary": "抗逆团队出让Leica SP8共聚焦激光显微镜周四18:00-22:00机时，置换近红外高通量光谱仪测样配额。（本信息为虚构，仅供比赛展示）",
     "url": "#intention-instrument-share",
     "display": "作物抗逆育种团队 ‹-› 代谢组学实验室",
     "accent": "#a855f7",
@@ -85,7 +85,7 @@ export const DEFAULT_PROJECTS: Project[] = [
   },
   {
     "name": "水稻稻飞虱无人机遥感多光谱全景航测与挑战杯联合组队",
-    "summary": "植保团队提供大疆M350水稻虫害航测多光谱全景数据，招募前端可视化与多智能体算法开发同学联合冲击挑战杯。",
+    "summary": "植保团队提供大疆M350水稻虫害航测多光谱全景数据，招募前端可视化与多智能体算法开发同学联合冲击挑战杯。（本信息为虚构，仅供比赛展示）",
     "url": "#intention-drone-challenge",
     "display": "植物保护学院 ‹-› 智科算法大创组",
     "accent": "#10b981",
@@ -99,7 +99,7 @@ export const DEFAULT_PROJECTS: Project[] = [
   },
   {
     "name": "手持便携式微型近红外探头果品糖度无损检测校准方程",
-    "summary": "果树生理组提供砀山酥梨与长丰草莓理化破坏性糖度实测数据，寻求化学计量学偏最小二乘校准方程封装。",
+    "summary": "果树生理组提供砀山酥梨与长丰草莓理化破坏性糖度实测数据，寻求化学计量学偏最小二乘校准方程封装。（本信息为虚构，仅供比赛展示）",
     "url": "#intention-fruit-sugar",
     "display": "果树生理团队 ‹-› 移动端与传感器组",
     "accent": "#ec4899",
@@ -113,7 +113,7 @@ export const DEFAULT_PROJECTS: Project[] = [
   },
   {
     "name": "2027考研数学一与计算机408核心概念断层互助探针研讨组",
-    "summary": "计算机同学讲解数据结构图论与操作系统虚拟内存内核机制，数学专业同学拆解高等数学微分中值与多元积分技巧。",
+    "summary": "计算机同学讲解数据结构图论与操作系统虚拟内存内核机制，数学专业同学拆解高等数学微分中值与多元积分技巧。（本信息为虚构，仅供比赛展示）",
     "url": "#intention-postgrad-study",
     "display": "信智学院学业组 ‹-› 理学院应用数学组",
     "accent": "#6366f1",
