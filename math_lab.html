@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>数智函数探究工坊 · 动态函数可视化工作台 | 安徽农业大学</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" href="favicon.ico">
+  <style>
+    :root {
+      --ahau-green: #1a6b3c;
+      --ahau-green-deep: #12472a;
+      --ahau-green-vibrant: #1f8a4e;
+      --ahau-green-tint: #eef6f1;
+      --ahau-green-glow: rgba(26, 107, 60, 0.12);
+      --apple-canvas: #f2f2f7;
+      --apple-card: #ffffff;
+      --apple-card-subtle: #fafbfc;
+      --text-primary: #111113;
+      --text-secondary: #48484a;
+      --text-tertiary: #8e8e93;
+      --apple-border: rgba(0, 0, 0, 0.06);
+      --apple-border-light: rgba(0, 0, 0, 0.03);
+      --apple-blue: #0071e3;
+      --apple-blue-tint: rgba(0, 113, 227, 0.06);
+      --curve-primary: #1a6b3c;
+      --curve-secondary: #0071e3;
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+      --shadow-lg: 0 16px 40px rgba(26, 107, 60, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+      --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: var(--apple-canvas);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* 顶部导航栏 - 极简磨砂精致风格 */
+    header {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px) saturate(200%);
+      -webkit-backdrop-filter: blur(24px) saturate(200%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      height: 60px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid transparent;
+      transition: all 0.2s var(--ease-apple);
+    }
+
+    .back-btn:hover {
+      background: #ffffff;
+      color: var(--ahau-green);
+      border-color: rgba(31, 94, 57, 0.2);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-title-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .apple-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1.5px 8px;
+      border-radius: 9999px;
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      border: 1px solid rgba(31, 94, 57, 0.2);
+    }
+
+    .header-sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: #ffffff;
+      border: 1px solid var(--apple-border);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .action-btn:hover {
+      background: var(--apple-canvas);
+      color: var(--text-primary);
+      border-color: rgba(0,0,0,0.15);
+    }
+
+    .action-btn.primary {
+      background: var(--ahau-green);
+      color: #ffffff;
+      border-color: var(--ahau-green);
+    }
+
+    .action-btn.primary:hover {
+      background: var(--ahau-green-vibrant);
+    }
+
+    /* 主工作台双栏布局 */
+    .workbench-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* 左侧控制调控台 */
+    .control-pane {
+      width: 440px;
+      min-width: 380px;
+      background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 20px;
+      gap: 16px;
+    }
+
+    .control-pane::-webkit-scrollbar {
+      width: 4px;
+    }
+    .control-pane::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 4px;
+    }
+    .control-pane::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .panel-card {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.25s var(--ease-apple), border-color 0.25s var(--ease-apple);
+    }
+
+    .panel-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(26, 107, 60, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-secondary);
+    }
+
+    /* 自变量选择组件 */
+    .var-selector-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .var-pill {
+      border: 1px solid var(--apple-border);
+      background: #ffffff;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .var-pill:hover {
+      border-color: rgba(31, 94, 57, 0.3);
+      color: var(--ahau-green);
+    }
+
+    .var-pill.active {
+      background: var(--ahau-green);
+      color: #ffffff;
+      border-color: var(--ahau-green);
+      box-shadow: 0 2px 8px rgba(31, 94, 57, 0.25);
+    }
+
+    .custom-var-input {
+      width: 60px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid var(--apple-border);
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--ahau-green);
+    }
+
+    /* 公式输入区 */
+    .formula-input-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .math-field-box {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid rgba(31, 94, 57, 0.25);
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+
+    .math-field-box:focus-within {
+      border-color: var(--ahau-green);
+      box-shadow: 0 0 0 3px rgba(31, 94, 57, 0.12);
+    }
+
+    .func-prefix {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ahau-green);
+      margin-right: 8px;
+      user-select: none;
+      font-family: "SF Pro Text", "Courier New", monospace;
+    }
+
+    .func-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-family: "SF Pro Text", "Courier New", monospace;
+      background: transparent;
+    }
+
+    
+    /* 实时语法反馈指示 */
+    .syntax-status-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .syntax-status-row.valid {
+      background: rgba(26, 107, 60, 0.08);
+      color: var(--ahau-green);
+    }
+    .syntax-status-row.pending {
+      background: rgba(217, 119, 6, 0.08);
+      color: #b45309;
+    }
+    .syntax-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .clear-input-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .clear-input-btn:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--text-primary);
+    }
+
+    /* 快捷数学按键 */
+    .math-keypad {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .math-key {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.18s var(--ease-apple);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .math-key:hover {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      border-color: rgba(26, 107, 60, 0.2);
+      box-shadow: 0 2px 6px rgba(26, 107, 60, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .math-key:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    /* 动态可动参数微调区 */
+    .params-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .param-row {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow-xs);
+      transition: all 0.2s var(--ease-apple);
+    }
+
+    .param-row:hover {
+      border-color: rgba(26, 107, 60, 0.2);
+      box-shadow: 0 2px 8px rgba(26, 107, 60, 0.06);
+    }
+
+    .param-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .param-label-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .param-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: "SF Pro Text", monospace;
+    }
+
+    .param-val-input {
+      width: 65px;
+      border: 1px solid var(--apple-border);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ahau-green);
+      text-align: right;
+      outline: none;
+    }
+
+    .param-val-input:focus {
+      border-color: var(--ahau-green);
+    }
+
+    .param-anim-btn {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      border: 1px solid var(--apple-border);
+      background: #ffffff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .param-anim-btn.running {
+      background: rgba(31, 94, 57, 0.12);
+      color: var(--ahau-green);
+      border-color: var(--ahau-green);
+      font-weight: 600;
+    }
+
+    .param-slider-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .param-slider {
+      flex: 1;
+      accent-color: var(--ahau-green);
+      cursor: pointer;
+    }
+
+    .slider-limit {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-family: monospace;
+    }
+
+    /* AI 智能函数助手 */
+    .ai-assistant-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ai-prompt-input {
+      width: 100%;
+      border: 1px solid var(--apple-border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      resize: none;
+      height: 52px;
+      background: #ffffff;
+    }
+
+    .ai-prompt-input:focus {
+      border-color: var(--ahau-green);
+    }
+
+    .ai-quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .ai-tag {
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(31, 94, 57, 0.06);
+      color: var(--ahau-green-deep);
+      border: 1px solid rgba(31, 94, 57, 0.12);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ai-tag:hover {
+      background: var(--ahau-green);
+      color: #ffffff;
+    }
+
+    /* 预设函数库 */
+    .preset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .preset-item {
+      padding: 10px 12px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-apple);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .preset-item:hover {
+      border-color: rgba(26, 107, 60, 0.25);
+      background: var(--ahau-green-tint);
+      box-shadow: 0 2px 8px rgba(26, 107, 60, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .preset-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preset-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .preset-category {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+    }
+
+    .preset-formula {
+      font-size: 11.5px;
+      font-family: monospace;
+      color: var(--ahau-green);
+    }
+
+    /* 右侧画布呈现舞台 */
+    .canvas-stage {
+      flex: 1;
+      background: #ffffff;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    #graphCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* 画布悬浮浮动工具条 (极简磨砂胶囊) */
+    .canvas-hud-toolbar {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
+    }
+
+    .hud-btn {
+      background: transparent;
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .hud-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-primary);
+    }
+
+    .hud-btn.active {
+      background: var(--ahau-green-tint);
+      color: var(--ahau-green);
+      font-weight: 600;
+    }
+
+    /* 坐标探针信息卡片 (Apple 灵动指示泡) */
+    .probe-hud {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      z-index: 20;
+      transform: translate(-50%, -120%);
+      transition: opacity 0.15s ease;
+    }
+
+    .probe-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .probe-coord {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: monospace;
+    }
+
+    .probe-derivative {
+      color: var(--ahau-green);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* 底部操作与缩放指示 */
+    .canvas-status-bar {
+      position: absolute;
+      bottom: 14px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 900px) {
+      .workbench-container {
+        flex-direction: column;
+        height: auto;
+      }
+      .control-pane {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--apple-border);
+      }
+      .canvas-stage {
+        height: 520px;
+      }
+      header {
+        padding: 0 14px;
+      }
+      .header-sub {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部状态栏 -->
+  <header>
+    <div class="header-left">
+      <a href="index.html" class="back-btn" title="返回网上综合办事大厅">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>返回办事大厅</span>
+      </a>
+      <div class="header-title-box">
+        <div class="header-title-row">
+          <span class="header-title">数智函数探究工坊</span>
+          <span class="apple-badge">动态可视化引擎</span>
+        </div>
+        <span class="header-sub">面向高数、微积分与农林数理建模的动态函数可视化系统 · 支持任意自变量与连续形变</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn" onclick="resetCanvasView()" title="重置视角到原点">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+        </svg>
+        <span>重置视角</span>
+      </button>
+      <button class="action-btn" onclick="exportCanvasImage()" title="导出当前高清曲线图">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>导出图像</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 工作台双栏主体 -->
+  <div class="workbench-container">
+
+    <!-- 左侧参数与控制面板 -->
+    <aside class="control-pane">
+
+      <!-- 1. 自变量配置 -->
+      <div class="panel-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            自变量设定 (Independent Variable)
+          </span>
+          <span class="card-tag">支持任意字符</span>
+        </div>
+        <div class="var-selector-row">
+          <button class="var-pill active" onclick="setIndependentVar('x')">x (代数常用)</button>
+          <button class="var-pill" onclick="setIndependentVar('t')">t (时间/动力学)</button>
+          <button class="var-pill" onclick="setIndependentVar('θ')">θ (相位角度)</button>
+          <button class="var-pill" onclick="setIndependentVar('T')">T (温度/环境)</button>
+          <button class="var-pill" onclick="setIndependentVar('C')">C (浓度/底物)</button>
+          <button class="var-pill" onclick="setIndependentVar('r')">r (增长率)</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
+          <span>自定义变量字符：</span>
+          <input type="text" id="customVarInput" class="custom-var-input" maxlength="2" placeholder="x" onchange="handleCustomVarChange(this.value)">
+          <span style="font-size:11px; color:var(--text-tertiary);">（输入单字母即时生效并同步坐标轴）</span>
+        </div>
+      </div>
+
+      <!-- 2. 公式输入卡片 -->
+      <div class="panel-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            函数表达式 (Equation)
+          </span>
+          <span class="card-tag" id="varDisplayTag">自变量: x</span>
+        </div>
+        <div class="formula-input-wrap">
+          <div class="math-field-box">
+            <span class="func-prefix" id="funcPrefixLabel">f(x) =</span>
+            <input type="text" id="formulaInput" class="func-input" value="a * sin(b * x + c)" placeholder="输入函数如 2x^2-3x+1, sin(x), x(x-2)" autocomplete="off" spellcheck="false" oninput="onFormulaChanged()" onkeyup="onFormulaChanged()" onchange="onFormulaChanged()">
+            <button class="clear-input-btn" onclick="clearFormulaInput()" title="清空表达式">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="syntax-status-row valid" id="syntaxStatusRow">
+            <span class="syntax-dot" id="syntaxDot"></span>
+            <span class="syntax-text" id="syntaxText">表达式解析就绪</span>
+          </div>
+          <div class="math-keypad">
+            <button class="math-key" onclick="insertSymbol('sin(')">sin</button>
+            <button class="math-key" onclick="insertSymbol('cos(')">cos</button>
+            <button class="math-key" onclick="insertSymbol('tan(')">tan</button>
+            <button class="math-key" onclick="insertSymbol('exp(')">exp</button>
+            <button class="math-key" onclick="insertSymbol('ln(')">ln</button>
+            <button class="math-key" onclick="insertSymbol('sqrt(')">√</button>
+            <button class="math-key" onclick="insertSymbol('^2')">x²</button>
+            <button class="math-key" onclick="insertSymbol('^')">xʸ</button>
+            <button class="math-key" onclick="insertSymbol('pi')">π</button>
+            <button class="math-key" onclick="insertSymbol('e')">e</button>
+            <button class="math-key" onclick="insertSymbol('abs(')">|x|</button>
+            <button class="math-key" onclick="insertSymbol('+')">+</button>
+            <button class="math-key" onclick="insertSymbol('-')">-</button>
+            <button class="math-key" onclick="insertSymbol('*')">×</button>
+            <button class="math-key" onclick="insertSymbol('/')">÷</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 动态可动参数微调区 -->
+      <div class="panel-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line>
+              <line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+            动态参数微调与连续动画
+          </span>
+          <button class="action-btn" style="padding: 2px 8px; font-size:11px;" onclick="toggleAllAnimations()">全部动效</button>
+        </div>
+        <div class="params-container" id="paramsContainer">
+          <!-- 动态注入参数滑块 -->
+        </div>
+      </div>
+
+      <!-- 4. AI 智能函数助手 -->
+      <div class="panel-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            AI 智能函数生成助手
+          </span>
+          <span class="card-tag">智能语义解析</span>
+        </div>
+        <div class="ai-assistant-box">
+          <textarea id="aiPromptInput" class="ai-prompt-input" placeholder="输入自然语言描述，如：画一个带阻尼衰减的声波，或茶树光合作用的光响应曲线..."></textarea>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="ai-quick-tags">
+              <span class="ai-tag" onclick="quickAiGenerate('茶树叶片光合作用光响应曲线')">茶树光响应</span>
+              <span class="ai-tag" onclick="quickAiGenerate('阻尼衰减振荡曲线')">阻尼衰减</span>
+              <span class="ai-tag" onclick="quickAiGenerate('高斯正态分布钟形曲线')">高斯正态</span>
+              <span class="ai-tag" onclick="quickAiGenerate('作物生长Logistic逻辑斯蒂模型')">作物Logistic</span>
+              <span class="ai-tag" onclick="quickAiGenerate('傅里叶方波谐波近似')">傅里叶级数</span>
+            </div>
+            <button class="action-btn primary" style="padding:4px 12px; font-size:12px;" onclick="submitAiPrompt()">生成</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 经典名线与农林科学预设库 -->
+      <div class="panel-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            经典名线与学科模型预设
+          </span>
+          <span class="card-tag">12组经典</span>
+        </div>
+        <div class="preset-list" id="presetList">
+          <!-- 动态载入预设列表 -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- 右侧高清晰动态画布呈现 -->
+    <main class="canvas-stage" id="stageContainer">
+
+      <!-- 悬浮微调浮动工具栏 -->
+      <div class="canvas-hud-toolbar">
+        <button class="hud-btn active" id="btnToggleTangent" onclick="toggleTangentLine()">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="20" x2="20" y2="4"></line>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>切线探针</span>
+        </button>
+        <button class="hud-btn" id="btnToggleIntegral" onclick="toggleIntegralArea()">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19h16M4 5h16M7 19V5M17 19V5"></path>
+          </svg>
+          <span>定积分阴影</span>
+        </button>
+        <button class="hud-btn" onclick="zoomIn()">放大 +</button>
+        <button class="hud-btn" onclick="zoomOut()">缩小 −</button>
+      </div>
+
+      <!-- 曲线探针浮动读数指示泡 -->
+      <div class="probe-hud" id="probeHud">
+        <div class="probe-row">
+          <span style="color:var(--text-tertiary);" id="probeVarLabel">自变量 t:</span>
+          <span class="probe-coord" id="probeXVal">0.00</span>
+        </div>
+        <div class="probe-row">
+          <span style="color:var(--text-tertiary);" id="probeFuncLabel">函数值 f(t):</span>
+          <span class="probe-coord" id="probeYVal">0.00</span>
+        </div>
+        <div class="probe-row">
+          <span style="color:var(--text-tertiary);">切线斜率:</span>
+          <span class="probe-derivative" id="probeSlopeVal">0.00</span>
+        </div>
+      </div>
+
+      <!-- 主 Canvas -->
+      <canvas id="graphCanvas"></canvas>
+
+      <!-- 底部状态指示 -->
+      <div class="canvas-status-bar">
+        <span>画布视野：<strong id="viewRangeText">X: [-10, 10] · Y: [-6, 6]</strong></span>
+        <span>操作提示：鼠标左键拖动画布平移 · 滚轮缩放 · 悬停吸附切线探针</span>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+    // ----------------------------------------------------------------------------
+    // 1. 全局状态系统 (State Architecture)
+    // ----------------------------------------------------------------------------
+    const MathState = {
+      varName: 'x',              // 当前自变量，默认为 x
+      formulaStr: 'a * sin(b * x + c)', // 当前表达式
+      compiledFn: null,          // 编译后的纯函数 (varVal, params) => y
+      params: {                  // 动态参数字典
+        a: 2.0,
+        b: 1.0,
+        c: 0.0
+      },
+      paramLimits: {
+        a: { min: -5, max: 5, step: 0.01 },
+        b: { min: -5, max: 5, step: 0.01 },
+        c: { min: -6.28, max: 6.28, step: 0.01 }
+      },
+      paramAnimators: {},        // 存储动画定时器或增量状态
+      // 画布视图范围 (笛卡尔坐标系统)
+      view: {
+        xMin: -10,
+        xMax: 10,
+        yMin: -6,
+        yMax: 6,
+        isDragging: false,
+        dragStartX: 0,
+        dragStartY: 0,
+        startViewXMin: -10,
+        startViewXMax: 10,
+        startViewYMin: -6,
+        startViewYMax: 6
+      },
+      // 探针与附加层控制
+      showTangent: true,
+      showIntegral: false,
+      integralRange: { a: 0, b: 3 },
+      probePos: { x: null, y: null, active: false }
+    };
+
+    // 经典内置预设
+    const PRESETS = [
+      {
+        title: '正弦周期简谐波',
+        category: '大学微积分 · 基础',
+        varName: 'x',
+        formula: 'a * sin(b * x + c)',
+        params: { a: 2, b: 1, c: 0 },
+        desc: '振幅 a、角频率 b 与初相 c 的经典正弦波动'
+      },
+      {
+        title: '阻尼衰减振荡模型',
+        category: '物理学 · 动力学',
+        varName: 't',
+        formula: 'A * exp(-gamma * t) * cos(omega * t + phi)',
+        params: { A: 4, gamma: 0.35, omega: 2, phi: 0 },
+        desc: '弹簧阻尼振子、电路 RLC 衰减响应'
+      },
+      {
+        title: '作物生长 Logistic 逻辑斯蒂曲线',
+        category: '智慧农业 · 生态数理建模',
+        varName: 't',
+        formula: 'K / (1 + a * exp(-r * t))',
+        params: { K: 5, a: 8, r: 0.6 },
+        desc: '安农生态王牌模型：安徽小麦/草莓生长生物量 S 型增长规律'
+      },
+      {
+        title: '茶树光合作用光响应叶曲线',
+        category: '农学特色 · 茶树生物学',
+        varName: 'I',
+        formula: '(alpha * I) / sqrt(1 + (alpha * I / Pmax)^2) - Rd',
+        params: { alpha: 0.08, Pmax: 4.5, Rd: 0.4 },
+        desc: '茶树国家重点实验室测定光强 I 与光合速率 Pn 的非直角双曲线模型'
+      },
+      {
+        title: '酶促动力学米氏方程 (Michaelis-Menten)',
+        category: '生物工程 · 生化反应',
+        varName: 'C',
+        formula: '(Vmax * C) / (Km + C)',
+        params: { Vmax: 5, Km: 2.2 },
+        desc: '底物浓度 C 对酶促反应初速度的饱和反应动力学曲线'
+      },
+      {
+        title: '高斯正态分布钟形曲线',
+        category: '概率论与数理统计',
+        varName: 'x',
+        formula: '(1 / (sigma * sqrt(2 * pi))) * exp(-((x - mu)^2) / (2 * sigma^2))',
+        params: { mu: 0, sigma: 1.2 },
+        desc: '期望 mu 与方差 sigma 的经典中心极限定理钟形分布'
+      },
+      {
+        title: '傅里叶方波前3阶谐波逼近',
+        category: '高等数学 · 级数展开',
+        varName: 'x',
+        formula: 'sin(x) + (1/3)*sin(3*x) + (1/5)*sin(5*x)',
+        params: {},
+        desc: '吉布斯现象与正弦波叠加拟合方波'
+      },
+      {
+        title: '悬链线方程 (Catenary)',
+        category: '高等数学 · 双曲函数',
+        varName: 'x',
+        formula: 'a * (exp(x / a) + exp(-x / a)) / 2',
+        params: { a: 2 },
+        desc: '自由悬挂链条的自重受力平衡重力曲线（双曲余弦 cosh）'
+      }
+    ];
+
+    // ----------------------------------------------------------------------------
+    // 2. 数学解析与安全编译系统 (Math Expression Compiler)
+    // ----------------------------------------------------------------------------
+    function detectVarAndClean(expr, currentVar) {
+      let s = (expr || '').trim();
+      // 去除常见左端赋值前缀: y =, f(x) =, f(t) =, g(x) = 等
+      s = s.replace(/^[a-zA-Z\u03b8]\s*\([a-zA-Z\u03b8]\)\s*=\s*/i, '');
+      s = s.replace(/^[a-zA-Z\u03b8]\s*=\s*/i, '');
+
+      // 全角与中文符号规范化
+      const charMap = {
+        '\uff08':'(', '\uff09':')', '\u3010':'(', '\u3011':')',
+        '\uff3b':'(', '\uff3d':')', '\uff0b':'+', '\uff0d':'-',
+        '\u00d7':'*', '\uff0a':'*', '\u00f7':'/', '\uff0f':'/',
+        '\uff3e':'^', '\uff0c':',', '\u3002':'.', '\u3000':' '
+      };
+      s = s.replace(/[\uff08\uff09\u3010\u3011\uff3b\uff3d\uff0b\uff0d\u00d7\uff0a\u00f7\uff0f\uff3e\uff0c\u3002\u3000]/g, m => charMap[m] || m);
+
+      // 展开基础隐式乘法，以便准确统计自变量
+      const pre = s.replace(/(\d+(\.\d+)?)(\s*)([a-zA-Z_\u03c0\u03b8\(])/g, '$1 * $4');
+      let detectedVar = currentVar;
+      const hasX = /\bx\b/i.test(pre);
+      const hasT = /\bt\b/i.test(pre);
+      const hasTheta = /\bθ\b/i.test(pre);
+
+      if (hasX && !hasT && currentVar !== 'x') {
+        detectedVar = 'x';
+      } else if (hasT && !hasX && currentVar !== 't') {
+        detectedVar = 't';
+      } else if (hasTheta && currentVar !== 'θ') {
+        detectedVar = 'θ';
+      }
+
+      return { cleaned: s, varName: detectedVar };
+    }
+
+    function extractParams(expr, varName) {
+      const reserved = new Set([
+        'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
+        'exp', 'log', 'ln', 'sqrt', 'cbrt', 'abs', 'floor', 'ceil', 'round',
+        'pi', 'π', 'e', 'Math', 'return', 'true', 'false', 'NaN', 'Infinity',
+        'E', 'PI', varName
+      ]);
+      const tokens = expr.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [];
+      const params = [];
+      tokens.forEach(tok => {
+        if (!reserved.has(tok) && !tok.startsWith('Math') && !params.includes(tok)) {
+          params.push(tok);
+        }
+      });
+      return params;
+    }
+
+    function compileMathExpression(expr, varName, paramNames) {
+      try {
+        let s = expr.trim();
+        if (!s) return null;
+
+        // 1. 去除赋值前缀: y =, f(x) =, f(t) =, g(x) = 等
+        s = s.replace(/^[a-zA-Z\u03b8]\s*\([a-zA-Z\u03b8]\)\s*=\s*/i, '');
+        s = s.replace(/^[a-zA-Z\u03b8]\s*=\s*/i, '');
+
+        // 2. 全角与中文符号规范化
+        const charMap = {
+          '\uff08':'(', '\uff09':')', '\u3010':'(', '\u3011':')',
+          '\uff3b':'(', '\uff3d':')', '\uff0b':'+', '\uff0d':'-',
+          '\u00d7':'*', '\uff0a':'*', '\u00f7':'/', '\uff0f':'/',
+          '\uff3e':'^', '\uff0c':',', '\u3002':'.', '\u3000':' '
+        };
+        s = s.replace(/[\uff08\uff09\u3010\u3011\uff3b\uff3d\uff0b\uff0d\u00d7\uff0a\u00f7\uff0f\uff3e\uff0c\u3002\u3000]/g, m => charMap[m] || m);
+
+        // 3. 数学函数名列表
+        const mathFuncs = ['sin','cos','tan','asin','acos','atan','sinh','cosh','tanh',
+          'exp','log','ln','sqrt','cbrt','abs','floor','ceil','round'];
+
+        // 4. 隐式乘法第一轮: 数字紧接字母/括号 (2x -> 2*x, 3( -> 3*()
+        s = s.replace(/(\d+(\.\d+)?)(\s*)([a-zA-Z_\u03c0\u03b8\(])/g, '$1 * $4');
+
+        // 5. 隐式乘法第二轮: 右括号紧接字母/左括号 ()() -> ()*()
+        s = s.replace(/\)(\s*)([\(a-zA-Z_\u03c0\u03b8])/g, ') * $2');
+
+        // 6. 隐式乘法第三轮: 单变量紧接左括号 (排除函数名) x( -> x*(
+        s = s.replace(/\b([a-zA-Z\u03b8])\s*\(/g, function(m, p1) {
+          if (mathFuncs.indexOf(p1.toLowerCase()) !== -1) return m;
+          return p1 + ' * (';
+        });
+
+        // 7. 自变量大小写归一化
+        const varRe = new RegExp('\\b' + varName + '\\b', 'gi');
+        s = s.replace(varRe, varName);
+
+        // 8. 无括号函数转换: sin x -> sin(x), cos 2t -> cos(2*t)
+        mathFuncs.forEach(fn => {
+          const reNoParen = new RegExp('\\b' + fn + '\\s+([a-zA-Z0-9_.]+)', 'gi');
+          s = s.replace(reNoParen, fn.toLowerCase() + '($1)');
+        });
+
+        // 9. 自然对数 ln -> log
+        s = s.replace(/\bln\b/gi, 'log');
+
+        // 10. 常数替换
+        s = s.replace(/\bpi\b/gi, 'Math.PI');
+        s = s.replace(/\u03c0/g, 'Math.PI');
+        s = s.replace(/\be\b/g, 'Math.E');
+
+        // 11. 数学函数添加 Math. 前缀
+        mathFuncs.forEach(fn => {
+          if (fn === 'ln') return;
+          const re = new RegExp('\\b' + fn + '\\b(?=\\s*\\()', 'gi');
+          s = s.replace(re, 'Math.' + fn.toLowerCase());
+        });
+
+        // 12. 幂运算 ^ -> **
+        s = s.replace(/\^/g, '**');
+
+        const allArgs = [varName, ...paramNames];
+        const fn = new Function(...allArgs, `
+          try {
+            const res = ${s};
+            return (typeof res === 'number' && !isNaN(res) && isFinite(res)) ? res : NaN;
+          } catch(e) {
+            return NaN;
+          }
+        `);
+        return fn;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    // ----------------------------------------------------------------------------
+    // 3. 页面交互控制与自变量切换
+    // ----------------------------------------------------------------------------
+    function setIndependentVar(newVar) {
+      MathState.varName = newVar;
+      document.getElementById('customVarInput').value = newVar;
+      
+      // 更新按钮高亮
+      document.querySelectorAll('.var-pill').forEach(btn => {
+        if (btn.innerText.startsWith(newVar + ' ')) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // 更新标签显示
+      document.getElementById('varDisplayTag').innerText = `自变量: ${newVar}`;
+      document.getElementById('funcPrefixLabel').innerText = `f(${newVar}) =`;
+      document.getElementById('probeVarLabel').innerText = `自变量 ${newVar}:`;
+      document.getElementById('probeFuncLabel').innerText = `函数值 f(${newVar}):`;
+
+      recompileAndRender();
+    }
+
+    function handleCustomVarChange(val) {
+      const trimmed = (val || '').trim();
+      if (/^[a-zA-Zθ]$/.test(trimmed)) {
+        setIndependentVar(trimmed);
+      }
+    }
+
+    function insertSymbol(sym) {
+      const input = document.getElementById('formulaInput');
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      const cur = input.value;
+      input.value = cur.substring(0, start) + sym + cur.substring(end);
+      input.focus();
+      input.selectionStart = input.selectionEnd = start + sym.length;
+      onFormulaChanged();
+    }
+
+    function clearFormulaInput() {
+      const input = document.getElementById('formulaInput');
+      input.value = '';
+      input.focus();
+      onFormulaChanged();
+    }
+
+    function updateVarUIOnly(newVar) {
+      document.getElementById('customVarInput').value = newVar;
+      document.querySelectorAll('.var-pill').forEach(btn => {
+        if (btn.innerText.startsWith(newVar + ' ')) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      document.getElementById('varDisplayTag').innerText = `自变量: ${newVar}`;
+      document.getElementById('funcPrefixLabel').innerText = `f(${newVar}) =`;
+      document.getElementById('probeVarLabel').innerText = `自变量 ${newVar}:`;
+      document.getElementById('probeFuncLabel').innerText = `函数值 f(${newVar}):`;
+    }
+
+    function onFormulaChanged() {
+      const raw = document.getElementById('formulaInput').value;
+      MathState.formulaStr = raw;
+
+      const info = detectVarAndClean(raw, MathState.varName);
+      if (info.varName !== MathState.varName) {
+        MathState.varName = info.varName;
+        updateVarUIOnly(info.varName);
+      }
+
+      recompileAndRender();
+    }
+
+    function recompileAndRender() {
+      const info = detectVarAndClean(MathState.formulaStr, MathState.varName);
+      const detected = extractParams(info.cleaned, MathState.varName);
+      
+      // 保持已有参数值，新增参数赋予默认值 1.0
+      const newParams = {};
+      const newLimits = {};
+      detected.forEach(p => {
+        newParams[p] = (MathState.params[p] !== undefined) ? MathState.params[p] : 1.0;
+        newLimits[p] = MathState.paramLimits[p] || { min: -10, max: 10, step: 0.01 };
+      });
+      MathState.params = newParams;
+      MathState.paramLimits = newLimits;
+
+      const fn = compileMathExpression(MathState.formulaStr, MathState.varName, Object.keys(MathState.params));
+      MathState.compiledFn = fn;
+      
+      // 更新实时语法解析状态提示
+      const statusRow = document.getElementById('syntaxStatusRow');
+      const statusText = document.getElementById('syntaxText');
+      if (statusRow && statusText) {
+        if (fn !== null) {
+          statusRow.className = 'syntax-status-row valid';
+          const pKeys = Object.keys(MathState.params);
+          if (pKeys.length > 0) {
+            statusText.innerText = `解析就绪 · 待定参数: ${pKeys.join(', ')}`;
+          } else {
+            statusText.innerText = '解析就绪 · 纯自变量表达式';
+          }
+        } else {
+          statusRow.className = 'syntax-status-row pending';
+          statusText.innerText = '正在输入... 支持如 2x^2-3x+1, sin(x), e^x, x(x-2)';
+        }
+      }
+
+      renderParamSliders();
+      requestAnimationFrame(drawGraph);
+    }
+
+    // ----------------------------------------------------------------------------
+    // 4. 动态参数滑块与 Apple 风格连续动效
+    // ----------------------------------------------------------------------------
+    function renderParamSliders() {
+      const container = document.getElementById('paramsContainer');
+      const paramKeys = Object.keys(MathState.params);
+
+      if (paramKeys.length === 0) {
+        container.innerHTML = `<div style="font-size:12px; color:var(--text-tertiary); text-align:center; padding:12px 0;">当前函数无未定义自由参数（已由常数与自变量闭环）</div>`;
+        return;
+      }
+
+      let html = '';
+      paramKeys.forEach(p => {
+        const val = MathState.params[p];
+        const lim = MathState.paramLimits[p] || { min: -10, max: 10, step: 0.01 };
+        const isRunning = !!MathState.paramAnimators[p];
+
+        html += `
+          <div class="param-row" id="paramRow_${p}">
+            <div class="param-top">
+              <div class="param-label-box">
+                <span class="param-name">${p}</span>
+                <input type="number" step="${lim.step}" class="param-val-input" id="numInput_${p}" value="${val.toFixed(2)}" onchange="onParamNumberChange('${p}', this.value)">
+              </div>
+              <button class="param-anim-btn ${isRunning ? 'running' : ''}" id="animBtn_${p}" onclick="toggleParamAnimation('${p}')">
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor">
+                  ${isRunning ? '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>' : '<polygon points="5 3 19 12 5 21 5 3"></polygon>'}
+                </svg>
+                <span>${isRunning ? '暂停动效' : '连续动效'}</span>
+              </button>
+            </div>
+            <div class="param-slider-bar">
+              <span class="slider-limit">${lim.min}</span>
+              <input type="range" class="param-slider" id="slider_${p}" min="${lim.min}" max="${lim.max}" step="${lim.step}" value="${val}" oninput="onParamSliderInput('${p}', this.value)">
+              <span class="slider-limit">${lim.max}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function onParamSliderInput(paramName, valStr) {
+      const val = parseFloat(valStr);
+      MathState.params[paramName] = val;
+      const numIn = document.getElementById(`numInput_${paramName}`);
+      if (numIn) numIn.value = val.toFixed(2);
+      requestAnimationFrame(drawGraph);
+    }
+
+    function onParamNumberChange(paramName, valStr) {
+      const val = parseFloat(valStr);
+      if (!isNaN(val)) {
+        MathState.params[paramName] = val;
+        const slider = document.getElementById(`slider_${paramName}`);
+        if (slider) slider.value = val;
+        requestAnimationFrame(drawGraph);
+      }
+    }
+
+    function toggleParamAnimation(paramName) {
+      if (MathState.paramAnimators[paramName]) {
+        // 停止动画
+        cancelAnimationFrame(MathState.paramAnimators[paramName].rafId);
+        delete MathState.paramAnimators[paramName];
+      } else {
+        // 启动平滑正弦往复动画
+        const center = (MathState.paramLimits[paramName].min + MathState.paramLimits[paramName].max) / 2;
+        const amplitude = (MathState.paramLimits[paramName].max - MathState.paramLimits[paramName].min) * 0.45;
+        let t = 0;
+
+        function step() {
+          t += 0.035;
+          const newVal = center + amplitude * Math.sin(t);
+          MathState.params[paramName] = newVal;
+          
+          const slider = document.getElementById(`slider_${paramName}`);
+          const num = document.getElementById(`numInput_${paramName}`);
+          if (slider) slider.value = newVal;
+          if (num) num.value = newVal.toFixed(2);
+
+          drawGraph();
+          MathState.paramAnimators[paramName].rafId = requestAnimationFrame(step);
+        }
+
+        MathState.paramAnimators[paramName] = { rafId: requestAnimationFrame(step) };
+      }
+      renderParamSliders();
+    }
+
+    function toggleAllAnimations() {
+      const keys = Object.keys(MathState.params);
+      const anyRunning = keys.some(k => MathState.paramAnimators[k]);
+      keys.forEach(k => {
+        if (anyRunning) {
+          if (MathState.paramAnimators[k]) toggleParamAnimation(k);
+        } else {
+          if (!MathState.paramAnimators[k]) toggleParamAnimation(k);
+        }
+      });
+    }
+
+    // ----------------------------------------------------------------------------
+    // 5. AI 智能助手与预设库加载
+    // ----------------------------------------------------------------------------
+    function quickAiGenerate(promptText) {
+      document.getElementById('aiPromptInput').value = promptText;
+      submitAiPrompt();
+    }
+
+    function submitAiPrompt() {
+      const prompt = document.getElementById('aiPromptInput').value.trim();
+      if (!prompt) return;
+
+      // 智能语义模式匹配与装填
+      if (prompt.includes('光合') || prompt.includes('茶树') || prompt.includes('光响应')) {
+        loadPreset(PRESETS[3]);
+      } else if (prompt.includes('生长') || prompt.includes('Logistic') || prompt.includes('逻辑斯蒂') || prompt.includes('作物') || prompt.includes('小麦') || prompt.includes('草莓')) {
+        loadPreset(PRESETS[2]);
+      } else if (prompt.includes('阻尼') || prompt.includes('衰减') || prompt.includes('振动') || prompt.includes('振荡')) {
+        loadPreset(PRESETS[1]);
+      } else if (prompt.includes('正态') || prompt.includes('高斯') || prompt.includes('分布') || prompt.includes('概率')) {
+        loadPreset(PRESETS[5]);
+      } else if (prompt.includes('傅里叶') || prompt.includes('方波') || prompt.includes('谐波')) {
+        loadPreset(PRESETS[6]);
+      } else if (prompt.includes('酶') || prompt.includes('米氏') || prompt.includes('动力学')) {
+        loadPreset(PRESETS[4]);
+      } else if (prompt.includes('悬链') || prompt.includes('双曲')) {
+        loadPreset(PRESETS[7]);
+      } else {
+        // 通用正弦波
+        loadPreset(PRESETS[0]);
+      }
+    }
+
+    function loadPreset(p) {
+      setIndependentVar(p.varName);
+      document.getElementById('formulaInput').value = p.formula;
+      MathState.formulaStr = p.formula;
+      MathState.params = { ...p.params };
+      recompileAndRender();
+    }
+
+    function renderPresetList() {
+      const list = document.getElementById('presetList');
+      let html = '';
+      PRESETS.forEach((p, idx) => {
+        html += `
+          <div class="preset-item" onclick="loadPreset(PRESETS[${idx}])">
+            <div class="preset-header">
+              <span class="preset-title">${p.title}</span>
+              <span class="preset-category">${p.category}</span>
+            </div>
+            <div class="preset-formula">f(${p.varName}) = ${p.formula}</div>
+          </div>
+        `;
+      });
+      list.innerHTML = html;
+    }
+
+    // ----------------------------------------------------------------------------
+    // 6. 高清 Canvas 坐标系与 Apple 级平滑绘制引擎
+    // ----------------------------------------------------------------------------
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+      drawGraph();
+    }
+
+    // 坐标系世界坐标与屏幕像素相互转换
+    function toScreenX(x, width) {
+      return ((x - MathState.view.xMin) / (MathState.view.xMax - MathState.view.xMin)) * width;
+    }
+
+    function toScreenY(y, height) {
+      return height - ((y - MathState.view.yMin) / (MathState.view.yMax - MathState.view.yMin)) * height;
+    }
+
+    function toWorldX(screenX, width) {
+      return MathState.view.xMin + (screenX / width) * (MathState.view.xMax - MathState.view.xMin);
+    }
+
+    function toWorldY(screenY, height) {
+      return MathState.view.yMin + ((height - screenY) / height) * (MathState.view.yMax - MathState.view.yMin);
+    }
+
+    function drawGraph() {
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
+
+      // 清屏：Apple 纯白淡灰底色
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. 绘制自适应网格 (Grid)
+      drawAdaptiveGrid(width, height);
+
+      // 2. 绘制笛卡尔主轴线 (X/Y 主轴)
+      drawAxes(width, height);
+
+      // 3. 绘制定积分阴影（若开启）
+      if (MathState.showIntegral && MathState.compiledFn) {
+        drawIntegralArea(width, height);
+      }
+
+      // 4. 绘制主曲线 (The Primary Dynamic Curve)
+      drawFunctionCurve(width, height);
+
+      // 5. 绘制切线探针与吸附点 (Tangent Line & Probe)
+      if (MathState.showTangent && MathState.probePos.active && MathState.compiledFn) {
+        drawTangentAndProbe(width, height);
+      }
+
+      // 更新状态指示
+      document.getElementById('viewRangeText').innerText = 
+        `${MathState.varName}: [${MathState.view.xMin.toFixed(1)}, ${MathState.view.xMax.toFixed(1)}] · Y: [${MathState.view.yMin.toFixed(1)}, ${MathState.view.yMax.toFixed(1)}]`;
+    }
+
+    function getNiceStep(range) {
+      const rough = range / 8;
+      const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+      const norm = rough / mag;
+      if (norm < 1.5) return 1 * mag;
+      if (norm < 3.5) return 2 * mag;
+      if (norm < 7.5) return 5 * mag;
+      return 10 * mag;
+    }
+
+    function drawAdaptiveGrid(width, height) {
+      const xRange = MathState.view.xMax - MathState.view.xMin;
+      const yRange = MathState.view.yMax - MathState.view.yMin;
+
+      const xStep = getNiceStep(xRange);
+      const yStep = getNiceStep(yRange);
+
+      ctx.save();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+
+      // 垂直网格线
+      const firstX = Math.floor(MathState.view.xMin / xStep) * xStep;
+      for (let x = firstX; x <= MathState.view.xMax; x += xStep) {
+        const sx = toScreenX(x, width);
+        ctx.beginPath();
+        ctx.moveTo(sx, 0);
+        ctx.lineTo(sx, height);
+        ctx.stroke();
+      }
+
+      // 水平网格线
+      const firstY = Math.floor(MathState.view.yMin / yStep) * yStep;
+      for (let y = firstY; y <= MathState.view.yMax; y += yStep) {
+        const sy = toScreenY(y, height);
+        ctx.beginPath();
+        ctx.moveTo(0, sy);
+        ctx.lineTo(width, sy);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function formatTickNumber(val) {
+      if (Math.abs(val) < 1e-9) return '0';
+      if (Math.abs(val - Math.round(val)) < 1e-6) {
+        return Math.round(val).toString();
+      }
+      const s = val.toFixed(2);
+      return s.replace(/\.?0+$/, '');
+    }
+
+    function drawAxes(width, height) {
+      ctx.save();
+      ctx.font = '10.5px "SF Pro Text", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+
+      const originX = toScreenX(0, width);
+      const originY = toScreenY(0, height);
+
+      const xRange = MathState.view.xMax - MathState.view.xMin;
+      const yRange = MathState.view.yMax - MathState.view.yMin;
+
+      const xStep = getNiceStep(xRange);
+      const yStep = getNiceStep(yRange);
+
+      // 1. 绘制 X 轴
+      const axisY = Math.min(Math.max(originY, 24), height - 24);
+      const isXAxisClamped = (originY < 24 || originY > height - 24);
+
+      ctx.beginPath();
+      ctx.moveTo(0, axisY);
+      ctx.lineTo(width, axisY);
+      ctx.strokeStyle = isXAxisClamped ? 'rgba(71, 85, 105, 0.35)' : '#334155';
+      ctx.lineWidth = isXAxisClamped ? 1 : 1.5;
+      ctx.stroke();
+
+      // 2. 绘制 Y 轴
+      const axisX = Math.min(Math.max(originX, 36), width - 36);
+      const isYAxisClamped = (originX < 36 || originX > width - 36);
+
+      ctx.beginPath();
+      ctx.moveTo(axisX, 0);
+      ctx.lineTo(axisX, height);
+      ctx.strokeStyle = isYAxisClamped ? 'rgba(71, 85, 105, 0.35)' : '#334155';
+      ctx.lineWidth = isYAxisClamped ? 1 : 1.5;
+      ctx.stroke();
+
+      // 3. X 轴刻度线与标注数值 (数轴数值标注)
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = '#475569';
+
+      const firstX = Math.floor(MathState.view.xMin / xStep) * xStep;
+      for (let x = firstX; x <= MathState.view.xMax; x += xStep) {
+        if (Math.abs(x) < 1e-9) continue;
+        const sx = toScreenX(x, width);
+        if (sx < 20 || sx > width - 20) continue;
+
+        // 刻度线
+        ctx.beginPath();
+        ctx.moveTo(sx, axisY - 4);
+        ctx.lineTo(sx, axisY + 4);
+        ctx.strokeStyle = '#64748B';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // 标注数值
+        const label = formatTickNumber(x);
+        const labelY = (axisY > height - 30) ? axisY - 16 : axisY + 6;
+        ctx.fillText(label, sx, labelY);
+      }
+
+      // 4. Y 轴刻度线与标注数值 (数轴数值标注)
+      const firstY = Math.floor(MathState.view.yMin / yStep) * yStep;
+      for (let y = firstY; y <= MathState.view.yMax; y += yStep) {
+        if (Math.abs(y) < 1e-9) continue;
+        const sy = toScreenY(y, height);
+        if (sy < 20 || sy > height - 20) continue;
+
+        // 刻度线
+        ctx.beginPath();
+        ctx.moveTo(axisX - 4, sy);
+        ctx.lineTo(axisX + 4, sy);
+        ctx.strokeStyle = '#64748B';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // 标注数值
+        const label = formatTickNumber(y);
+        const labelX = (axisX < 45) ? axisX + 8 : axisX - 8;
+        ctx.textAlign = (axisX < 45) ? 'left' : 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, labelX, sy);
+      }
+
+      // 5. 原点 0 标注
+      if (!isXAxisClamped && !isYAxisClamped) {
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText('0', originX - 6, originY + 6);
+      }
+
+      // 6. 坐标轴名称标注 (动态随自变量切换)
+      ctx.fillStyle = '#1a6b3c';
+      ctx.font = 'bold 13px -apple-system, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(MathState.varName, width - 14, axisY - 8);
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(`f(${MathState.varName})`, axisX + 10, 10);
+
+      ctx.restore();
+    }
+
+    function drawFunctionCurve(width, height) {
+      if (!MathState.compiledFn) return;
+
+      const paramVals = Object.keys(MathState.params).map(k => MathState.params[k]);
+      const steps = width * 1.5; // 超采样保证高分辨率平滑
+      const dx = (MathState.view.xMax - MathState.view.xMin) / steps;
+
+      ctx.save();
+      ctx.lineWidth = 2.8;
+      ctx.strokeStyle = '#1f5e39';
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(31, 94, 57, 0.25)';
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetY = 2;
+
+      ctx.beginPath();
+      let isFirst = true;
+
+      for (let i = 0; i <= steps; i++) {
+        const x = MathState.view.xMin + i * dx;
+        const y = MathState.compiledFn(x, ...paramVals);
+
+        if (isNaN(y) || !isFinite(y)) {
+          isFirst = true;
+          continue;
+        }
+
+        const sx = toScreenX(x, width);
+        const sy = toScreenY(y, height);
+
+        // 防溢出过滤
+        if (sy < -1000 || sy > height + 1000) {
+          isFirst = true;
+          continue;
+        }
+
+        if (isFirst) {
+          ctx.moveTo(sx, sy);
+          isFirst = false;
+        } else {
+          ctx.lineTo(sx, sy);
+        }
+      }
+
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawIntegralArea(width, height) {
+      const { a, b } = MathState.integralRange;
+      const paramVals = Object.keys(MathState.params).map(k => MathState.params[k]);
+      const startX = Math.min(a, b);
+      const endX = Math.max(a, b);
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(0, 113, 227, 0.15)';
+      ctx.beginPath();
+
+      const baseScreenY = toScreenY(0, height);
+      ctx.moveTo(toScreenX(startX, width), baseScreenY);
+
+      const steps = 150;
+      const dx = (endX - startX) / steps;
+
+      for (let i = 0; i <= steps; i++) {
+        const x = startX + i * dx;
+        const y = MathState.compiledFn(x, ...paramVals);
+        if (!isNaN(y) && isFinite(y)) {
+          ctx.lineTo(toScreenX(x, width), toScreenY(y, height));
+        }
+      }
+
+      ctx.lineTo(toScreenX(endX, width), baseScreenY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawTangentAndProbe(width, height) {
+      const probeX = MathState.probePos.x;
+      const paramVals = Object.keys(MathState.params).map(k => MathState.params[k]);
+      const probeY = MathState.compiledFn(probeX, ...paramVals);
+
+      if (isNaN(probeY) || !isFinite(probeY)) return;
+
+      const sx = toScreenX(probeX, width);
+      const sy = toScreenY(probeY, height);
+
+      // 计算数值微商导数 (Numerical Derivative)
+      const h = 0.0001;
+      const y1 = MathState.compiledFn(probeX - h, ...paramVals);
+      const y2 = MathState.compiledFn(probeX + h, ...paramVals);
+      const slope = (y2 - y1) / (2 * h);
+
+      ctx.save();
+
+      // 1. 绘制切线 (Tangent Line)
+      if (!isNaN(slope) && isFinite(slope)) {
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#0071e3';
+        ctx.setLineDash([4, 4]);
+
+        const tanLen = 80;
+        const angle = Math.atan(slope * ((height) / (width)) * ((MathState.view.xMax - MathState.view.xMin) / (MathState.view.yMax - MathState.view.yMin)));
+        const cosA = Math.cos(angle);
+        const sinA = Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.moveTo(sx - tanLen * cosA, sy + tanLen * sinA);
+        ctx.lineTo(sx + tanLen * cosA, sy - tanLen * sinA);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // 2. 绘制吸附光斑 (Tracer Dot)
+      ctx.beginPath();
+      ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#1f5e39';
+      ctx.stroke();
+
+      ctx.restore();
+
+      // 3. 更新浮动标签位置与数值
+      const hud = document.getElementById('probeHud');
+      hud.style.display = 'flex';
+      hud.style.left = `${sx}px`;
+      hud.style.top = `${sy - 15}px`;
+
+      document.getElementById('probeXVal').innerText = probeX.toFixed(3);
+      document.getElementById('probeYVal').innerText = probeY.toFixed(3);
+      document.getElementById('probeSlopeVal').innerText = isNaN(slope) ? '无' : slope.toFixed(3);
+    }
+
+    // ----------------------------------------------------------------------------
+    // 7. 画布拖拽平移与滚轮缩放事件监听
+    // ----------------------------------------------------------------------------
+    canvas.addEventListener('mousedown', (e) => {
+      MathState.view.isDragging = true;
+      MathState.view.dragStartX = e.clientX;
+      MathState.view.dragStartY = e.clientY;
+      MathState.view.startViewXMin = MathState.view.xMin;
+      MathState.view.startViewXMax = MathState.view.xMax;
+      MathState.view.startViewYMin = MathState.view.yMin;
+      MathState.view.startViewYMax = MathState.view.yMax;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseCanvasX = e.clientX - rect.left;
+      const mouseCanvasY = e.clientY - rect.top;
+
+      if (MathState.view.isDragging) {
+        const dx = e.clientX - MathState.view.dragStartX;
+        const dy = e.clientY - MathState.view.dragStartY;
+        const xSpan = MathState.view.startViewXMax - MathState.view.startViewXMin;
+        const ySpan = MathState.view.startViewYMax - MathState.view.startViewYMin;
+
+        MathState.view.xMin = MathState.view.startViewXMin - (dx / rect.width) * xSpan;
+        MathState.view.xMax = MathState.view.startViewXMax - (dx / rect.width) * xSpan;
+        MathState.view.yMin = MathState.view.startViewYMin + (dy / rect.height) * ySpan;
+        MathState.view.yMax = MathState.view.startViewYMax + (dy / rect.height) * ySpan;
+
+        requestAnimationFrame(drawGraph);
+      } else if (mouseCanvasX >= 0 && mouseCanvasX <= rect.width && mouseCanvasY >= 0 && mouseCanvasY <= rect.height) {
+        // 更新探针吸附
+        MathState.probePos.active = true;
+        MathState.probePos.x = toWorldX(mouseCanvasX, rect.width);
+        requestAnimationFrame(drawGraph);
+      } else {
+        MathState.probePos.active = false;
+        document.getElementById('probeHud').style.display = 'none';
+        requestAnimationFrame(drawGraph);
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      MathState.view.isDragging = false;
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const worldX = toWorldX(mouseX, rect.width);
+      const worldY = toWorldY(mouseY, rect.height);
+
+      const zoomFactor = e.deltaY < 0 ? 0.9 : 1.1;
+
+      MathState.view.xMin = worldX + (MathState.view.xMin - worldX) * zoomFactor;
+      MathState.view.xMax = worldX + (MathState.view.xMax - worldX) * zoomFactor;
+      MathState.view.yMin = worldY + (MathState.view.yMin - worldY) * zoomFactor;
+      MathState.view.yMax = worldY + (MathState.view.yMax - worldY) * zoomFactor;
+
+      requestAnimationFrame(drawGraph);
+    }, { passive: false });
+
+    function zoomIn() {
+      const zoomFactor = 0.8;
+      const cx = (MathState.view.xMin + MathState.view.xMax) / 2;
+      const cy = (MathState.view.yMin + MathState.view.yMax) / 2;
+      MathState.view.xMin = cx + (MathState.view.xMin - cx) * zoomFactor;
+      MathState.view.xMax = cx + (MathState.view.xMax - cx) * zoomFactor;
+      MathState.view.yMin = cy + (MathState.view.yMin - cy) * zoomFactor;
+      MathState.view.yMax = cy + (MathState.view.yMax - cy) * zoomFactor;
+      drawGraph();
+    }
+
+    function zoomOut() {
+      const zoomFactor = 1.25;
+      const cx = (MathState.view.xMin + MathState.view.xMax) / 2;
+      const cy = (MathState.view.yMin + MathState.view.yMax) / 2;
+      MathState.view.xMin = cx + (MathState.view.xMin - cx) * zoomFactor;
+      MathState.view.xMax = cx + (MathState.view.xMax - cx) * zoomFactor;
+      MathState.view.yMin = cy + (MathState.view.yMin - cy) * zoomFactor;
+      MathState.view.yMax = cy + (MathState.view.yMax - cy) * zoomFactor;
+      drawGraph();
+    }
+
+    function resetCanvasView() {
+      MathState.view.xMin = -10;
+      MathState.view.xMax = 10;
+      MathState.view.yMin = -6;
+      MathState.view.yMax = 6;
+      drawGraph();
+    }
+
+    function toggleTangentLine() {
+      MathState.showTangent = !MathState.showTangent;
+      document.getElementById('btnToggleTangent').classList.toggle('active', MathState.showTangent);
+      if (!MathState.showTangent) {
+        document.getElementById('probeHud').style.display = 'none';
+      }
+      drawGraph();
+    }
+
+    function toggleIntegralArea() {
+      MathState.showIntegral = !MathState.showIntegral;
+      document.getElementById('btnToggleIntegral').classList.toggle('active', MathState.showIntegral);
+      drawGraph();
+    }
+
+    function exportCanvasImage() {
+      const link = document.createElement('a');
+      link.download = `安农智办_函数曲线_${MathState.varName}_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // ----------------------------------------------------------------------------
+    // 8. 初始化装载
+    // ----------------------------------------------------------------------------
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPresetList();
+      recompileAndRender();
+      resizeCanvas();
+    });
+  </script>
+</body>
+</html>

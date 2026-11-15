@@ -1869,14 +1869,18 @@
       <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarView()" title="展开/收起侧边栏" aria-label="切换侧边栏">
         <img src="sidebar_toggle_icon.png" alt="Toggle Sidebar" class="toggle-icon-img">
       </button>
-      <div class="logo-emblem-wrap" title="安徽农业大学校徽">
+      <div class="logo-emblem-wrap" title="安徽农业大学校徽 · 徽农智">
         <img class="logo-emblem" 
-             src="https://upload.wikimedia.org/wikipedia/en/e/ed/Anhui_Agricultural_University_seal.svg" 
-             alt="安徽农业大学校徽"
+             src="anau_ai_logo.png" 
+             alt="安徽农业大学校徽 · 徽农智"
              onerror="this.style.display='none'; document.getElementById('ahau-svg-fallback').style.display='block';">
-        <svg id="ahau-svg-fallback" class="logo-emblem" style="display:none;" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="48" fill="#1f5e39" stroke="#ffffff" stroke-width="2"/>
-          <text x="50" y="55" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">AHAU</text>
+        <svg id="ahau-svg-fallback" class="logo-emblem" style="display:none;" viewBox="0 0 256 256">
+          <g fill="#1f5e39" fill-rule="evenodd" transform="translate(-29.31 -29.31) scale(1.229)">
+            <path d="M 118 28 C 66 44, 28 94, 28 156 C 28 200, 62 228, 114 228 C 118 228, 118 218, 118 208 C 78 204, 54 176, 54 146 C 54 104, 84 64, 118 28 Z"/>
+            <path d="M 138 28 C 190 44, 228 94, 228 156 C 228 200, 194 228, 142 228 C 138 228, 138 218, 138 208 C 178 204, 202 176, 202 146 C 202 104, 172 64, 138 28 Z"/>
+            <path d="M 128 70 C 128 100, 140 120, 170 120 C 140 120, 128 140, 128 170 C 128 140, 116 120, 86 120 C 116 120, 128 100, 128 70 Z"/>
+            <circle cx="128" cy="216" r="8"/>
+          </g>
         </svg>
       </div>
       <div class="logo-text">
@@ -2217,6 +2221,22 @@
         </div>
       </div>
 
+      <!-- 模块 4: 数智函数工坊 (数理动态函数可视化系统) - 侧边栏独立入口 -->
+      <div class="sidebar-accordion-group" id="groupMathLab">
+        <div class="accordion-trigger-card" id="cardMathLab" onclick="openMathLabPage()" title="点击直达数智函数探究工坊 (数理动态函数与参数可视化探索平台)">
+          <div class="accordion-trigger-left">
+            <div class="accordion-icon-wrap" style="background: rgba(16, 185, 129, 0.08); color: #059669;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h4l3 8 4-16 3 8h4"/>
+              </svg>
+            </div>
+            <span class="accordion-label">数智函数工坊</span>
+            <span class="group-count-badge" style="background: rgba(16, 185, 129, 0.12); color: #047857;">Lab</span>
+          </div>
+          <span class="accordion-arrow" id="arrowMathLab" style="background: rgba(16, 185, 129, 0.08); color: #059669;">探究 ›</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- 侧边栏底部版权与参赛说明 (小字) -->
@@ -2392,6 +2412,14 @@ function filterServices(query) {
       const win = window.open('plaza.html?v=white_v40', '_blank');
       if (!win || win.closed || typeof win.closed === 'undefined') {
         window.location.href = 'plaza.html?v=white_v40';
+      }
+    }
+
+    function openMathLabPage() {
+      autoCloseSidebarOnMobile();
+      const win = window.open('math_lab.html?v=apple_math_v1', '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = 'math_lab.html?v=apple_math_v1';
       }
     }
 
