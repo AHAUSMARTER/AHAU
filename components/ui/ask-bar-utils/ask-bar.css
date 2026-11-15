@@ -1,0 +1,559 @@
+/* ==========================================================================
+   AskBar Component Styling - Full-Screen Quiet AI Conversation Stage
+   Supports dark & light themes, iOS 26 frosted glass, and seamless transitions
+   ========================================================================== */
+
+:root {
+  --askb-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --askb-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.askb {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  font-family: var(--askb-font);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ---------------- Theme: Dark ---------------- */
+.askb--dark {
+  background-color: #0d1117;
+  color: #e6edf3;
+  --askb-glow-color: rgba(35, 115, 70, 0.22);
+  --askb-bar-bg: rgba(22, 27, 34, 0.85);
+  --askb-bar-border: rgba(240, 246, 252, 0.12);
+  --askb-bar-focus: rgba(35, 115, 70, 0.4);
+  --askb-text-color: #f0f6fc;
+  --askb-text-muted: #8b949e;
+  --askb-user-bubble: #1f5e39;
+  --askb-user-text: #ffffff;
+  --askb-ai-text: #e6edf3;
+  --askb-menu-bg: #161b22;
+  --askb-menu-border: rgba(240, 246, 252, 0.15);
+  --askb-menu-hover: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------------- Theme: Light (Default for AHAU) ---------------- */
+.askb--light {
+  background-color: transparent;
+  color: #1a202c;
+  --askb-glow-color: rgba(31, 94, 57, 0.12);
+  --askb-bar-bg: rgba(255, 255, 255, 0.82);
+  --askb-bar-border: rgba(31, 94, 57, 0.18);
+  --askb-bar-focus: rgba(31, 94, 57, 0.35);
+  --askb-text-color: #143d24;
+  --askb-text-muted: #64748b;
+  --askb-user-bubble: #1f5e39;
+  --askb-user-text: #ffffff;
+  --askb-ai-text: #1e293b;
+  --askb-menu-bg: rgba(255, 255, 255, 0.95);
+  --askb-menu-border: rgba(0, 0, 0, 0.08);
+  --askb-menu-hover: rgba(31, 94, 57, 0.06);
+}
+
+/* ---------------- Deep Ambient Glow ---------------- */
+.askb__glow {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 380px;
+  background: radial-gradient(ellipse at center, var(--askb-glow-color) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(60px);
+}
+
+/* ---------------- Welcoming Greeting ---------------- */
+.askb__hello {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 640px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--askb-text-color);
+  margin: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.askb__hello span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: askbFadeUp 0.6s var(--askb-ease) forwards;
+}
+
+@keyframes askbFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------- Conversation Log (Seamless Stream) ---------------- */
+.askb__log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px 140px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  z-index: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 94, 57, 0.2) transparent;
+}
+
+/* User Message */
+.askb__me {
+  align-self: flex-end;
+  max-width: 78%;
+  background: var(--askb-user-bubble);
+  color: var(--askb-user-text);
+  padding: 12px 18px;
+  border-radius: 20px 20px 4px 20px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  box-shadow: 0 4px 14px rgba(20, 61, 36, 0.16);
+  word-break: break-word;
+}
+
+.askb__me p {
+  margin: 0;
+}
+
+.askb__sent-files {
+  list-style: none;
+  margin: 0 0 8px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.askb__sent-files li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.askb__sent-files svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* Assistant Message */
+.askb__ai {
+  align-self: flex-start;
+  max-width: 86%;
+  display: flex;
+  gap: 14px;
+  color: var(--askb-ai-text);
+  font-size: 14.5px;
+  line-height: 1.65;
+  word-break: break-word;
+}
+
+.askb__spark {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1f5e39 0%, #143d24 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  box-shadow: 0 2px 8px rgba(31, 94, 57, 0.25);
+}
+
+.askb__spark svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.askb__ai > div {
+  flex: 1;
+}
+
+.askb__ai p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.askb__ai small {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--askb-text-muted);
+}
+
+/* Thinking Dots */
+.askb__dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.askb__dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  animation: askbPulse 1.2s infinite ease-in-out;
+}
+
+.askb__dots i:nth-child(2) { animation-delay: 0.2s; }
+.askb__dots i:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes askbPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* ---------------- Floating Ask Bar Dock ---------------- */
+.askb__dock {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.85) 60%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.askb--dark .askb__dock {
+  background: linear-gradient(180deg, transparent 0%, rgba(13, 17, 23, 0.9) 60%);
+}
+
+.askb__bar {
+  width: 100%;
+  max-width: 740px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--askb-bar-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1.5px solid var(--askb-bar-border);
+  border-radius: 28px;
+  padding: 8px 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  transition: all 0.25s var(--askb-ease);
+  box-sizing: border-box;
+}
+
+.askb__bar:focus-within {
+  border-color: var(--askb-bar-focus);
+  box-shadow: 0 14px 40px rgba(31, 94, 57, 0.16), 0 0 0 3px rgba(31, 94, 57, 0.1);
+}
+
+/* Attached Files Tray in Bar */
+.askb__files {
+  list-style: none;
+  margin: 0;
+  padding: 4px 6px 8px 6px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  order: -1;
+  flex-basis: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.askb__files li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(31, 94, 57, 0.08);
+  color: var(--askb-text-color);
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.askb__files button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  color: inherit;
+  opacity: 0.6;
+}
+
+.askb__files button:hover { opacity: 1; }
+
+/* Textarea Field */
+.askb__field {
+  flex: 1;
+  display: flex;
+  margin: 0;
+  padding: 2px 4px;
+}
+
+.askb__field textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  line-height: 24px;
+  color: var(--askb-text-color);
+  box-sizing: border-box;
+  max-height: 192px;
+}
+
+.askb__field textarea::placeholder {
+  color: var(--askb-text-muted);
+}
+
+.askb__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Action Icons */
+.askb__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--askb-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.askb__icon:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--askb-text-color);
+}
+
+.askb__icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.askb__fill {
+  fill: currentColor;
+  stroke: none !important;
+}
+
+/* Model Selector */
+.askb__model-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.askb__model {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(31, 94, 57, 0.08);
+  border: 1px solid rgba(31, 94, 57, 0.15);
+  border-radius: 9999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f5e39;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.askb__model:hover {
+  background: rgba(31, 94, 57, 0.15);
+}
+
+.askb__model svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* Dropdown Menus */
+.askb__plus-wrap {
+  position: relative;
+}
+
+.askb__menu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  background: var(--askb-menu-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--askb-menu-border);
+  border-radius: 16px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
+  z-index: 50;
+  min-width: 200px;
+}
+
+.askb__menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--askb-text-color);
+  font-size: 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.askb__menu button:hover,
+.askb__menu button:focus {
+  background: var(--askb-menu-hover);
+  outline: none;
+}
+
+.askb__menu svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.askb__menu--model {
+  left: auto;
+  right: 0;
+  min-width: 260px;
+}
+
+.askb__menu--model button span {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.askb__menu--model button strong {
+  font-size: 13px;
+}
+
+.askb__menu--model button small {
+  font-size: 11px;
+  color: var(--askb-text-muted);
+}
+
+/* Send & Stop Action Buttons */
+.askb__action {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--askb-ease);
+  flex-shrink: 0;
+}
+
+.askb__action--send {
+  background: linear-gradient(135deg, #237346 0%, #143d24 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(20, 61, 36, 0.25);
+}
+
+.askb__action--send:hover {
+  transform: scale(1.05);
+}
+
+.askb__action--stop {
+  background: #dc2626;
+  color: #fff;
+}
+
+.askb__action svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+/* Voice Equalizer */
+.askb__bars {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 16px;
+}
+
+.askb__bars i {
+  width: 3px;
+  height: 100%;
+  background: #10b981;
+  border-radius: 2px;
+  animation: askbBarDance 0.8s infinite ease-in-out alternate;
+}
+
+.askb__bars i:nth-child(1) { animation-delay: 0.1s; height: 40%; }
+.askb__bars i:nth-child(2) { animation-delay: 0.3s; height: 90%; }
+.askb__bars i:nth-child(3) { animation-delay: 0.2s; height: 60%; }
+.askb__bars i:nth-child(4) { animation-delay: 0.4s; height: 80%; }
+
+@keyframes askbBarDance {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
+}
+
+.askb__note {
+  margin: 6px 0 0 0;
+  font-size: 11.5px;
+  color: #dc2626;
+  min-height: 16px;
+}
