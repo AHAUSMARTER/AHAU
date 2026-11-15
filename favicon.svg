@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><title>徽农智 · 安农智办 智能体图标</title><g transform="translate(-29.31 -29.31) scale(1.229)">
+  <title id="small-title">徽农智 · 智芽之芯 (小尺寸微调版)</title>
+  <g fill="#1f5e39" fill-rule="evenodd">
+    <!-- Left Leaf Blade (Thickened for 16px retention) -->
+    <path d="M 118 28
+             C 66 44, 28 94, 28 156
+             C 28 200, 62 228, 114 228
+             C 118 228, 118 218, 118 208
+             C 78 204, 54 176, 54 146
+             C 54 104, 84 64, 118 28 Z"/>
+    <!-- Right Leaf Blade -->
+    <path d="M 138 28
+             C 190 44, 228 94, 228 156
+             C 228 200, 194 228, 142 228
+             C 138 228, 138 218, 138 208
+             C 178 204, 202 176, 202 146
+             C 202 104, 172 64, 138 28 Z"/>
+    <!-- Enlarged AI Neural Spark -->
+    <path d="M 128 70
+             C 128 100, 140 120, 170 120
+             C 140 120, 128 140, 128 170
+             C 128 140, 116 120, 86 120
+             C 116 120, 128 100, 128 70 Z"/>
+    <!-- Foundation Node -->
+    <circle cx="128" cy="216" r="8"/>
+  </g>
+</g></svg>
