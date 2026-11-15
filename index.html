@@ -2389,9 +2389,9 @@ function filterServices(query) {
 
     function openResearchPlazaPage() {
       autoCloseSidebarOnMobile();
-      const win = window.open('plaza.html', '_blank');
+      const win = window.open('plaza.html?v=white_v40', '_blank');
       if (!win || win.closed || typeof win.closed === 'undefined') {
-        window.location.href = 'plaza.html';
+        window.location.href = 'plaza.html?v=white_v40';
       }
     }
 

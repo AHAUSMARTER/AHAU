@@ -13,21 +13,27 @@
        Zero Emojis | Pure SVG Icons | Backdrop Blur 24px | 7:1+ Contrast
        ========================================================================== */
     :root {
-      --bg-black: #000000;
-      --bg-surface: #0c0c0e;
-      --bg-card: rgba(255, 255, 255, 0.04);
-      --bg-card-hover: rgba(255, 255, 255, 0.07);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-focus: #2997ff;
-      --text-primary: #f5f5f7;
-      --text-secondary: #86868b;
-      --text-tertiary: #6e6e73;
-      --apple-blue: #2997ff;
-      --apple-blue-glow: rgba(41, 151, 255, 0.25);
-      --apple-indigo: #5e5ce6;
-      --apple-cyan: #64d2ff;
-      --apple-emerald: #30d158;
-      --apple-amber: #ffd60a;
+      --bg-canvas: #fbfbfd;
+      --bg-white: #ffffff;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #ffffff;
+      --bg-card-subtle: #f5f5f7;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.14);
+      --border-focus: #0071e3;
+      --text-primary: #1d1d1f;
+      --text-secondary: #515154;
+      --text-tertiary: #86868b;
+      --apple-blue: #0071e3;
+      --apple-blue-glow: rgba(0, 113, 227, 0.15);
+      --apple-indigo: #5856d6;
+      --apple-cyan: #0284c7;
+      --apple-emerald: #107c41;
+      --apple-amber: #b45309;
+      --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+      --card-shadow-hover: 0 16px 38px -4px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.04);
+      --deck-card-shadow: 0 35px 85px -20px rgba(0, 0, 0, 0.14), 0 12px 30px -10px rgba(0, 0, 0, 0.06);
       --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
       --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
@@ -41,7 +47,7 @@
     }
 
     body {
-      background-color: var(--bg-black);
+      background-color: var(--bg-canvas);
       color: var(--text-primary);
       font-family: var(--font-sf);
       line-height: 1.5;
@@ -58,7 +64,7 @@
       transform: translateX(-50%);
       width: 1000px;
       height: 480px;
-      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(41, 151, 255, 0.12), rgba(94, 92, 230, 0.06), transparent 70%);
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0, 113, 227, 0.08), rgba(88, 86, 214, 0.04), transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -69,7 +75,7 @@
       top: 0;
       z-index: 100;
       width: 100%;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(255, 255, 255, 0.82);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border-bottom: 1px solid var(--border-subtle);
@@ -94,18 +100,18 @@
       font-weight: 500;
       color: var(--text-secondary);
       text-decoration: none;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 980px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       transition: all 0.2s var(--ease-apple);
       cursor: pointer;
     }
 
     .back-btn:hover {
       color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.14);
       transform: translateX(-2px);
     }
 
@@ -145,7 +151,8 @@
       gap: 8px;
       font-size: 12px;
       color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(0, 0, 0, 0.035);
+      border: 1px solid var(--border-subtle);
       padding: 4px 12px;
       border-radius: 980px;
       border: 1px solid var(--border-subtle);
@@ -245,17 +252,15 @@
     .spotlight-box {
       width: 100%;
       height: 56px;
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 18px;
       padding: 0 18px 0 52px;
       font-size: 15px;
       color: var(--text-primary);
       outline: none;
       transition: all 0.25s var(--ease-apple);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
     }
 
     .spotlight-box::placeholder {
@@ -263,9 +268,9 @@
     }
 
     .spotlight-box:focus {
-      background: rgba(255, 255, 255, 0.09);
+      background: #ffffff;
       border-color: var(--apple-blue);
-      box-shadow: 0 0 0 4px var(--apple-blue-glow), 0 12px 36px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 4px var(--apple-blue-glow), 0 8px 30px rgba(0, 0, 0, 0.08);
     }
 
     .spotlight-icon {
@@ -285,7 +290,7 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.08);
       border: none;
       color: var(--text-secondary);
       display: none;
@@ -297,8 +302,8 @@
     }
 
     .spotlight-clear-btn:hover {
-      background: rgba(255, 255, 255, 0.22);
-      color: #fff;
+      background: rgba(0, 0, 0, 0.16);
+      color: var(--text-primary);
     }
 
     /* Filter Pills Group */
@@ -316,7 +321,7 @@
       align-items: center;
       gap: 6px;
       padding: 6px 14px;
-      background: rgba(255, 255, 255, 0.05);
+      background: #ffffff;
       border: 1px solid var(--border-subtle);
       border-radius: 980px;
       color: var(--text-secondary);
@@ -325,20 +330,21 @@
       cursor: pointer;
       transition: all 0.2s var(--ease-apple);
       user-select: none;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
     }
 
     .filter-pill:hover {
-      background: rgba(255, 255, 255, 0.09);
+      background: #f5f5f7;
       color: var(--text-primary);
-      border-color: rgba(255, 255, 255, 0.16);
+      border-color: rgba(0, 0, 0, 0.14);
     }
 
     .filter-pill.active {
-      background: #f5f5f7;
-      color: #000000;
-      border-color: #f5f5f7;
+      background: #1d1d1f;
+      color: #ffffff;
+      border-color: #1d1d1f;
       font-weight: 600;
-      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     }
 
     .filter-count {
@@ -382,25 +388,24 @@
 
     /* Demand Card */
     .demand-card {
-      background: var(--bg-card);
+      background: #ffffff;
       border: 1px solid var(--border-subtle);
       border-radius: 20px;
       padding: 22px 24px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 16px;
       transition: all 0.28s var(--ease-apple);
       position: relative;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
     }
 
     .demand-card:hover {
-      background: var(--bg-card-hover);
-      border-color: rgba(255, 255, 255, 0.16);
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.14);
       transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
     }
 
     .demand-card-header {
@@ -420,9 +425,9 @@
     .dept-badge {
       font-size: 11.5px;
       font-weight: 600;
-      color: var(--apple-cyan);
-      background: rgba(100, 210, 255, 0.1);
-      border: 1px solid rgba(100, 210, 255, 0.2);
+      color: #0071e3;
+      background: rgba(0, 113, 227, 0.08);
+      border: 1px solid rgba(0, 113, 227, 0.18);
       padding: 2.5px 9px;
       border-radius: 6px;
     }
@@ -463,8 +468,8 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      background: rgba(0, 0, 0, 0.28);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: #f8fafc;
+      border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: 12px;
       padding: 10px 12px;
     }
@@ -500,15 +505,15 @@
     }
 
     .tag-chip.source {
-      background: rgba(41, 151, 255, 0.12);
-      color: #70b7ff;
-      border: 1px solid rgba(41, 151, 255, 0.22);
+      background: rgba(0, 113, 227, 0.08);
+      color: #0066cc;
+      border: 1px solid rgba(0, 113, 227, 0.16);
     }
 
     .tag-chip.target {
-      background: rgba(94, 92, 230, 0.15);
-      color: #9d9bff;
-      border: 1px solid rgba(94, 92, 230, 0.25);
+      background: rgba(88, 86, 214, 0.08);
+      color: #4f46e5;
+      border: 1px solid rgba(88, 86, 214, 0.18);
     }
 
     /* Card Footer */
@@ -517,7 +522,7 @@
       align-items: center;
       justify-content: space-between;
       padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
     }
 
     .peer-indicator {
@@ -532,20 +537,21 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #374151, #111827);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #e5e7eb;
+      border: 1px solid rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 10px;
-      color: #cbd5e1;
+      color: #374151;
+      font-weight: 600;
     }
 
     .btn-card-detail {
       padding: 6px 14px;
-      background: rgba(255, 255, 255, 0.08);
+      background: #f5f5f7;
       color: var(--text-primary);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 980px;
       font-size: 12px;
       font-weight: 500;
@@ -597,7 +603,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       z-index: 200;
@@ -619,11 +625,11 @@
       max-width: 620px;
       max-height: 88vh;
       overflow-y: auto;
-      background: #141416;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 24px;
       padding: 28px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
       position: relative;
       transform: scale(0.96);
       transition: transform 0.25s var(--ease-apple);
@@ -640,7 +646,7 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.06);
       border: none;
       color: var(--text-secondary);
       display: flex;
@@ -680,16 +686,17 @@
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: 12px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: #f8fafc;
+      border: 1px solid rgba(0, 0, 0, 0.06);
       border-radius: 16px;
       padding: 16px;
       margin: 18px 0;
     }
 
     .topo-node {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
       border-radius: 12px;
       padding: 10px 12px;
     }
@@ -734,12 +741,12 @@
 
     /* Modal Policy Box */
     .modal-policy-box {
-      background: rgba(41, 151, 255, 0.06);
-      border: 1px solid rgba(41, 151, 255, 0.16);
+      background: rgba(0, 113, 227, 0.06);
+      border: 1px solid rgba(0, 113, 227, 0.16);
       border-radius: 12px;
       padding: 12px 14px;
       font-size: 12px;
-      color: #93c5fd;
+      color: #0066cc;
       line-height: 1.6;
       margin-bottom: 20px;
     }
@@ -774,8 +781,8 @@
     .btn-auth-cancel {
       flex: 1;
       padding: 11px 16px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #f5f5f7;
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 12px;
       color: var(--text-secondary);
       font-size: 13px;
@@ -804,8 +811,8 @@
 
     .form-input, .form-textarea {
       width: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 12px;
       padding: 10px 14px;
       font-size: 13px;
@@ -866,8 +873,8 @@
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 980px;
       padding: 3px;
       flex-shrink: 0;
@@ -887,13 +894,13 @@
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .view-btn:hover {
-      color: #ffffff;
+      color: var(--text-primary);
     }
     .view-btn.active {
       background: #ffffff;
-      color: #000000;
+      color: #1d1d1f;
       font-weight: 600;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
     .view-btn svg {
       width: 13px;
@@ -955,9 +962,9 @@
       position: relative;
       overflow: hidden;
       border-radius: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: #090b10;
-      box-shadow: 0 45px 95px -30px rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+      box-shadow: 0 35px 85px -20px rgba(0, 0, 0, 0.14), 0 12px 30px -10px rgba(0, 0, 0, 0.06);
       cursor: pointer;
     }
 
@@ -1000,7 +1007,7 @@
     }
     .deck-serial {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.4);
+      color: #6e6e73;
       letter-spacing: 0.1em;
       font-weight: 500;
     }
@@ -1013,7 +1020,7 @@
     .deck-heading {
       font-size: 25px;
       font-weight: 700;
-      color: #ffffff;
+      color: #1d1d1f;
       letter-spacing: -0.02em;
       line-height: 1.3;
       margin-bottom: 8px;
@@ -1027,7 +1034,7 @@
 
     .deck-subheading {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.65);
+      color: #515154;
       margin-bottom: 22px;
     }
     @media (max-width: 640px) {
@@ -1052,8 +1059,8 @@
     }
 
     .deck-spec-box {
-      background: rgba(255, 255, 255, 0.035);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #f5f5f7;
+      border: 1px solid rgba(0, 0, 0, 0.06);
       border-radius: 16px;
       padding: 16px 18px;
       display: flex;
@@ -1073,7 +1080,7 @@
     }
     .deck-spec-text {
       font-size: 13.5px;
-      color: rgba(255, 255, 255, 0.9);
+      color: #1d1d1f;
       line-height: 1.45;
     }
     @media (max-width: 640px) {
@@ -1084,7 +1091,7 @@
 
     .deck-spec-status {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
+      color: #6e6e73;
       margin-top: 2px;
     }
 
@@ -1092,10 +1099,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(0, 0, 0, 0.07);
       padding-top: 14px;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.45);
+      color: #6e6e73;
     }
     .deck-footer-left {
       display: flex;
@@ -1106,7 +1113,7 @@
     .deck-card-dim {
       position: absolute;
       inset: 0;
-      background: #050608;
+      background: #f5f5f7;
       pointer-events: none;
       transition: opacity 0.08s linear;
       opacity: 0;
@@ -1143,7 +1150,8 @@
       gap: 14px;
       border-top-left-radius: 20px;
       padding: 10px 14px 10px 20px;
-      background: #090b10;
+      background: #ffffff;
+      box-shadow: -4px -4px 14px rgba(0, 0, 0, 0.03);
       border: none;
       cursor: pointer;
       outline: none;
@@ -1159,7 +1167,7 @@
     .deck-action-title {
       font-size: 14px;
       font-weight: 600;
-      color: #f5f5f7;
+      color: #1d1d1f;
       letter-spacing: -0.015em;
       max-width: 320px;
       white-space: nowrap;
@@ -1174,7 +1182,7 @@
     }
     .deck-action-sub {
       font-size: 11.5px;
-      color: #86868b;
+      color: #6e6e73;
       margin-top: 2px;
     }
     .deck-action-arrow {
@@ -1183,7 +1191,8 @@
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      color: #000000;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s ease;
       flex-shrink: 0;
     }
@@ -1210,13 +1219,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(15, 17, 23, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 980px;
-      padding: 7px 18px;
-      font-size: 12px;
+      padding: 8px 20px;
+      font-size: 12.5px;
       color: var(--text-secondary);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       transition: opacity 0.3s ease;
@@ -1341,7 +1350,7 @@
             <span class="match-rate-badge">撮合契合度 98.6%</span>
           </div>
           <h2 class="demand-title">茶树叶部病斑多光谱图谱采样与端侧轻量化算法验证</h2>
-          <p class="demand-desc">课题组已在舒城、黄山茶园采集5000+组高精度病害多光谱与叶绿素反射率样本并完成真值标注，急寻擅长YOLOv10轻量化剪枝与端侧部署的工科同学联合申报挑战杯。</p>
+          <p class="demand-desc">课题组已在舒城、黄山茶园采集5000+组高精度病害多光谱与叶绿素反射率样本并完成真值标注，急寻擅长YOLOv10轻量化剪枝与端侧部署的工科同学联合申报挑战杯。（本信息为虚构，仅供比赛展示）</p>
         </div>
 
         <div class="card-tags-group">
@@ -1383,7 +1392,7 @@
             <span class="match-rate-badge">撮合契合度 95.2%</span>
           </div>
           <h2 class="demand-title">轮式农机作业振动时序信号边缘端轻量化异常预测</h2>
-          <p class="demand-desc">团队搭建了农田旋耕机具振动多通道遥测台架，积累了完整非平稳振动加速度时序，希望匹配对端智能体引荐精通轻量化时序模型压缩与嵌入式下位的同学。</p>
+          <p class="demand-desc">团队搭建了农田旋耕机具振动多通道遥测台架，积累了完整非平稳振动加速度时序，希望匹配对端智能体引荐精通轻量化时序模型压缩与嵌入式下位的同学。（本信息为虚构，仅供比赛展示）</p>
         </div>
 
         <div class="card-tags-group">
@@ -1425,7 +1434,7 @@
             <span class="match-rate-badge">撮合契合度 97.4%</span>
           </div>
           <h2 class="demand-title">超分辨激光共聚焦显微镜周四机时与近红外时段置换</h2>
-          <p class="demand-desc">本组持有勤学楼生科测试中心周四晚段18:00-22:00超分辨激光共聚焦显微镜已预约机时，因细胞样品培养延期，急需置换周五或周末近红外光谱机时，附赠荧光制样支持。</p>
+          <p class="demand-desc">本组持有勤学楼生科测试中心周四晚段18:00-22:00超分辨激光共聚焦显微镜已预约机时，因细胞样品培养延期，急需置换周五或周末近红外光谱机时，附赠荧光制样支持。（本信息为虚构，仅供比赛展示）</p>
         </div>
 
         <div class="card-tags-group">
@@ -1465,7 +1474,7 @@
             <span class="match-rate-badge">撮合契合度 96.8%</span>
           </div>
           <h2 class="demand-title">水稻稻飞虱病害无人机多光谱全景航测与比赛联合组队</h2>
-          <p class="demand-desc">植保团队已获取庐江试验基地连片水稻田间无人机高清多光谱影像，具有专家级虫害危害分级金标准。招募算法主力同学组队冲击省挑战杯与全国农芯智大赛。</p>
+          <p class="demand-desc">植保团队已获取庐江试验基地连片水稻田间无人机高清多光谱影像，具有专家级虫害危害分级金标准。招募算法主力同学组队冲击省挑战杯与全国农芯智大赛。（本信息为虚构，仅供比赛展示）</p>
         </div>
 
         <div class="card-tags-group">
@@ -1507,7 +1516,7 @@
             <span class="match-rate-badge">撮合契合度 94.1%</span>
           </div>
           <h2 class="demand-title">手持式便携探头近红外果实可溶性固形物(糖度)标定算法</h2>
-          <p class="demand-desc">团队针对梨、桃等耐贮藏果品完成了2000组手持微型光谱探头实测曲线与折光仪糖度理化真实值的对照实验，急寻算法同学设计1D-CNN回归校准方程并固化为手机离线应用。</p>
+          <p class="demand-desc">团队针对梨、桃等耐贮藏果品完成了2000组手持微型光谱探头实测曲线与折光仪糖度理化真实值的对照实验，急寻算法同学设计1D-CNN回归校准方程并固化为手机离线应用。（本信息为虚构，仅供比赛展示）</p>
         </div>
 
         <div class="card-tags-group">
@@ -1549,7 +1558,7 @@
             <span class="match-rate-badge">撮合契合度 99.0%</span>
           </div>
           <h2 class="demand-title">2027考研数学一与计算机408核心概念断层互助探针小组</h2>
-          <p class="demand-desc">已整理历年统考未定式极限、级数敛散性与数据结构DAG拓扑诊断题库。组织4人跨学科闭门自习攻坚搭档，每日基于确定性认知探针复盘错因，拒绝低效题海。</p>
+          <p class="demand-desc">已整理历年统考未定式极限、级数敛散性与数据结构DAG拓扑诊断题库。组织4人跨学科闭门自习攻坚搭档，每日基于确定性认知探针复盘错因，拒绝低效题海。（本信息为虚构，仅供比赛展示）</p>
         </div>
 
         <div class="card-tags-group">
@@ -1708,7 +1717,7 @@
     "accent": "#38bdf8",
     "offer": "茶园多光谱航测图谱(400-1000nm)、40GB原始点云标本、野外光谱仪设备机时",
     "seek": "针对树冠重叠叶片的轻量化 YOLOv9 / MobileNet 剪枝模型，模型体积小于15MB",
-    "desc": "课题组已在舒城、黄山茶园采集5000+组高精度病害多光谱与叶绿素反射率样本并完成真值标注，急寻擅长YOLO轻量化剪枝与端侧部署的工科同学联合申报挑战杯与顶级期刊验证。",
+    "desc": "课题组已在舒城、黄山茶园采集5000+组高精度病害多光谱与叶绿素反射率样本并完成真值标注，急寻擅长YOLO轻量化剪枝与端侧部署的工科同学联合申报挑战杯与顶级期刊验证。（本信息为虚构，仅供比赛展示）",
     "bg": [
       "#070a12",
       "#0f172a"
@@ -1728,7 +1737,7 @@
     "accent": "#f59e0b",
     "offer": "雷沃2004拖拉机深松整地三轴加速度1000Hz实测时序、机具试验场实机测试台",
     "seek": "适应STM32单片机的边缘端 TinyML 时序异常检测模型，推理延迟低于8ms",
-    "desc": "团队搭建了农田旋耕机具振动多通道遥测台架，积累了完整非平稳振动加速度时序，希望匹配对端智能体引荐精通轻量化时序模型压缩与嵌入式下位的同学，打通传感器到端侧实时告警。",
+    "desc": "团队搭建了农田旋耕机具振动多通道遥测台架，积累了完整非平稳振动加速度时序，希望匹配对端智能体引荐精通轻量化时序模型压缩与嵌入式下位的同学，打通传感器到端侧实时告警。（本信息为虚构，仅供比赛展示）",
     "bg": [
       "#0d0c0a",
       "#261a0b"
@@ -1748,7 +1757,7 @@
     "accent": "#a855f7",
     "offer": "农科大楼生命科学中心 Leica SP8 共聚焦激光显微镜 4小时专属预约机时",
     "seek": "置换茶树代谢组学实验室近红外高通量光谱仪 20个批次的样品快测配额",
-    "desc": "本组持有勤学楼生科测试中心周四晚段18:00-22:00超分辨激光共聚焦显微镜已预约机时，因细胞样品培养延期，急需置换周五或周末近红外光谱机时，附赠荧光制样操作指导。",
+    "desc": "本组持有勤学楼生科测试中心周四晚段18:00-22:00超分辨激光共聚焦显微镜已预约机时，因细胞样品培养延期，急需置换周五或周末近红外光谱机时，附赠荧光制样操作指导。（本信息为虚构，仅供比赛展示）",
     "bg": [
       "#0e0914",
       "#200e30"
@@ -1768,7 +1777,7 @@
     "accent": "#10b981",
     "offer": "合肥高刘教学科研试验基地大疆M350航测多光谱正射影像、水稻虫情实地标定集",
     "seek": "招募精通 WebGL / React 三维全景渲染或智能体算法的计算机学院本科生联合组队",
-    "desc": "植保团队已获取庐江试验基地连片水稻田间无人机高清多光谱影像，具有专家级虫害危害分级金标准。招募算法主力同学组队冲击省挑战杯与全国农芯智大赛。",
+    "desc": "植保团队已获取庐江试验基地连片水稻田间无人机高清多光谱影像，具有专家级虫害危害分级金标准。招募算法主力同学组队冲击省挑战杯与全国农芯智大赛。（本信息为虚构，仅供比赛展示）",
     "bg": [
       "#080f0c",
       "#0d261e"
@@ -1788,7 +1797,7 @@
     "accent": "#ec4899",
     "offer": "500组砀山酥梨与长丰草莓可溶性固形物(糖度)折光仪破坏性真实测定值",
     "seek": "基于偏最小二乘法(PLS)的近红外吸光度校准模型及跨平台 BLE 蓝牙通信封装",
-    "desc": "团队针对梨、桃等耐贮藏果品完成了2000组手持微型光谱探头实测曲线与折光仪糖度理化真实值的对照实验，急寻算法同学设计1D-CNN回归校准方程并固化为手机离线应用。",
+    "desc": "团队针对梨、桃等耐贮藏果品完成了2000组手持微型光谱探头实测曲线与折光仪糖度理化真实值的对照实验，急寻算法同学设计1D-CNN回归校准方程并固化为手机离线应用。（本信息为虚构，仅供比赛展示）",
     "bg": [
       "#130a10",
       "#2c0e20"
@@ -1808,7 +1817,7 @@
     "accent": "#6366f1",
     "offer": "计算机专业 408 核心重难点代码手写推演、操作系统内存分页管理内核思维导图",
     "seek": "数学系应用数学同学深度解析数学一多元函数微积分证明题与线性代数正交变换",
-    "desc": "已整理历年统考未定式极限、级数敛散性与数据结构DAG拓扑诊断题库。组织跨学科闭门自习攻坚搭档，每日基于确定性认知探针复盘错因，拒绝低效题海。",
+    "desc": "已整理历年统考未定式极限、级数敛散性与数据结构DAG拓扑诊断题库。组织跨学科闭门自习攻坚搭档，每日基于确定性认知探针复盘错因，拒绝低效题海。（本信息为虚构，仅供比赛展示）",
     "bg": [
       "#0a0b16",
       "#141733"
@@ -1857,11 +1866,11 @@
         article.setAttribute('data-keywords', `${item.title} ${item.dept} ${item.categoryName} ${item.offer} ${item.seek} ${item.desc}`);
 
         const R = 18;
-        const cornerSvg = `<svg aria-hidden="true" width="${R}" height="${R}" viewBox="0 0 ${R} ${R}"><path d="M${R} 0 V${R} H0 A${R} ${R} 0 0 0 ${R} 0 Z" fill="#090b10"/></svg>`;
+        const cornerSvg = `<svg aria-hidden="true" width="${R}" height="${R}" viewBox="0 0 ${R} ${R}"><path d="M${R} 0 V${R} H0 A${R} ${R} 0 0 0 ${R} 0 Z" fill="#ffffff"/></svg>`;
 
         article.innerHTML = `
           <div class="deck-card-inner" onclick="openDetailModal(${item.id})">
-            <div class="deck-card-content" style="background: radial-gradient(circle at 85% 15%, ${item.accent}25 0%, transparent 60%), linear-gradient(135deg, ${item.bg[0]} 0%, ${item.bg[1]} 100%);">
+            <div class="deck-card-content" style="background: radial-gradient(circle at 85% 15%, ${item.accent}14 0%, transparent 65%), linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
               
               <!-- Top bar -->
               <div class="deck-card-topbar">
@@ -1875,7 +1884,7 @@
               <!-- Main Heading & Pairing -->
               <div>
                 <h2 class="deck-heading">${item.title}</h2>
-                <div class="deck-subheading">协同对接端：${item.sourceTeam.split('·')[0].trim()} ‹—› ${item.targetTeam.split('·')[0].trim()}</div>
+                <div class="deck-subheading">协同对接端：${item.sourceTeam.split('·')[0].trim()} ‹—› ${item.targetTeam.split('·')[0].trim()} · <span style="font-size:12px; color:var(--text-tertiary); font-weight:500;">（本信息为虚构，仅供比赛展示）</span></div>
               </div>
 
               <!-- Specs Grid -->
@@ -1896,7 +1905,7 @@
               <div class="deck-card-footer">
                 <div class="deck-footer-left">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <span>分布式智能体撮合网络 · 存证有效 · 本人拍板授权</span>
+                  <span>分布式智能体撮合网络 · 存证有效 · 本人拍板授权 · <strong style="color:var(--apple-blue); font-weight:600;">（本信息为虚构，仅供比赛展示）</strong></span>
                 </div>
               </div>
 
