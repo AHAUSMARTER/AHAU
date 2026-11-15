@@ -199,6 +199,99 @@
     `;
   }
 
+  function renderResearchPlazaWidget(customData = {}) {
+    const pid = 'plaza-' + Math.floor(100000 + Math.random() * 900000);
+    const sourceRole = customData.sourceRole || '需求发起方 (本端)';
+    const sourceName = customData.sourceName || '茶树病害多光谱与表型课题组';
+    const sourceDept = customData.sourceDept || '茶学重点实验室 · 农科团队';
+    const targetRole = customData.targetRole || '最佳撮合对端 (匹配中)';
+    const targetName = customData.targetName || '嵌入式AI与计算机视觉课题组';
+    const targetDept = customData.targetDept || '信息与计算机学院 · 工科团队';
+    const matchScore = customData.matchScore || '98.6%';
+
+    return `
+      <div class="research-plaza-card" id="${pid}">
+        <div class="research-plaza-header">
+          <div class="research-plaza-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span>科研与学业互助广场 · 多智能体 P2P 需求撮合网络</span>
+          </div>
+          <span class="research-plaza-badge">多智能体直连</span>
+        </div>
+
+        <p class="research-plaza-desc">
+          <strong>运作机制（AI跑腿，学生拍板）</strong>：本地智能体已提炼您的跨学科需求特征标签，并在全校科研互助节点中完成语义多维撮合；初步技术与需求契合研判由智能体自动化处理，<strong>实验数据资产交付与正式项目组队权责严格由双方同学本人实名审定</strong>！
+        </p>
+
+        <div class="research-plaza-tags-section">
+          <div class="plaza-tags-title">
+            <span>本端持有资源与研究条件 (已提炼标签)</span>
+            <span style="font-size:11px; color:#166534; font-weight:normal;">数据与试验支持</span>
+          </div>
+          <div class="plaza-tags-list">
+            <span class="plaza-tag-pill source">#茶树病斑多光谱数据集</span>
+            <span class="plaza-tag-pill source">#5000+田间样本已标注</span>
+            <span class="plaza-tag-pill source">#茶学理化实验工位</span>
+            <span class="plaza-tag-pill source">#挑战杯/大创重点推荐</span>
+          </div>
+          <div class="plaza-tags-title" style="margin-top:10px;">
+            <span>需求与期望匹配能力 (算法与工程)</span>
+            <span style="font-size:11px; color:#1e40af; font-weight:normal;">算法与算力支撑</span>
+          </div>
+          <div class="plaza-tags-list">
+            <span class="plaza-tag-pill target">#计算机视觉CV</span>
+            <span class="plaza-tag-pill target">#YOLO轻量化剪枝</span>
+            <span class="plaza-tag-pill target">#端侧嵌入式部署</span>
+            <span class="plaza-tag-pill target">#算法主力联合组队</span>
+          </div>
+        </div>
+
+        <div class="research-plaza-topology">
+          <div class="plaza-topo-node">
+            <div class="plaza-topo-role">${sourceRole}</div>
+            <div class="plaza-topo-name">${sourceName}</div>
+            <div class="plaza-topo-dept">${sourceDept}</div>
+            <div class="plaza-topo-status">本地智能体 · 已就绪</div>
+          </div>
+          <div class="plaza-topo-bus">
+            <div class="plaza-bus-line">
+              <span>‹--</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+              <span>--›</span>
+            </div>
+            <div class="plaza-bus-label">P2P 撮合信道</div>
+          </div>
+          <div class="plaza-topo-node">
+            <div class="plaza-topo-role">${targetRole}</div>
+            <div class="plaza-topo-name">${targetName}</div>
+            <div class="plaza-topo-dept">${targetDept}</div>
+            <div class="plaza-topo-status">对端智能体 · 已对接</div>
+          </div>
+        </div>
+
+        <div class="research-plaza-match-box">
+          <div class="plaza-match-metric">
+            <strong>撮合语义契合度评价</strong>
+            <span class="plaza-match-score">匹配契合度 ${matchScore}</span>
+          </div>
+          <div>
+            <strong>对端智能体响应反馈</strong>：信息与计算机学院团队正在开展农林边缘计算与轻量化目标检测算法研究，亟需真实农田多光谱数据用于模型调优与成果申报；双方技术优势与数据资产形成闭环互补。
+          </div>
+        </div>
+
+        <div class="research-plaza-actions" id="${pid}-actions">
+          <button class="btn-plaza-confirm" onclick="window.AnauAgent.confirmResearchPlaza('${pid}')">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            本人审定意向 · 建立点对点安全信道
+          </button>
+          <button class="btn-plaza-cancel" onclick="window.AnauAgent.cancelResearchPlaza('${pid}')">
+            暂存为拟发布草案
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   function ensureCitationDrawerMounted() {
     if (document.getElementById('ahauCitationDrawerOverlay')) return;
     const overlay = document.createElement('div');
@@ -2174,6 +2267,24 @@ ${examSummary}
     };
   }
 
+  // ----------------------------------------------------------------------------
+  // 3.10 科研与学业互助广场 (多智能体 P2P 需求撮合网络)
+  // ----------------------------------------------------------------------------
+  function handleResearchPlazaWorkflow(raw) {
+    return {
+      text:
+        `**【科研与学业互助广场 · 多智能体 P2P 需求撮合网络】**\n\n` +
+        `已为您启动校园多智能体点对点撮合协同机制，打破学科壁垒与信息孤岛：\n\n` +
+        `1. **能力标签自动提炼**：本地智能体已解析您的诉求，结构化抽象出本端资产（#茶树病斑多光谱数据集 #5000+样本已标注 #茶树国重室工位支持）与互补技术需求（#计算机视觉 #YOLO轻量化剪枝 #端侧嵌入式部署）；\n` +
+        `2. **多智能体点对点网络撮合**：各学院个人智能体在去中心化网络中自动对接，发现并锁定了 1 组高匹配度的工科算法科研团队（契合度 98.6%）；\n` +
+        `3. **严格遵循安全底线（AI跑腿，学生拍板）**：智能体仅负责前置需求匹配与技术可行性预审，**敏感科研数据资产交付、代码共享与大创项目正式组队签约，必须由双方同学本人实名审定并点击授权！**\n\n` +
+        `**独立交互广场直达**：您可直接点击侧边栏「打开广场 ›」或通过下方链接进入带有全景搜索与筛选的独立广场：\n` +
+        `- [进入科研与学业互助广场 (Apple风格大屏检索)](plaza.html)\n\n` +
+        `下方为本次多智能体撮合拓扑与对接详情：`,
+      widgetHtml: renderResearchPlazaWidget()
+    };
+  }
+
   function processUserInput(text, hasImage = false, imageInfo = null) {
     const raw = (text || '').trim();
     const t = raw.toLowerCase();
@@ -2238,6 +2349,12 @@ ${examSummary}
     // 优先：期末考试真题与课程资料共享 (历年真题库)
     if (/期末|往年卷|真题|试卷|复习资料|复习题|题库|高数卷|高数题|高数真题|线代卷|线代题|线代真题|普化卷|普化题|普化真题|生化卷|生化题|工图卷|工图题|工程制图卷|微观经济|基础会计|思政合集|思政题库|思修题库|马原题库|近代史题库|农学专业课|结课论文|aau-course/.test(t)) {
       return handleExamMaterials(raw);
+    }
+
+    // 优先：科研与学业互助广场 (多智能体 P2P 需求撮合网络)
+    if (/科研广场|互助广场|科研互助|找队友|跨学科|组队|科研合作|借仪器|借设备|数据共享|互帮互助|找搭档|芯片量化|多光谱|病斑数据|p2p撮合|智能体撮合|找搭子|合作组队/.test(t) ||
+        (t.includes('科研') && (t.includes('广场') || t.includes('撮合') || t.includes('合作') || t.includes('找人') || t.includes('组队') || t.includes('互助')))) {
+      return handleResearchPlazaWorkflow(raw);
     }
 
     // =========================================================================
@@ -4151,6 +4268,7 @@ ${examSummary}
       const kaoyanKeywords = ['考研', '择校', '专硕', '学硕', '读博', '408', '414', '314', '315', '考研时间线', '考研科目', '复习进度', '择校方案'];
       const facultyKeywords = ['师资', '导师', '教授', '课题组', '研究课题', '研究方向', '老师', '教师', '博导', '硕导', '农学院', '茶业学院', '茶学院', '计算机学院', '人工智能学院', '信息与计算机学院', '信智学院', '生命科学学院', '生科院', '生物制造', '植物保护学院', '植保学院', '经济管理学院', '经管学院', '动物科技学院', '动科院', '动物医学院', '动医院', '有哪些老师', '找老师', '找导师', '宛晓春', '夏恩华', '张友华', '姜东', '武立权', '程备久', '薛挺', '操海群', '辜丽川'];
       const examKeywords = ['期末', '真题', '试卷', '往年卷', '复习资料', '高数卷', '高数题', '高数真题', '线代卷', '线代题', '线代真题', '普化卷', '普化题', '生化卷', '生化题', '工图卷', '工图题', '工程制图', '微观经济', '基础会计', '思政合集', '题库', 'leaning'];
+      const plazaKeywords = ['科研广场', '互助广场', '科研互助', '找队友', '跨学科', '组队', '科研合作', '借仪器', '借设备', '数据共享', '互帮互助', '找搭档', '芯片量化', '多光谱', '病斑数据', 'p2p撮合', '智能体撮合', '找搭子', '合作组队'];
       
       const isShortFollowUp = (AgentState.lastTopic !== null) && (text.length <= 10 || text.endsWith('呢') || text.endsWith('吗') || text.startsWith('那'));
       const isCampusSpecific = AgentState.workflow || hasImage || isShortFollowUp ||
@@ -4161,6 +4279,7 @@ ${examSummary}
         zongceKeywords.some(k => t.includes(k.toLowerCase())) ||
         kaoyanKeywords.some(k => t.includes(k.toLowerCase())) ||
         examKeywords.some(k => t.includes(k.toLowerCase())) ||
+        plazaKeywords.some(k => t.includes(k.toLowerCase())) ||
         facultyKeywords.some(k => t.includes(k.toLowerCase())) || AHAU_KB.faculty.some(g => g.teachers.some(teacher => text.includes(teacher.name)));
 
       if (isCampusSpecific) {
@@ -4431,7 +4550,36 @@ ${examSummary}
       }
     },
 
+    confirmResearchPlaza: function (pid) {
+      const actionsEl = document.getElementById(pid + '-actions');
+      if (actionsEl) {
+        actionsEl.innerHTML = `
+          <div class="research-plaza-result">
+            <strong>【双方已完成实名审定 · 点对点安全信道建立成功】</strong><br>
+            双方同学已通过数字校园身份认证核验意向！系统已为双方团队开通端到端加密协作信道，并自动生成《农工交叉科研项目意向推进备忘录》。双方可在点对点工作区内分工推进下一步数据校验与轻量化模型联合调优！
+          </div>
+        `;
+      }
+    },
+
+    cancelResearchPlaza: function (pid) {
+      const actionsEl = document.getElementById(pid + '-actions');
+      if (actionsEl) {
+        actionsEl.innerHTML = `
+          <div style="font-size:12px; color:#64748b; padding:8px 0;">
+            已暂存为拟发布需求草案。您可随时在输入框中补充更多数据样本详情或调整算法要求后重新撮合。
+          </div>
+        `;
+      }
+    },
+
     // 兼容接口 (静音模式安全无缝响应)
+    openPlazaPage: function () {
+      const win = window.open('plaza.html', '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = 'plaza.html';
+      }
+    },
     openVoiceMode: function () {},
     closeVoiceMode: function () {},
     toggleVoiceMic: function () {},

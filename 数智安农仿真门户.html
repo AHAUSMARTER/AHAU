@@ -436,6 +436,114 @@
                   visibility 0s linear 0.28s;
     }
 
+    /* 侧边栏独立入口：科研与学业互助广场 */
+    .sidebar-plaza-entry {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1.5px solid rgba(219, 234, 254, 0.95);
+      border-radius: 18px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.28s var(--ease-apple);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+      user-select: none;
+      box-sizing: border-box;
+      min-height: 52px;
+    }
+
+    .sidebar-plaza-entry:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12), inset 0 1px 1px rgba(255, 255, 255, 1);
+    }
+
+    .plaza-entry-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .plaza-entry-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.14) 0%, rgba(37, 99, 235, 0.05) 100%);
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .plaza-entry-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .plaza-entry-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .plaza-entry-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ahau-green-deep);
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .plaza-entry-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+    }
+
+    .plaza-entry-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin: 2px 0 0 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .plaza-entry-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #2563eb;
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      padding: 3.5px 10px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+      transition: all 0.22s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .sidebar-plaza-entry:hover .plaza-entry-pill {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
     .user-profile-row {
       display: flex;
       align-items: center;
@@ -1179,6 +1287,39 @@
       border-color: rgba(31, 94, 57, 0.2) !important;
     }
 
+    .sidebar-plaza-entry {
+      min-height: 42px !important;
+      padding: 6px 10px !important;
+      border-radius: 9px !important;
+      background: rgba(255, 255, 255, 0.7) !important;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      box-shadow: none !important;
+    }
+
+    .sidebar-plaza-entry:hover {
+      background: #ffffff !important;
+      border-color: rgba(37, 99, 235, 0.25) !important;
+    }
+
+    .plaza-entry-icon {
+      width: 26px !important;
+      height: 26px !important;
+      border-radius: 6px !important;
+    }
+
+    .plaza-entry-title {
+      font-size: 12px !important;
+    }
+
+    .plaza-entry-desc {
+      font-size: 10px !important;
+    }
+
+    .plaza-entry-pill {
+      font-size: 10px !important;
+      padding: 2px 7px !important;
+    }
+
     .accordion-icon-wrap {
       width: 26px !important;
       height: 26px !important;
@@ -1686,6 +1827,16 @@
       color: #94a3b8;
     }
 
+  
+    #cardResearchPlaza:hover {
+      border-color: rgba(37, 99, 235, 0.3) !important;
+      background: #ffffff !important;
+    }
+    #cardResearchPlaza:hover #arrowPlaza {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+
   </style>
 </head>
 <body>
@@ -1857,12 +2008,12 @@
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
                 </div>
                 <span class="accordion-label">常见应用 (直达)</span>
-                <span class="group-count-badge">13</span>
+                <span class="group-count-badge">12</span>
               </div>
               <span class="accordion-arrow" id="arrowApps">▸ 展开</span>
             </div>
 
-            <!-- 展开后展示：搜索框 ＋ 13 项高频校园应用 -->
+            <!-- 展开后展示：搜索框 ＋ 12 项高频校园应用 -->
             <div class="accordion-collapse-panel collapsed" id="panelApps">
               <div class="sidebar-search-box">
                 <div class="search-input-wrapper">
@@ -2031,6 +2182,23 @@
 
         </div>
 
+        <!-- 模块 3: 科研与学业互助广场 (多智能体 P2P 需求撮合网络) - 侧边栏独立入口 -->
+        <div class="sidebar-accordion-group" id="groupPlaza">
+          <div class="accordion-trigger-card" id="cardResearchPlaza" onclick="openResearchPlazaPage()" title="点击直达科研与学业互助广场">
+            <div class="accordion-trigger-left">
+              <div class="accordion-icon-wrap" style="background: rgba(37, 99, 235, 0.08); color: #2563eb;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+              </div>
+              <span class="accordion-label">科研互助广场</span>
+              <span class="group-count-badge">6</span>
+            </div>
+            <span class="accordion-arrow" id="arrowPlaza" style="background: rgba(37, 99, 235, 0.08); color: #2563eb;">直达 ›</span>
+          </div>
+        </div>
+
         <!-- 侧边栏底部版权与参赛说明 (小字) -->
         <div class="sidebar-copyright-note">
           <p>版权所有 © 2026 安徽农业大学 · 现代教育技术中心 / 网络信息中心 运维保障</p>
@@ -2196,6 +2364,14 @@ function filterServices(query) {
     function sendQuickPrompt(promptText) {
       if (window.AnauAgent) {
         window.AnauAgent.sendUserMsg(promptText); autoCloseSidebarOnMobile();
+      }
+    }
+
+    function openResearchPlazaPage() {
+      autoCloseSidebarOnMobile();
+      const win = window.open('plaza.html', '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = 'plaza.html';
       }
     }
 
