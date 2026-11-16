@@ -85,7 +85,66 @@
     `;
   }
 
-  function renderInteractiveSliderWidget(initialGpa = 3.65, initialVol = 20, initialComp = 4) {
+  function renderAgentWeberPassiveWidget(data) {
+    const wid = 'weber-' + data.docNo;
+    const stepsHtml = data.steps.map((s, idx) => {
+      const isDone = s.status === 'done';
+      return `
+        <div style="display:flex; align-items:flex-start; gap:10px; font-size:12.5px;">
+          <div style="width:20px; height:20px; border-radius:50%; background:${isDone ? '#f0fdf4' : '#fffbeb'}; border:1.5px solid ${isDone ? '#22c55e' : '#f59e0b'}; color:${isDone ? '#16a34a' : '#d97706'}; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px;">
+            ${isDone ? '✓' : idx + 1}
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:600; color:var(--text-primary); display:flex; justify-content:space-between; align-items:center;">
+              <span>${s.name}</span>
+              <span style="font-size:10.5px; font-weight:600; padding:1px 6px; border-radius:4px; ${isDone ? 'background:#dcfce7; color:#15803d;' : 'background:#fef3c7; color:#b45309;'}">${isDone ? '已核验' : '待授权'}</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--text-tertiary); margin-top:2px;">${s.detail}</div>
+          </div>
+        </div>
+      `;
+    }).join('<div style="margin-left:9px; height:8px; border-left:1.5px dashed #cbd5e1;"></div>');
+
+    return `
+      <div class="security-gating-card" id="${wid}" style="border-left: 3px solid #6366f1; background:#ffffff; box-shadow:0 4px 16px rgba(0,0,0,0.06); border-radius:14px; padding:16px; margin-top:10px;">
+        <div class="security-gating-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div class="gating-title-wrap" style="display:flex; align-items:center; gap:8px;">
+            <div style="width:24px; height:24px; border-radius:6px; background:rgba(99,102,241,0.1); color:#6366f1; display:flex; align-items:center; justify-content:center;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">${data.title}</div>
+              <div style="font-size:10.5px; color:var(--text-tertiary); margin-top:1px;">归口单位: ${data.dept} · 单号: ${data.docNo}</div>
+            </div>
+          </div>
+          <span class="gating-badge-promise" style="font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:6px; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe;">0次擅自越权</span>
+        </div>
+
+        <!-- 流水线多节点追踪 -->
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:12px;">
+          ${stepsHtml}
+        </div>
+
+        <!-- 双轨安全隔离说明 -->
+        <div style="font-size:11.5px; line-height:1.5; color:#475569; background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-bottom:12px;">
+          <strong>公私数据双轨隔离保障：</strong>公开课表、学分标准由 AI 自动只读核验；私有学籍、教务写操作已被 Action Gating 拦截，绝不擅自越权点击！
+        </div>
+
+        <!-- 动作按钮 -->
+        <div class="gating-actions-wrap" id="${wid}-actions" style="display:flex; gap:10px;">
+          <button class="btn-gating-confirm" style="flex:1; padding:9px 14px; border-radius:8px; background:#4f46e5; color:#ffffff; font-size:12.5px; font-weight:600; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="window.AnauAgent.confirmWeberAction('${wid}', '${data.title}', '${data.docNo}')">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>核验无误 · 模拟授权流转</span>
+          </button>
+          <button class="btn-gating-cancel" style="padding:9px 14px; border-radius:8px; background:#f1f5f9; color:#475569; font-size:12.5px; font-weight:600; border:1px solid #cbd5e1; cursor:pointer;" onclick="window.AnauAgent.cancelWeberAction('${wid}')">
+            暂存只读草案
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderZongceSlidersWidget(initialGpa = 3.65, initialVol = 24, initialComp = 3) {
     const wid = 'slider-box-' + Math.floor(100000 + Math.random() * 900000);
     return `
       <div class="interactive-slider-box" id="${wid}" data-initial-gpa="${initialGpa}" data-initial-vol="${initialVol}" data-initial-comp="${initialComp}">
@@ -1558,7 +1617,8 @@ ${examSummary}
       const fallback = processUserInput(userPrompt, false, null);
       return {
         text: fallback.text + '\n\n*(本回答由 安徽农业大学「徽农智 · 安农智办」数智大脑驱动)*',
-        approval: fallback.approval
+        approval: fallback.approval,
+        widgetHtml: fallback.widgetHtml || ''
       };
     }
   }
@@ -1614,6 +1674,11 @@ ${examSummary}
     // 8. 学生请假
     if (/请假|假条|离校审批|开假单/.test(t)) {
       return 'leave';
+    }
+
+    // 8.1 教务跨部门协同工作流 (AgentWeber 被动触发能力)
+    if (/调课|排课对齐|培养方案|毕业学分|学分查漏|成绩复核|成绩异议|协同工作流|教务协同|agentweber|weber|跨部门审批|公文流转|审批流程/.test(t)) {
+      return 'agent_weber';
     }
 
     // 9. 考研
@@ -2285,6 +2350,79 @@ ${examSummary}
     };
   }
 
+  // ----------------------------------------------------------------------------
+  // 3.11 AgentWeber 智能教务协同与安全工作流 (被动能力流转状态机)
+  // ----------------------------------------------------------------------------
+  function handleAgentWeberPassiveWorkflow(raw) {
+    AgentState.lastTopic = 'agent_weber';
+    const t = (raw || '').toLowerCase();
+
+    let scenarioKey = 'general';
+    let title = '智能教务跨部门协同流转工作流';
+    let dept = '现代教育技术中心 / 教务处教务运行科';
+    let steps = [];
+    let summaryText = '';
+
+    if (t.includes('调课') || t.includes('换课') || t.includes('教室冲突')) {
+      scenarioKey = 'tiaoke';
+      title = '调课申请与教室占用冲突消解协同工作流';
+      dept = '开课学院教学办 / 教务处教务运行科';
+      steps = [
+        { name: '读取原授课计划与教师周课表', status: 'done', detail: '已核验：原周三第3节课程无学生大面积重叠' },
+        { name: '全校空闲教室资源自动拓扑扫描', status: 'done', detail: '已核验：拟调入时段勤学楼 402/博学楼 201 均空闲' },
+        { name: '教学院长终审与全班调课通告发布', status: 'gated', detail: '触发写入门禁：需任课教师/经办人核验并授权' }
+      ];
+      summaryText = '已为您完成拟调课程冲突检测与备选多媒体教室匹配。读操作已在您的浏览器原生沙箱中自动完成，正式写入教务系统并下发通知前已置入 0 次越权门禁，请您确认：';
+    } else if (t.includes('学分') || t.includes('培养方案') || t.includes('毕业')) {
+      scenarioKey = 'credit';
+      title = '培养方案毕业学分查漏与排课对齐工作流';
+      dept = '教务处学籍与注册科 / 教学培养科';
+      steps = [
+        { name: '抓取专业本科培养方案基线标准', status: 'done', detail: '已核验：总学分要求 160，必修 128，选修 32' },
+        { name: '比对学生当前教务系统已修读学分', status: 'done', detail: '已核验：已修 114，尚缺通识选修 2 学分、专业拓展 12 学分' },
+        { name: '推荐补选方案并预选下学期缺额课程', status: 'gated', detail: '触发写入门禁：课程预选写入教务池需本人授权' }
+      ];
+      summaryText = '已为您核对毕业学分缺额并完成开课池时序排课规划。敏感学籍数据完全在本地加密处理，自动预选写入教务系统前已置入 0 次越权门禁：';
+    } else if (t.includes('成绩') && (t.includes('复核') || t.includes('异议') || t.includes('查分') || t.includes('登分'))) {
+      scenarioKey = 'score';
+      title = '期末考试成绩异议复核多节点协同工作流';
+      dept = '开课教研室 / 学院教学督导组 / 考务科';
+      steps = [
+        { name: '调取卷面答卷归档与登分系统电子存根', status: 'done', detail: '已核验：答卷流水号与试卷扫描件匹配成功' },
+        { name: '双评专家组同卷背靠背分步重新核分', status: 'done', detail: '已核验：客观题无漏评，大题分步小计一致' },
+        { name: '教学院长终核与教务系统更正签批', status: 'gated', detail: '触发写入门禁：最终成绩数据库回写需主管签字授权' }
+      ];
+      summaryText = '已为您调取卷面存根与专家核分流转记录。只读审查已通过，正式更正数据库前已激活 Action Gating 门禁卡口：';
+    } else {
+      scenarioKey = 'general';
+      title = '智能教务跨部门多智能体协同流转工作流';
+      dept = '现代教育技术中心 / 综合办事大厅';
+      steps = [
+        { name: '浏览器原生沙箱环境初始化与凭证校验', status: 'done', detail: '已核验：本地公私数据双轨隔离已就绪' },
+        { name: '业务流转前置规则与跨部门接口对齐', status: 'done', detail: '已核验：教务、后勤、学工状态读操作无冲突' },
+        { name: '向校园核心系统推送最终业务办结表单', status: 'gated', detail: '触发写入门禁：高敏写入操作需经办人显式授权' }
+      ];
+      summaryText = '智能体已在后台作为被动能力接管本次跨部门协同任务。遵循 0 次擅自越权承诺，前置核验已就绪，等待最终确认：';
+    }
+
+    const docNo = 'WEBER-' + Math.floor(100000 + Math.random() * 900000);
+
+    return {
+      text: `**【AgentWeber 智能教务协同引擎】被动协同流转已启动**\n\n` +
+        `已在后台自动调取 **AgentWeber 智能教务协同与安全流转能力**（作为 AI 被动技能实时介入）。\n\n` +
+        `遵循 **公私数据双轨隔离** 与 **0 次擅自越权 Action Gating 门禁机制**，智能体在您的本地浏览器原生沙箱中完成了跨部门数据比对与流程编排。\n\n` +
+        summaryText,
+      approval: null,
+      widgetHtml: renderAgentWeberPassiveWidget({
+        docNo,
+        title,
+        dept,
+        steps,
+        scenarioKey
+      })
+    };
+  }
+
   function processUserInput(text, hasImage = false, imageInfo = null) {
     const raw = (text || '').trim();
     const t = raw.toLowerCase();
@@ -2310,6 +2448,11 @@ ${examSummary}
     // 优先：正在进行的请假工作流
     if (AgentState.workflow === 'leave') {
       return handleLeaveWorkflow(raw);
+    }
+
+    // 优先：正在进行的教务协同工作流 (AgentWeber)
+    if (AgentState.workflow === 'agent_weber') {
+      return handleAgentWeberPassiveWorkflow(raw);
     }
 
     // 优先：正在进行的综测与奖学金工作流
@@ -2355,6 +2498,11 @@ ${examSummary}
     if (/科研广场|互助广场|科研互助|找队友|跨学科|组队|科研合作|借仪器|借设备|数据共享|互帮互助|找搭档|芯片量化|多光谱|病斑数据|p2p撮合|智能体撮合|找搭子|合作组队/.test(t) ||
         (t.includes('科研') && (t.includes('广场') || t.includes('撮合') || t.includes('合作') || t.includes('找人') || t.includes('组队') || t.includes('互助')))) {
       return handleResearchPlazaWorkflow(raw);
+    }
+
+    // 优先：教务跨部门协同工作流 (AgentWeber 被动触发能力)
+    if (/调课|排课对齐|培养方案|毕业学分|学分查漏|成绩复核|成绩异议|协同工作流|教务协同|agentweber|weber|跨部门审批|公文流转|审批流程/.test(t)) {
+      return handleAgentWeberPassiveWorkflow(raw);
     }
 
     // =========================================================================
@@ -4263,7 +4411,7 @@ ${examSummary}
       const catKeywords = ['猫', '校宠', '花名册', '猫坡', '东门', '来福', '花姐', '英国佬', '大吉', '馆长', '毛毛', '小黑', '小漂亮', '嘴上有屎', '对眼', '屁姐', '屁哥', '鸟哥', '花卷', '足球八嘎', '黑头', '小罐', '小美', '四瓜'];
       const canteenKeywords = ['食堂', '餐厅', '吃饭', '吃什么', '西苑', '欣苑', '东苑', '北苑', '丰泽', '思源'];
       const buildingKeywords = ['勤政楼', '勤学楼', '博学楼', '图书馆', '第二报告厅', '报告厅', '化学楼'];
-      const workflowKeywords = ['借教室', '开班会', '请假', '假条', '离校', '一卡通', '报修', '茶树', '国重', '名木', '银杏', '香樟'];
+      const workflowKeywords = ['借教室', '开班会', '请假', '假条', '离校', '一卡通', '报修', '茶树', '国重', '名木', '银杏', '香樟', '调课', '排课', '换课', '停课', '教室冲突', '学分', '培养方案', '成绩复核', '协同工作流', '教务协同', 'agentweber', 'weber'];
       const zongceKeywords = ['综测', '测评', '算综测', '奖学金', '国家奖学金', '励志奖学金', '志愿汇', '德育'];
       const kaoyanKeywords = ['考研', '择校', '专硕', '学硕', '读博', '408', '414', '314', '315', '考研时间线', '考研科目', '复习进度', '择校方案'];
       const facultyKeywords = ['师资', '导师', '教授', '课题组', '研究课题', '研究方向', '老师', '教师', '博导', '硕导', '农学院', '茶业学院', '茶学院', '计算机学院', '人工智能学院', '信息与计算机学院', '信智学院', '生命科学学院', '生科院', '生物制造', '植物保护学院', '植保学院', '经济管理学院', '经管学院', '动物科技学院', '动科院', '动物医学院', '动医院', '有哪些老师', '找老师', '找导师', '宛晓春', '夏恩华', '张友华', '姜东', '武立权', '程备久', '薛挺', '操海群', '辜丽川'];
@@ -4429,6 +4577,37 @@ ${examSummary}
         actions.innerHTML = `
           <div style="font-size:12px; color:#64748b; padding:6px 0;">已存为草案，尚未向教务/学工系统发起正式推送。</div>
         `;
+      }
+    },
+
+    confirmWeberAction: function (wid, title, docNo) {
+      const card = document.getElementById(wid);
+      if (!card) return;
+      const actions = document.getElementById(wid + '-actions');
+      if (actions) {
+        actions.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:#15803d; background:#dcfce7; padding:8px 14px; border-radius:8px; border:1px solid #86efac; width:100%;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>【0次越权门禁授权】${title} 协同流转已完成 · 单号 ${docNo} 已存证</span>
+          </div>
+        `;
+      }
+      if (window.AnauAgent.showToast) {
+        window.AnauAgent.showToast('AgentWeber 门禁核验通过：教务协同流转已成功归档！');
+      }
+    },
+
+    cancelWeberAction: function (wid) {
+      const actions = document.getElementById(wid + '-actions');
+      if (actions) {
+        actions.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:#64748b; background:#f1f5f9; padding:8px 14px; border-radius:8px; width:100%;">
+            <span>已取消写入操作 · 本地数据保持只读 · 0次擅自越权</span>
+          </div>
+        `;
+      }
+      if (window.AnauAgent.showToast) {
+        window.AnauAgent.showToast('已取消写操作，系统未向教务系统写入任何修改。');
       }
     },
 

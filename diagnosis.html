@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AI 错题认知诊断与考点拓扑工坊 · 安农智办</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    :root {
+      --bg-base: #f5f5f7;
+      --card-bg: #ffffff;
+      --card-subtle: #fbfbfd;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-focus: rgba(13, 148, 136, 0.35);
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #86868b;
+      --accent-teal: #0d9488;
+      --accent-teal-subtle: rgba(13, 148, 136, 0.08);
+      --accent-blue: #0071e3;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.08);
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Top Navigation Bar */
+    header.workbench-header {
+      height: 56px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 200;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--accent-teal);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-teal-subtle);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-back:hover {
+      background: rgba(13, 148, 136, 0.15);
+      color: #0f766e;
+    }
+
+    .header-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(13, 148, 136, 0.1);
+      color: var(--accent-teal);
+      letter-spacing: 0.2px;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .model-chip {
+      font-size: 11px;
+      font-weight: 500;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* Main Container Stage */
+    .mo-stage-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* Ambient Background & Glow */
+    .mo-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 45%, rgba(13, 148, 136, 0.05) 0%, rgba(245, 245, 247, 0) 70%);
+      pointer-events: none;
+    }
+
+    .mo-halo {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      width: 320px;
+      height: 320px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, rgba(13, 148, 136, 0) 70%);
+      opacity: var(--oCenter, 0);
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Initial Landing Hero (Focal View) */
+    .landing-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 24px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 10;
+    }
+
+    .landing-hero.hide {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+
+    .landing-pill-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-teal);
+      background: rgba(13, 148, 136, 0.08);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(13, 148, 136, 0.15);
+    }
+
+    .landing-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .landing-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      line-height: 1.5;
+    }
+
+    /* Morphing Wrapper */
+    .mo-mover {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      will-change: transform;
+      transition: transform 0.1s linear;
+    }
+
+    /* Morphing Actor Card / Pill */
+    .mo-actor {
+      position: relative;
+      width: var(--w, 560px);
+      height: var(--h, 60px);
+      border-radius: var(--r, 999px);
+      background: #ffffff;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: width, height, border-radius, box-shadow;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .mo-actor[data-shake] {
+      animation: mo-shake 0.26s ease-in-out;
+    }
+
+    /* Aurora / Surface effect */
+    .mo-surface {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: var(--oAur, 1);
+    }
+
+    .mo-aurora {
+      position: absolute;
+      inset: -50%;
+      background: radial-gradient(circle at 30% 50%, rgba(13, 148, 136, 0.08), transparent 40%),
+                  radial-gradient(circle at 70% 50%, rgba(37, 99, 235, 0.08), transparent 40%);
+      animation: mo-drift 8s infinite alternate ease-in-out;
+    }
+
+    /* Input Form inside Pill */
+    form.mo-input {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 12px 0 20px;
+      gap: 12px;
+      opacity: var(--oInput, 1);
+      transform: scale(var(--inScale, 1));
+      transition: opacity 0.2s ease;
+      z-index: 5;
+    }
+
+    .mo-spark {
+      width: 20px;
+      height: 20px;
+      color: var(--accent-teal);
+      flex-shrink: 0;
+    }
+
+    .mo-field {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14.5px;
+      color: var(--text-primary);
+      font-family: inherit;
+    }
+
+    .mo-field::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    /* Photo Upload Button */
+    .mo-photo-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .mo-photo-btn:hover {
+      background: #e2e8f0;
+      color: var(--text-primary);
+      transform: scale(1.05);
+    }
+
+    .mo-photo-btn input {
+      display: none;
+    }
+
+    /* Send Button */
+    .mo-send {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #94a3b8;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: not-allowed;
+      flex-shrink: 0;
+      transition: all 0.2s var(--ease-apple);
+    }
+
+    .mo-send[data-ready] {
+      background: var(--accent-teal);
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+    }
+
+    .mo-send[data-ready]:hover {
+      background: #0f766e;
+      transform: scale(1.05);
+    }
+
+    /* 3D Dotted Canvas Orb */
+    canvas.mo-orb {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 220px;
+      height: 220px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Thinking Status Pill below the Orb */
+    .mo-status {
+      position: absolute;
+      top: calc(50% + 80px);
+      left: 50%;
+      transform: translate(-50%, var(--sTy, 6px));
+      opacity: var(--sOp, 0);
+      pointer-events: none;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-teal);
+      background: #ffffff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border-color);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .mo-dots i {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      margin: 0 1.5px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: mo-dot 1.2s infinite ease-in-out;
+    }
+    .mo-dots i:nth-child(2) { animation-delay: 0.2s; }
+    .mo-dots i:nth-child(3) { animation-delay: 0.4s; }
+
+    /* Compact Answer / Unfold Card */
+    .mo-answer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: #ffffff;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: var(--oCard, 0);
+      pointer-events: none;
+      z-index: 15;
+      overflow: hidden;
+    }
+
+    .mo-a-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-teal);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      opacity: var(--hOp, 0);
+    }
+
+    .mo-a-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    .mo-a-body {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .mo-w {
+      display: inline-block;
+      transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
+    }
+
+    /* Reset / New Question Button */
+    .mo-reset {
+      margin-top: 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    .mo-reset.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .mo-reset:hover {
+      background: #f8fafc;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Quick Exam Sample Chips */
+    .sample-chips-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+      max-width: 620px;
+      z-index: 10;
+      transition: opacity 0.3s ease;
+    }
+
+    .sample-chips-row.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sample-chip {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 5px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sample-chip:hover {
+      background: #f8fafc;
+      color: var(--text-primary);
+      border-color: rgba(13, 148, 136, 0.3);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Upload Preview Floating Tag */
+    .upload-preview-tag {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent-teal);
+      background: #ffffff;
+      border: 1px solid rgba(13, 148, 136, 0.25);
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Dynamic Expanded Detailed Report Card */
+    .detailed-report-wrap {
+      display: none;
+      width: 100%;
+      max-width: 860px;
+      margin-top: 24px;
+      padding-bottom: 60px;
+      flex-direction: column;
+      gap: 20px;
+      animation: mo-fade-in 0.4s ease forwards;
+      z-index: 10;
+    }
+
+    .detailed-report-wrap.show {
+      display: flex;
+    }
+
+    /* Report Sections */
+    .report-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .verdict-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .verdict-title-box h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    .verdict-badge {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: #fef2f2;
+      color: #e11d48;
+      border: 1px solid rgba(225, 29, 72, 0.2);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .compare-card {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .compare-wrong {
+      background: #fff1f2;
+      border: 1px solid rgba(225, 29, 72, 0.2);
+      color: #9f1239;
+    }
+
+    .compare-right {
+      background: #f0fdf4;
+      border: 1px solid rgba(22, 163, 74, 0.2);
+      color: #166534;
+    }
+
+    .compare-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Problem Walkthrough & Final Answer Box */
+    .walkthrough-box {
+      font-size: 13.5px;
+      line-height: 1.68;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-top: 10px;
+    }
+
+    .derivation-box {
+      font-size: 13.5px;
+      line-height: 1.68;
+      color: #1e293b;
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+    }
+
+    .final-answer-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(13, 148, 136, 0.03) 100%);
+      border: 1px solid rgba(13, 148, 136, 0.25);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .final-answer-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-teal);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .final-answer-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+
+    .solution-method-box {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #f1f5f9;
+      border-left: 3px solid var(--accent-teal);
+      border-radius: 4px;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #475569;
+    }
+
+    /* Option Distractor Breakdown & Subjective Scoring Traps */
+    .distractor-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .distractor-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .distractor-item:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .distractor-item.correct-distractor {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .distractor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .distractor-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .distractor-badge.badge-correct {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+
+    .distractor-badge.badge-trap {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .distractor-reason {
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.55;
+      margin-top: 2px;
+    }
+
+    .subjective-trap-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .subjective-trap-item {
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .subjective-trap-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #581c87;
+    }
+
+    .subjective-trap-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: #f3e8ff;
+      color: #7e22ce;
+      border: 1px solid #d8b4fe;
+    }
+
+    .subjective-trap-reason {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.55;
+    }
+
+    /* Probe Question Box */
+    .probe-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .probe-pill {
+      font-size: 11px;
+      font-weight: 700;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      width: fit-content;
+    }
+
+    .probe-q-text {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .probe-options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .probe-opt-btn {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .probe-opt-btn:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      transform: translateX(2px);
+    }
+
+    .probe-opt-btn.correct {
+      background: #f0fdf4 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+      font-weight: 600;
+    }
+
+    .probe-opt-btn.wrong {
+      background: #fef2f2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+
+    .probe-feedback-box {
+      display: none;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    /* Knowledge DAG Chain */
+    .dag-chain {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dag-node {
+      flex: 1;
+      padding: 14px 12px;
+      background: var(--card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dag-node.active-node {
+      border-color: var(--accent-teal);
+      background: rgba(13, 148, 136, 0.05);
+      box-shadow: 0 0 0 1px var(--accent-teal);
+    }
+
+    .dag-role {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+    }
+
+    .dag-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dag-status {
+      font-size: 10.5px;
+      color: var(--accent-teal);
+    }
+
+    /* Spaced Repetition Timeline */
+    .calendar-timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .calendar-step {
+      padding: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .step-day {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .step-task {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .step-desc {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    /* Keyframes */
+    @keyframes mo-drift {
+      from { transform: translateX(-14%); }
+      to { transform: translateX(14%); }
+    }
+    @keyframes mo-dot {
+      0%, 80%, 100% { opacity: .25; }
+      40% { opacity: 1; }
+    }
+    @keyframes mo-shake {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-4px, 0); }
+      75% { transform: translate(4px, 0); }
+    }
+    @keyframes mo-fade-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header.workbench-header {
+        height: 52px;
+        padding: 0 12px;
+      }
+      .header-sub { display: none; }
+      .mo-stage-container { padding: 16px; }
+      .landing-title { font-size: 20px; }
+      .mo-actor { width: calc(100vw - 32px) !important; }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .dag-chain { flex-direction: column; gap: 8px; }
+      .calendar-timeline { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="workbench-header">
+    <div class="header-left">
+      <button class="btn-back" onclick="window.location.href='index.html'">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>返回综合大厅</span>
+      </button>
+      <div class="header-title-wrap">
+        <div class="header-title">
+          <span>AI 错题分析与认知诊断工坊</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="model-chip">
+        <span class="pulse-dot"></span>
+        <span>DeepSeek-V4.1-Flash-SS 推理引擎</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Stage Container -->
+  <main class="mo-stage-container" id="moStage">
+    <div class="mo-bg" aria-hidden="true"></div>
+    <div class="mo-halo" id="centerHalo" aria-hidden="true"></div>
+
+    <!-- Initial Landing Hero Text (Center Stage) -->
+    <div class="landing-hero" id="landingHero">
+      <h1 class="landing-title">AI 错题分析与认知诊断</h1>
+      <p class="landing-desc">
+        输入题目或上传题目照片，AI 现做给出规范解题精讲、选项逐项排雷与错因深度剖析。
+      </p>
+    </div>
+
+    <!-- Upload preview indicator if an image is selected -->
+    <div class="upload-preview-tag" id="uploadTag">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+      <span id="uploadFileName">已载入错题照片</span>
+    </div>
+
+    <!-- The Morphing Mover Stage (Houses the Pill / Canvas / Unfold Card) -->
+    <div class="mo-mover" id="moMover">
+      <div class="mo-actor" id="moActor">
+        <div class="mo-surface">
+          <div class="mo-aurora"></div>
+        </div>
+
+        <!-- Input Form (Search & Upload Pill) -->
+        <form class="mo-input" id="moForm" onsubmit="handleFormSubmit(event)">
+          <svg class="mo-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 3.5l1.7 4.8 4.8 1.7-4.8 1.7L10 16.5l-1.7-4.8L3.5 10l4.8-1.7L10 3.5z"/>
+            <path d="M18 14.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"/>
+          </svg>
+          
+          <input
+            type="text"
+            class="mo-field"
+            id="promptInput"
+            placeholder="输入题目或做题思路，亦可拍照上传错题…"
+            autocomplete="off"
+            oninput="handleInputChange(this.value)"
+          />
+
+          <!-- Photo Upload Button -->
+          <label class="mo-photo-btn" title="上传错题照片 / 试卷拍照">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <input type="file" id="fileUpload" accept="image/*" onchange="handleFileSelect(event)" />
+          </label>
+
+          <!-- Submit Arrow -->
+          <button type="submit" class="mo-send" id="btnSend" aria-label="启动诊断">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 19V5M5 12l7-7 7 7"/>
+            </svg>
+          </button>
+        </form>
+
+        <!-- 3D Dotted Canvas Orb -->
+        <canvas class="mo-orb" id="moCanvas" style="display:none;"></canvas>
+
+        <!-- Floating Thinking Status -->
+        <div class="mo-status" id="moStatus">
+          <span id="statusLabel">Thinking</span>
+          <span class="mo-dots"><i></i><i></i><i></i></span>
+        </div>
+
+        <!-- Morph Unfold Summary Header -->
+        <div class="mo-answer" id="moAnswer">
+          <div class="mo-a-head">
+            <i class="mo-a-dot"></i>
+            <span>DeepSeek 认知诊断完成</span>
+          </div>
+          <p class="mo-a-body" id="moAnswerBody">
+            <span class="mo-w">题目已深度推演，认知漏洞与知识拓扑已在下方展开呈现。</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset / Test New Question Button -->
+    <button type="button" class="mo-reset" id="btnReset" onclick="resetMorphState()">
+      诊断下一道错题
+    </button>
+
+    <!-- DYNAMIC EXPLAINED REPORT CONTAINER (Revealed on-the-fly) -->
+    <div class="detailed-report-wrap" id="reportWrap">
+      
+      <!-- Card 1: Problem Walkthrough & Step-by-Step Solution -->
+      <div class="report-card">
+        <div class="verdict-header">
+          <div class="verdict-title-box">
+            <span style="font-size:11px; font-weight:700; color:var(--accent-teal); text-transform:uppercase;">题目原题研读与规范解题精讲</span>
+            <h3 id="verdictTitle">核心概念混淆 · 洛必达求导未定式前置检验缺失</h3>
+          </div>
+          <span class="verdict-badge" id="verdictBadge">概念性漏洞 (Core Misconception)</span>
+        </div>
+
+        <div class="walkthrough-box" id="problemWalkthroughText">
+          <strong>原题背景与考点研读：</strong>本题考查微分学核心考点：0/0 型未定式极限求解。原式在 x 趋于 0 时，分子 sin(0) - 0 = 0，分母 0³ = 0，属于标准 0/0 未定式。常规解法有两条路径：一是连续应用洛必达法则求导，二是应用泰勒（麦克劳林）公式展开。由于分母为 x³，分子进行泰勒展开能够一步消去低阶无穷小，是最不易发生算术失误的最优路径。
+        </div>
+
+        <div class="derivation-box" id="derivationText">
+          <strong>规范分步求解推导：</strong><br>
+          1. <strong>验证未定式型态：</strong>\(\lim_{x \to 0}(\sin x - x) = 0\)，\(\lim_{x \to 0} x^3 = 0\)，为 \(\frac{0}{0}\) 型未定式；<br>
+          2. <strong>麦克劳林级数展开：</strong>回忆基本展开式 \(\sin x = x - \frac{x^3}{3!} + o(x^3) = x - \frac{x^3}{6} + o(x^3)\)；<br>
+          3. <strong>分子代换化简：</strong>分子 \(= (x - \frac{x^3}{6} + o(x^3)) - x = -\frac{x^3}{6} + o(x^3)\)；<br>
+          4. <strong>计算极限：</strong>\(\lim_{x \to 0} \frac{-\frac{1}{6}x^3 + o(x^3)}{x^3} = -\frac{1}{6} + \lim_{x \to 0}\frac{o(x^3)}{x^3} = -\frac{1}{6}\)。
+        </div>
+
+        <div class="final-answer-box">
+          <span class="final-answer-label">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+            <span>标准答案 / 严谨结论：</span>
+          </span>
+          <span class="final-answer-value" id="finalAnswerText">\(-\frac{1}{6}\)</span>
+        </div>
+
+        <div class="solution-method-box" id="solutionMethodText">
+          <strong>解题思路精要：</strong>分母为 \(x^3\) 时，优先利用麦克劳林展开至 3 阶，一招消去低阶无穷小，规避洛必达连续 3 次求导失误风险。
+        </div>
+      </div>
+
+      <!-- Card 2: Full-Spectrum Error Breakdown (Multiple Choice & Subjective Traps) -->
+      <div class="report-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div>
+            <span style="font-size:11px; font-weight:700; color:var(--accent-teal); text-transform:uppercase;">错因全景剖析</span>
+            <h3 style="font-size:16px; font-weight:700; color:#1e293b; margin-top:2px;">选择题逐项排雷 & 主观题易错点</h3>
+          </div>
+        </div>
+
+        <!-- Section A: Option Distractors (Multiple Choice) -->
+        <div style="margin-bottom:18px;">
+          <div style="font-size:13px; font-weight:700; color:#1e293b; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+            <span style="width:3px; height:12px; background:var(--accent-teal); border-radius:2px;"></span>
+            <span>选择题选项逐项排雷 (若为选择题，各选项心智陷阱定位)</span>
+          </div>
+          <div class="distractor-grid" id="optionDistractorsList">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+
+        <!-- Section B: Subjective Question Scoring Pitfalls -->
+        <div style="margin-bottom:18px;">
+          <div style="font-size:13px; font-weight:700; color:#1e293b; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+            <span style="width:3px; height:12px; background:#8b5cf6; border-radius:2px;"></span>
+            <span>主观题典型失误与易错知识点 (若为主观题/大题，分步失分点剖析)</span>
+          </div>
+          <div class="subjective-trap-grid" id="subjectiveTrapsList">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+
+        <!-- Section C: Mental Misconception vs Authoritative Theorem -->
+        <div style="font-size:13px; font-weight:700; color:#1e293b; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+          <span style="width:3px; height:12px; background:#0ea5e9; border-radius:2px;"></span>
+          <span>心智认知偏差 vs 定理约束边界</span>
+        </div>
+        <div class="comparison-grid">
+          <div class="compare-card compare-wrong">
+            <div class="compare-label">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span>学生心智模型误区 (偏差源头)</span>
+            </div>
+            <div id="wrongReasonText">
+              看到分式形式立即求导，未检验极限是否趋于 0/0，存在“将任意除法极限当成导数比值”的机械套公式心智习惯。
+            </div>
+          </div>
+          <div class="compare-card compare-right">
+            <div class="compare-label">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 12 2 2 4-4"/></svg>
+              <span>权威定理约束 (正确边界)</span>
+            </div>
+            <div id="rightReasonText">
+              洛必达法则源自柯西中值定理，必须满足未定式型态与导数商极限存在。非未定式时直接使用将导致结果完全失真。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Interactive Concept Probe Question -->
+      <div class="probe-card">
+        <div class="probe-pill">启发式概念探针</div>
+        <div class="probe-q-text" id="probeQText">
+          【探针自测题】在计算极限时，若分子极限为 0 但分母极限非 0，若直接使用洛必达法则上下求导，会发生什么？
+        </div>
+        <div class="probe-options-list" id="probeOptionsList">
+          <!-- Dynamically injected -->
+        </div>
+        <div class="probe-feedback-box" id="probeFeedback"></div>
+      </div>
+
+      <!-- Section 3: Knowledge Topology DAG -->
+      <div class="report-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:13px; font-weight:700; color:var(--text-secondary);">考点先后依赖拓扑图</span>
+        </div>
+        <div class="dag-chain" id="dagChain">
+          <div class="dag-node">
+            <span class="dag-role">前驱条件</span>
+            <span class="dag-title" id="dagNode1">函数连续与极限四则运算</span>
+            <span class="dag-status">必须达标</span>
+          </div>
+          <div class="dag-node active-node">
+            <span class="dag-role">当前错因核心</span>
+            <span class="dag-title" id="dagNode2">未定式判定与洛必达边界</span>
+            <span class="dag-status">重点攻关</span>
+          </div>
+          <div class="dag-node">
+            <span class="dag-role">后继应用</span>
+            <span class="dag-title" id="dagNode3">泰勒公式展开与级数求和</span>
+            <span class="dag-status">后续进阶</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Transfer Problems & Spaced Repetition -->
+      <div class="report-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:13px; font-weight:700; color:var(--text-secondary);">艾宾浩斯复习计划</span>
+        </div>
+        
+        <div class="calendar-timeline">
+          <div class="calendar-step">
+            <span class="step-day">Day 1 (今日)</span>
+            <span class="step-task">探针启发通关</span>
+            <span class="step-desc">澄清定理成立边界，完成概念探针自测</span>
+          </div>
+          <div class="calendar-step">
+            <span class="step-day">Day 3 (后天)</span>
+            <span class="step-task">同构变式强化</span>
+            <span class="step-desc">独立完成 1 道相同概念、不同情境的变式大题</span>
+          </div>
+          <div class="calendar-step">
+            <span class="step-day">Day 7 (下周)</span>
+            <span class="step-task">盲测迁移考查</span>
+            <span class="step-desc">无任何解题提示下，一次性独立答对判定及格</span>
+          </div>
+          <div class="calendar-step">
+            <span class="step-day">Day 15 (半月)</span>
+            <span class="step-task">期末真题通关</span>
+            <span class="step-desc">并入历年期末全真试卷大题，形成持久长时记忆</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Reset Action -->
+      <div style="display:flex; justify-content:center; margin-top:12px; margin-bottom:20px;">
+        <button type="button" class="btn-primary" id="btnResetBottom" onclick="resetMorphState()" style="padding:10px 24px; border-radius:999px; background:var(--accent-teal); color:#ffffff; font-size:13.5px; font-weight:600; border:none; cursor:pointer; box-shadow:var(--shadow-sm); display:inline-flex; align-items:center; gap:8px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>诊断下一道错题</span>
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    /* ─────────────────────────────────────────────────────────────
+       1. Knowledge Sample Presets (for instant live resolution)
+       ───────────────────────────────────────────────────────────── */
+    const SAMPLES = {
+      gaoshu: {
+        fileName: '高数期末_未定式求极限_错题照.jpg',
+        prompt: '求极限 lim (x -> 0) (sin x - x) / x^3',
+        verdict: '核心概念混淆 · 洛必达求导未定式前置检验缺失',
+        badge: '概念性漏洞 (Core Misconception)',
+        summary: '已完成关于「sin x - x / x³」的极限深度解题与错因排查：极限标准值为 -1/6，已剖析四项选项陷阱与主观题三大失分阶段。',
+        walkthrough: '本题考查微分学核心考点：0/0 型未定式极限求解。原式在 x 趋于 0 时，分子 sin(0) - 0 = 0，分母 0³ = 0，属于标准 0/0 未定式。常规解法有两条路径：一是连续应用洛必达法则求导，二是应用麦克劳林公式展开。由于分母为 x³，分子进行泰勒展开能够一步消去低阶无穷小，是最不易发生算术失误的最优路径。',
+        derivation: '1. <strong>验证未定式型态：</strong>\\(\\lim_{x \\to 0}(\\sin x - x) = 0\\)，\\(\\lim_{x \\to 0} x^3 = 0\\)，为 \\(\\frac{0}{0}\\) 型未定式；<br>' +
+          '2. <strong>麦克劳林级数展开：</strong>回忆基本展开式 \\(\\sin x = x - \\frac{x^3}{3!} + o(x^3) = x - \\frac{x^3}{6} + o(x^3)\\)；<br>' +
+          '3. <strong>分子代换化简：</strong>分子 \\(= (x - \\frac{x^3}{6} + o(x^3)) - x = -\\frac{x^3}{6} + o(x^3)\\)；<br>' +
+          '4. <strong>计算极限：</strong>\\(\\lim_{x \\to 0} \\frac{-\\frac{1}{6}x^3 + o(x^3)}{x^3} = -\\frac{1}{6} + \\lim_{x \\to 0}\\frac{o(x^3)}{x^3} = -\\frac{1}{6}\\)。',
+        finalAnswer: '-\\frac{1}{6}',
+        methodTips: '解题思路精要：分母为 x 的 k 次幂时，优先对分子展开至同阶 x^k，避免连续多次洛必达商求导导致符号丢失。',
+        optionDistractors: [
+          { label: '选项 A: -1/6', isCorrect: true, title: '正确选项', trap: '正确：正确识别 0/0 型未定式，使用三阶泰勒展开或规范三次洛必达求导，负号与系数 1/6 完整保留。' },
+          { label: '选项 B: 1/6', isCorrect: false, title: '符号颠倒陷阱', trap: '典型失误：在展开 sin x - x 时漏掉负号，将 -(x³/6) 误写为 +(x³/6)；或洛必达求导时 (cos x - 1) 符号算错。' },
+          { label: '选项 C: 0', isCorrect: false, title: '低阶等价无穷小滥用陷阱', trap: '严重失误：在分子加减法中盲目套用一阶等价无穷小 sin x ~ x，导致分子化为 x - x = 0，过早得出分子为 0 的错误结论。' },
+          { label: '选项 D: 不存在 / 无穷大', isCorrect: false, title: '未定式概念缺失陷阱', trap: '失误：未按未定式化简，误将分母趋于 0 当作极限为无穷大，忽略了分子也是同阶无穷小量。' }
+        ],
+        subjectiveTraps: [
+          { stage: '阶段一：审题与等价无穷小误区', trap: '在加减法中直接将 sin x 替换为 x，得出分子为 0，导致解题全过程瞬间报废（等价无穷小原则上只能用于因式乘除因子！）。', deduction: '扣 80%~100% 分数' },
+          { stage: '阶段二：洛必达连续求导符号脱落', trap: '若选用洛必达法则，第一步求导为 (cos x - 1)/(3x²)，第二步为 -sin x/(6x)，第三步为 -cos x/6；在连续求导中极易将负号遗失变成 1/6。', deduction: '扣 30%~50% 步骤分' },
+          { stage: '阶段三：泰勒展开截断阶数不足', trap: '展开 sin x 时仅保留至一阶 x，写出 x + o(x)，导致残差项阶数不足无法与分母 x³ 相比，无法求出极限。', deduction: '扣 50% 步骤分' }
+        ],
+        wrong: '看到分式形式立即求导，未检验极限是否趋于 0/0，存在“将任意除法极限当成导数比值”的机械套公式心智习惯。',
+        right: '洛必达法则源自柯西中值定理，必须满足未定式型态与导数商极限存在。非未定式时直接使用将导致结果完全失真。',
+        probeQ: '【探针自测题】在应用洛必达法则时，下列哪项是必须严格满足的充要前提？',
+        options: [
+          { text: 'A. 分子与分母导数的极限必须存在（或为无穷大），且属于未定式', correct: true },
+          { text: 'B. 只要自变量趋于正无穷即可使用', correct: false },
+          { text: 'C. 只要原函数在整个实数域连续即可使用', correct: false },
+          { text: 'D. 不需要检验型态，只要多项式次数大于 2', correct: false }
+        ],
+        feedbackCorrect: '回答完全正确！洛必达法则的核心前提是未定式型态与导数商极限存在，这是高数极限考核的第一道安全护栏！',
+        feedbackWrong: '回答错误。洛必达法则成立绝不能跳过未定式检验，否则会导致极限计算结果全盘失真。',
+        dag: ['函数连续与极限四则运算', '未定式判定与洛必达边界', '泰勒公式展开与级数求和']
+      },
+      xiandai: {
+        fileName: '线代期末_特征值与特征向量_答题卡.jpg',
+        prompt: '设 3 阶方阵 A 的对角线元素为 2, 1, 3，求特征方程 |A - λE| = 0 的根',
+        verdict: '计算策略疏漏 (Slip) · 行列式展开符号与交叉项检验不足',
+        badge: '计算粗心 (Slip/Calculation)',
+        summary: '已完成方阵特征值求解与不变量验算：求得特征值 1, 2, 4，主对角线之和 tr(A)=7 严格闭环验算。',
+        walkthrough: '本题考查线性代数核心考点：方阵特征多项式计算与特征值求解。通过求解行列式特征方程 |A - λE| = 0，得到关于 λ 的一元三次代数方程。解题时需注意符号交替及因式分解技巧，并利用矩阵的迹（Trace）和行列式（Determinant）进行双重验算。',
+        derivation: '1. <strong>构造特征矩阵：</strong>写出 A - λE，主对角线上元素分别为 (2 - λ), (1 - λ), (3 - λ)；<br>' +
+          '2. <strong>行列式展开：</strong>利用主对角线展开定理，代数余子式带有 (-1)^{i+j} 符号交替；<br>' +
+          '3. <strong>因式分解方程：</strong>整理化简得到特征多项式 -(λ - 1)(λ - 2)(λ - 4) = 0；<br>' +
+          '4. <strong>求得特征值：</strong>解得 λ₁ = 1, λ₂ = 2, λ₃ = 4。',
+        finalAnswer: 'λ₁ = 1, λ₂ = 2, λ₃ = 4',
+        methodTips: '解题思路精要：算完特征值务必用 tr(A) = ∑λi 与 det(A) = ∏λi 两道公式进行 3 秒口算自检，瞬间截获计算符号错误。',
+        optionDistractors: [
+          { label: '选项 A: λ₁ = 1, λ₂ = 2, λ₃ = 4', isCorrect: true, title: '正确选项', trap: '正确：因式分解准确无误，经迹 tr(A)=7 与行列式 det(A)=8 检验完全吻合。' },
+          { label: '选项 B: λ₁ = -1, λ₂ = -2, λ₃ = -4', isCorrect: false, title: '方程提负号变号陷阱', trap: '典型失误：在将 -λ³ 提负号提取时，把括号内的常数项正负号全部弄反，得出相反数。' },
+          { label: '选项 C: λ₁ = 2, λ₂ = 1, λ₃ = 3', isCorrect: false, title: '主对角线直代主观臆断', trap: '严重失误：误以为对角线元素就是特征值（只有当方阵为对角阵或三角阵时才成立！非三角阵不能直读对角线）。' },
+          { label: '选项 D: λ = 0, 1, 7', isCorrect: false, title: '特征方程移项丢解陷阱', trap: '失误：因式分解时强行除以非零因子导致降次丢根，产生虚假根。' }
+        ],
+        subjectiveTraps: [
+          { stage: '阶段一：特征矩阵主对角线减反', trap: '将 |A - λE| 写成 |λE - A| 时常数符号混淆，或主对角线减去 λ 时常数项符号算错。', deduction: '扣 20% 步骤分' },
+          { stage: '阶段二：三阶行列式副对角线符号脱落', trap: '使用沙路法则展开三阶行列式时，副对角线三项漏乘负号，导致三次多项式系数全错。', deduction: '扣 50% 分数' },
+          { stage: '阶段三：特征向量求解漏去零向量', trap: '在求特征向量时，解齐次线性方程组基础解系后，未在最后写明“k 为任意非零常数 (k ≠ 0)”，遗漏零向量排除。', deduction: '扣 2 分格式分' }
+        ],
+        wrong: '面对复杂行列式纯纸面单向手算，缺乏中间符号括号保护，心算跳步丢负号；算完后从不验算。',
+        right: '计算出 λ₁, λ₂, λ₃ 后，立即用 tr(A) = ∑λi 与 det(A) = ∏λi 两道公式进行 3 秒自检，瞬间查出计算错误。',
+        probeQ: '【验算探针】若求得 3 阶方阵 A 的特征值为 1, 2, 4，则该方阵主对角线元素之和 tr(A) 必为多少？',
+        options: [
+          { text: 'A. tr(A) = 7 (因为方阵的迹恒等于全体特征值之和: 1 + 2 + 4 = 7)', correct: true },
+          { text: 'B. tr(A) = 8 (积为行列式 1×2×4=8)', correct: false },
+          { text: 'C. tr(A) = 14 (平方和)', correct: false },
+          { text: 'D. 无法通过特征值确定', correct: false }
+        ],
+        feedbackCorrect: '完全正确！tr(A) = ∑λi 是线代最强大的防粗心验算法宝，3 秒即可验证特征多项式是否算错！',
+        feedbackWrong: '回答错误。根据矩阵特征理论，主对角线元素之和严格等于所有特征值之和：tr(A) = 1 + 2 + 4 = 7。',
+        dag: ['矩阵初等变换与行列式性质', '特征方程构建与双向自检', '相似对角化与二次型化简']
+      },
+      huaxue: {
+        fileName: '普通化学_缓冲溶液pH计算_作业照.jpg',
+        prompt: '计算 0.1 mol/L HAc 与 0.1 mol/L NaAc 混合溶液的 pH 值 (pKa = 4.75)',
+        verdict: '核心概念混淆 · 缓冲体系平衡移动与同离子效应认知缺失',
+        badge: '概念性漏洞 (Core Misconception)',
+        summary: '已完成 HAc/NaAc 缓冲溶液 pH 深度推导演算：pH 严格等于 4.75，已解析同离子效应及选项干扰项。',
+        walkthrough: '本题考查无机与分析化学核心考点：共轭酸碱对构成的缓冲溶液 pH 计算。体系由弱酸 HAc 与强电解质 NaAc 组成。NaAc 完全电离出高浓度的 Ac⁻，由于同离子效应强烈抑制了 HAc 的解离，体系中的 [HAc] 与 [Ac⁻] 近似等于其初始配制浓度，适用亨德森-哈塞尔巴尔赫方程。',
+        derivation: '1. <strong>平衡体系分析：</strong>NaAc → Na⁺ + Ac⁻（完全电离）；HAc ⇌ H⁺ + Ac⁻（微弱电离，受 Ac⁻ 强烈抑制）；<br>' +
+          '2. <strong>列出解离平衡常数式：</strong>Ka = [H⁺][Ac⁻] / [HAc]，两边取负对数得：pH = pKa + lg([Ac⁻] / [HAc])；<br>' +
+          '3. <strong>代入平衡浓度：</strong>[Ac⁻] ≈ c(NaAc) = 0.1 mol/L，[HAc] ≈ c(HAc) = 0.1 mol/L；<br>' +
+          '4. <strong>计算 pH：</strong>pH = 4.75 + lg(0.1 / 0.1) = 4.75 + lg 1 = 4.75 + 0 = 4.75。',
+        finalAnswer: 'pH = 4.75',
+        methodTips: '解题思路精要：识别共轭酸碱缓冲对后，当酸与共轭碱浓度比为 1:1 时，对数项为零，溶液 pH 直接等于弱酸的 pKa。',
+        optionDistractors: [
+          { label: '选项 A: pH = 4.75', isCorrect: true, title: '正确选项', trap: '正确：正确识别缓冲对，利用亨德森方程计算，缓冲比为 1:1，pH = pKa = 4.75。' },
+          { label: '选项 B: pH = 2.88', isCorrect: false, title: '单一弱酸开平方公式误用陷阱', trap: '严重失误：把体系误当作单一纯 HAc 弱酸，套用 [H⁺] = √(c·Ka) 计算得出 pH = 2.88，完全忽略了外加共轭碱的抑制作用。' },
+          { label: '选项 C: pH = 7.00', isCorrect: false, title: '酸碱强中和直觉主观臆断', trap: '失误：误以为弱酸与强碱盐混合相当于“完全中和”，直觉误判为中性 pH = 7。' },
+          { label: '选项 D: pH = 9.25', isCorrect: false, title: 'pH 与 pOH 颠倒陷阱', trap: '失误：把计算出的 pOH 误当作 pH，或者把共轭碱的 pKb 当成了 pKa。' }
+        ],
+        subjectiveTraps: [
+          { stage: '阶段一：体系定性判定失误', trap: '未能从题目中识别出存在同离子效应，误用纯弱酸一元二次方程或开平方法，导致计算模型彻底选错。', deduction: '扣 80% 分数' },
+          { stage: '阶段二：亨德森方程分子分母颠倒', trap: '将公式写成 pH = pKa + lg([酸]/[碱])，导致在缓冲比不等于 1 时对数项正负号反转。', deduction: '扣 40% 步骤分' },
+          { stage: '阶段三：外加强酸碱时摩尔量未更新', trap: '若题意增加加入少量 HCl/NaOH，计算缓冲容量时忘记相应增减 [HAc] 与 [Ac⁻] 的物质的量。', deduction: '扣 50% 计算分' }
+        ],
+        wrong: '学生误将缓冲体系当成单一弱酸，直接套用了弱酸解离平方根公式，忽视了外加共轭碱对解离平衡的强烈抑制。',
+        right: '必须准确识别缓冲对（弱酸+共轭碱），应用质子平衡与亨德森方程定量求解。',
+        probeQ: '【概念探针】向该缓冲溶液中加入少量强碱 NaOH，体系 pH 仅轻微变动的核心机理是：',
+        options: [
+          { text: 'A. 加入的 OH- 被储备的大量弱酸 HAc 中和转化成水，缓冲比值变动极小', correct: true },
+          { text: 'B. 强碱不与弱酸反应', correct: false },
+          { text: 'C. 溶液体积瞬间膨胀', correct: false },
+          { text: 'D. 温度骤降', correct: false }
+        ],
+        feedbackCorrect: '回答完全正确！缓冲容量的精髓在于体系储备有充足的共轭酸碱对，外来强酸强碱被对数平滑吸收！',
+        feedbackWrong: '回答错误。缓冲机制是外来 OH- 与体系内的未解离弱酸分子反应，防止游离氢氧根大量增加。',
+        dag: ['化学平衡常数与电离度', '同离子效应与亨德森方程', '四大平衡综合计算与应用']
+      },
+      gongtu: {
+        fileName: '工程制图_正交圆柱相贯线_图纸照.jpg',
+        prompt: '两不等径圆柱轴线垂直正交，求其水平投影与侧面投影上的相贯线',
+        verdict: '空间认知偏差 · 积聚性投影面的表面可见性逻辑颠倒',
+        badge: '概念性漏洞 (Core Misconception)',
+        summary: '已完成正交圆柱相贯线作图剖析：相贯线向大圆柱轴线方向弯曲，不可见相贯轮廓严格绘为虚线。',
+        walkthrough: '本题考查工程制图核心技能：立体相交之两回转体正交相贯线求法。两圆柱直径不等、轴线垂直交叉时，相贯线为闭合的空间四次曲线。其投影特点是：小圆柱在水平面（或侧面）具有积聚性圆投影，相贯线的所有点都落在积聚性圆弧上；在非积聚性主视图上，相贯线呈平滑圆弧且必然弯向大圆柱轴线一侧。',
+        derivation: '1. <strong>利用积聚性定特殊点：</strong>在小圆柱积聚性圆弧上直接找到最高、最低（定极限高度）、最前、最后（定转向轮廓与可见性分界）4 个特殊点；<br>' +
+          '2. <strong>求一般中间点：</strong>作辅助水平截平面截切两圆柱，求出辅助面在两圆柱表面纬圆的交点；<br>' +
+          '3. <strong>判别内外可见性：</strong>处于前半部和外部的相贯线为可见，后半部或穿入内壁部分为不可见；<br>' +
+          '4. <strong>平滑连线：</strong>非积聚性投影面上相贯线弯向大圆柱轴线，可见轮廓画粗实线，不可见画细虚线。',
+        finalAnswer: '空间四次平滑封闭曲线（主视图弯向大圆柱，内腔及后半部为虚线）',
+        methodTips: '解题思路精要：相贯线求法“特殊点先行、一般点补充”，记住口诀“大柱吃小柱，相贯线必弯向大柱轴线”。',
+        optionDistractors: [
+          { label: '选项 A: 平滑曲线弯向大圆柱轴线，不可见部分绘为细虚线', isCorrect: true, title: '正确选项', trap: '正确：符合蒙日定理及相贯线投影法则，转向分界点与可见性虚实线完全规范。' },
+          { label: '选项 B: 相贯线弯向小圆柱轴线', isCorrect: false, title: '弯曲方向颠倒陷阱', trap: '严重失误：弯曲方向画反，违背了几何形体相交的截交包含关系（小柱必嵌入大柱）。' },
+          { label: '选项 C: 主视图相贯线直接画成相交直线交叉（X形）', isCorrect: false, title: '等径与不等径混淆陷阱', trap: '典型失误：只有当两正交圆柱直径完全相等时，相贯线才退化为平面椭圆投影为相交实直线；不等径时绝不能画直线！' },
+          { label: '选项 D: 全体绘制为粗实线，未区分可见性', isCorrect: false, title: '制图国家标准虚实线违背', trap: '失误：将内壁不可见的背向相贯轮廓画成粗实线，直接判定为制图图纸重大质量失误。' }
+        ],
+        subjectiveTraps: [
+          { stage: '阶段一：特殊分界转向点遗漏', trap: '作图时未标出最高、最低、最前、最后 4 个极限转向点，直接凭手感徒手画圆弧，导致关键坐标偏移。', deduction: '扣 30% 绘图精度分' },
+          { stage: '阶段二：转向轮廓线误截断或贯通', trap: '圆柱的转向轮廓素线在相贯线区域应该断开，很多同学直接将小柱轮廓素线画通穿过大柱。', deduction: '扣 3 分投影原理分' },
+          { stage: '阶段三：图线线型与线宽规范失误', trap: '虚线线段长短不一、点划线未出头、相贯线两端接合处出现折角或粗细不均。', deduction: '扣 2 分国标规范分' }
+        ],
+        wrong: '直接凭感觉在主视图画折线，且将内壁不可见的相贯线绘制成粗实线，违背制图国标。',
+        right: '必须在积聚性投影面上取点，判定前后内外重叠可见性，不可见相贯轮廓严格绘制为规范细虚线。',
+        probeQ: '【制图探针】当两正交圆柱直径完全相等时，其空间相贯线在正投影面上的投影退化为什么图形？',
+        options: [
+          { text: 'A. 两条互相垂直交叉的相交实直线段', correct: true },
+          { text: 'B. 一个闭合的正圆形', correct: false },
+          { text: 'C. 一段双曲线', correct: false },
+          { text: 'D. 空间三次抛物线', correct: false }
+        ],
+        feedbackCorrect: '完全正确！等径正交圆柱相贯线退化为平面椭圆，在平行轴线的投影面上正投影为两条相交直线！',
+        feedbackWrong: '回答错误。根据蒙日定理，两外切于同一球面的回转体相交，交线退化为两条相交平面直线。',
+        dag: ['三面正投影与积聚性判定', '相贯线特殊点法与可见性', '零件图剖视与组合体表达']
+      }
+    };
+
+    let activeSampleKey = null;
+    let activeUploadFile = null;
+    let currentReportData = null;
+
+    /* ─────────────────────────────────────────────────────────────
+       2. MorphOrb Canvas 3D Dotted Engine with Rhythmic Respiration
+       ───────────────────────────────────────────────────────────── */
+    const CANVAS_SIZE = 220;
+    const RINGS = 18;
+    const TAU = Math.PI * 2;
+
+    function mulberry32(a) {
+      return function () {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    const rand = mulberry32(7);
+    const DOTS = [];
+    for (let k = 0; k < RINGS; k++) {
+      const y = 1 - ((k + 0.5) / RINGS) * 2;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const m = Math.max(5, Math.round(34 * r));
+      for (let j = 0; j < m; j++) {
+        const a = (j / m) * TAU + k * 0.38;
+        DOTS.push({
+          ux: Math.cos(a) * r,
+          uy: y,
+          uz: Math.sin(a) * r,
+          lat: Math.asin(y), // Latitude for traveling spherical ripple waves
+          lon: a,            // Longitude
+          seed: rand() * 6.283
+        });
+      }
+    }
+    const DOT_COUNT = DOTS.length;
+
+    let canvasEl, ctx;
+    let orbRaf = 0;
+    let orbTime = 0;
+    let orbSpin = 0.8;
+    let orbYaw = 0;
+    const orbPitch = 0.35;
+    let isOrbRunning = false;
+
+    function initOrbCanvas() {
+      canvasEl = document.getElementById('moCanvas');
+      ctx = canvasEl.getContext('2d');
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvasEl.width = Math.round(CANVAS_SIZE * dpr);
+      canvasEl.height = Math.round(CANVAS_SIZE * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function renderOrbFrame() {
+      if (!isOrbRunning) return;
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      
+      orbTime += 0.038;
+      
+      // 1. Rhythmic Macro Respiration (球体全局尺寸有节奏的变大变小)
+      // Smooth sinusoidal cycle modulated by subtle thinking harmonics
+      const breathPhase = orbTime * 2.3; // Cadence ~1.3s per full inhale/exhale
+      const macroBreath = Math.sin(breathPhase); // -1.0 to 1.0
+      const subBreath = Math.sin(breathPhase * 2.2 + 0.4) * 0.22;
+      const breathScale = 1.0 + 0.20 * macroBreath + 0.05 * subBreath; // Expands to 1.25, contracts to 0.75
+
+      const BASE_R = 56;
+      const currentRadius = BASE_R * breathScale;
+
+      // 2. Dynamic Spin Rate (呼吸扩张时旋转略有从容感，收缩时略微加速)
+      orbSpin = 0.75 + 0.28 * Math.sin(breathPhase);
+      orbYaw += orbSpin * 0.024;
+      const cyw = Math.cos(orbYaw), syw = Math.sin(orbYaw);
+      const CP = Math.cos(orbPitch), SP = Math.sin(orbPitch);
+      const C0 = CANVAS_SIZE / 2;
+
+      // 3. Central Ambient Aura (随球体呼吸同步膨胀收缩的柔和微光)
+      const auraRad = Math.max(12, currentRadius * 1.35);
+      const auraGrad = ctx.createRadialGradient(C0, C0, currentRadius * 0.15, C0, C0, auraRad);
+      const auraIntensity = 0.14 + 0.09 * macroBreath;
+      auraGrad.addColorStop(0, `rgba(13, 148, 136, ${Math.max(0, auraIntensity.toFixed(2))})`);
+      auraGrad.addColorStop(0.5, `rgba(13, 148, 136, ${(auraIntensity * 0.4).toFixed(2)})`);
+      auraGrad.addColorStop(1, 'rgba(13, 148, 136, 0)');
+      ctx.fillStyle = auraGrad;
+      ctx.beginPath();
+      ctx.arc(C0, C0, auraRad, 0, TAU);
+      ctx.fill();
+
+      // 4. Render Dots with Dynamic Inter-Dot Distance Dilations (组成球的点之间的距离，有节奏的变大变小)
+      for (let i = 0; i < DOT_COUNT; i++) {
+        const d = DOTS[i];
+
+        // Spherical surface traveling ripple: points push outward from the shell rhythmically,
+        // which physically increases the geodesic/Euclidean distance between neighbor dots!
+        const ripple = Math.sin(breathPhase * 1.6 + d.lat * 3.6 + Math.cos(d.lon * 2.0));
+        const dotDispersion = 1.0 + (0.15 + 0.08 * macroBreath) * ripple;
+        const finalR = currentRadius * dotDispersion;
+
+        // 3D Rotation along yaw and pitch
+        const x1 = d.ux * cyw + d.uz * syw;
+        const z1 = -d.ux * syw + d.uz * cyw;
+        const y2 = d.uy * CP - z1 * SP;
+        const z2 = d.uy * SP + z1 * CP;
+
+        // Perspective Projection
+        const f = 2.8 / (2.8 - z2);
+        const depth = (z2 + 1) / 2; // 0 (back) to 1 (front)
+
+        const ox = x1 * finalR * f;
+        const oy = -y2 * finalR * f;
+
+        // Visual Luminance & Dot Radius scaling with breath and depth
+        const baseAlpha = 0.25 + 0.65 * depth * depth + 0.12 * macroBreath;
+        const shimmer = 0.82 + 0.18 * Math.sin(d.seed + orbTime * 2.8);
+        const alpha = Math.max(0.12, Math.min(1.0, baseAlpha * shimmer));
+
+        ctx.fillStyle = `rgba(13, 148, 136, ${alpha.toFixed(2)})`;
+        ctx.beginPath();
+        // Dot radius breathes slightly with the overall pulsation
+        const rad = Math.max(0.8, (1.2 + 0.4 * macroBreath) * depth * f);
+        ctx.arc(C0 + ox, C0 + oy, rad, 0, TAU);
+        ctx.fill();
+
+        // High-energy specular core on front-facing dots during peak breath
+        if (depth > 0.72 && macroBreath > 0.15) {
+          const coreAlpha = 0.35 * (depth - 0.72) * 3.5 * macroBreath;
+          ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1.0, coreAlpha).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.arc(C0 + ox, C0 + oy, rad * 0.55, 0, TAU);
+          ctx.fill();
+        }
+      }
+
+      orbRaf = requestAnimationFrame(renderOrbFrame);
+    }
+
+    function startOrb() {
+      canvasEl.style.display = 'block';
+      isOrbRunning = true;
+      cancelAnimationFrame(orbRaf);
+      orbRaf = requestAnimationFrame(renderOrbFrame);
+    }
+
+    function stopOrb() {
+      isOrbRunning = false;
+      cancelAnimationFrame(orbRaf);
+      if (ctx) ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      canvasEl.style.display = 'none';
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       3. Interactive Form & Morph Workflow
+       ───────────────────────────────────────────────────────────── */
+    function handleInputChange(val) {
+      const btn = document.getElementById('btnSend');
+      if (val.trim().length > 0) {
+        btn.setAttribute('data-ready', 'true');
+      } else {
+        btn.removeAttribute('data-ready');
+      }
+      if (activeSampleKey && SAMPLES[activeSampleKey] && val.trim() !== SAMPLES[activeSampleKey].prompt.trim()) {
+        activeSampleKey = null;
+      }
+    }
+
+    function handleFileSelect(evt) {
+      const file = evt.target.files && evt.target.files[0];
+      if (file) {
+        activeUploadFile = file;
+        activeSampleKey = null;
+        document.getElementById('uploadFileName').textContent = '已载入错题: ' + file.name;
+        document.getElementById('uploadTag').style.display = 'inline-flex';
+        document.getElementById('promptInput').value = '请针对上传的这道错题照片（' + file.name + '），进行题目精讲、选项排雷与错因深度剖析。';
+        handleInputChange(document.getElementById('promptInput').value);
+      }
+    }
+
+    function loadSample(key) {
+      activeSampleKey = key;
+      const s = SAMPLES[key];
+      document.getElementById('uploadFileName').textContent = '已载入试卷: ' + s.fileName;
+      document.getElementById('uploadTag').style.display = 'inline-flex';
+      document.getElementById('promptInput').value = s.prompt;
+      handleInputChange(s.prompt);
+      document.getElementById('btnSend').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       4. Real-time Dynamic Math & Cognitive Diagnosis Engine
+       ───────────────────────────────────────────────────────────── */
+    function safeEvaluateMath(expr) {
+      let s = expr.replace(/\s+/g, '').replace(/×/g, '*').replace(/÷/g, '/');
+      if (!/^[\d\.\+\-\*\/\^\(\)]+$/.test(s)) return null;
+      try {
+        const sanitized = s.replace(/\^/g, '**');
+        if (/^[0-9\.\+\-\*\/\(\)\s]+$/.test(sanitized)) {
+          const fn = new Function('return (' + sanitized + ')');
+          const val = fn();
+          if (typeof val === 'number' && !isNaN(val) && isFinite(val)) {
+            return { expr, val, sanitized: s };
+          }
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    function parseEquation(input) {
+      let s = input.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')');
+      // Quadratic: ax^2 + bx + c = 0
+      let m2 = s.match(/^([+-]?\d*)x(?:\^2|²)([+-]\d*)x([+-]\d+)=0$/i);
+      if (m2) {
+        let a = m2[1] === '' || m2[1] === '+' ? 1 : m2[1] === '-' ? -1 : parseFloat(m2[1]);
+        let b = m2[2] === '' || m2[2] === '+' ? 1 : m2[2] === '-' ? -1 : parseFloat(m2[2]);
+        let c = parseFloat(m2[3]);
+        let delta = b * b - 4 * a * c;
+        return { type: 'quadratic', a, b, c, delta, raw: input };
+      }
+      // Quadratic: ax^2 - c = 0
+      let m2c = s.match(/^([+-]?\d*)x(?:\^2|²)([+-]\d+)=0$/i);
+      if (m2c) {
+        let a = m2c[1] === '' || m2c[1] === '+' ? 1 : m2c[1] === '-' ? -1 : parseFloat(m2c[1]);
+        let b = 0;
+        let c = parseFloat(m2c[2]);
+        let delta = b * b - 4 * a * c;
+        return { type: 'quadratic', a, b, c, delta, raw: input };
+      }
+      // Linear: ax + b = c
+      let m1 = s.match(/^([+-]?\d*)x([+-]\d+)?=([+-]?\d+)$/i);
+      if (m1) {
+        let a = m1[1] === '' || m1[1] === '+' ? 1 : m1[1] === '-' ? -1 : parseFloat(m1[1]);
+        let b = m1[2] ? parseFloat(m1[2]) : 0;
+        let c = parseFloat(m1[3]);
+        let x = (c - b) / a;
+        return { type: 'linear', a, b, c, x, raw: input };
+      }
+      return null;
+    }
+
+    function generateDynamicDiagnosis(rawInput, file, activeKey) {
+      const input = (rawInput || '').trim();
+
+      // 1. Explicit Preset Selection
+      if (activeKey && SAMPLES[activeKey] && (!input || input === SAMPLES[activeKey].prompt)) {
+        return SAMPLES[activeKey];
+      }
+
+      // 2. 1+1 Special Axiomatic & Multi-base Mathematical Evaluation
+      if (/^1\s*\+\s*1(\s*(=|\?|？|等于几|是多少|为什么等于2|\s*))*$/i.test(input) || input === '1+1') {
+        return {
+          verdict: '基础算术与公理体系 · 自然数皮亚诺构造与进制边界',
+          badge: '公理与数系认知 (Axiomatic Misconception)',
+          summary: '已完成对「1+1」的算术与数系认知推演：十进制严格等于 2，二进制严格等于 10，已详解选项干扰项与主观题失分陷阱。',
+          walkthrough: '本题考查初等算术基本公理体系与数系概念。在标准十进制（Base-10）自然数算术中，1 + 1 严格等于 2。在数理逻辑与公理集合论中，这一结论由皮亚诺公理体系严格确立；在不同数系（如二进制、布尔代数、模运算）中，表达式具有不同的代数解释。',
+          derivation: '1. <strong>标准十进制运算：</strong>自然数基数累加，1 的后继即为 2，故 <strong>1 + 1 = 2</strong>；<br>' +
+            '2. <strong>皮亚诺公理形式化定义：</strong>0 为初始元素，S(n) 为后继映射。定义 1 = S(0)，2 = S(1)。加法递归公理 a + S(b) = S(a + b)，代入 a = 1, b = 0 得：1 + 1 = 1 + S(0) = S(1 + 0) = S(1) = 2；<br>' +
+            '3. <strong>跨数系拓展：</strong>二进制逢二进一记为 (10)₂；布尔代数逻辑或 1 ∨ 1 = 1；模 2 剩余类 1 + 1 ≡ 0 (mod 2)。',
+          finalAnswer: '2 (标准十进制) / (10)₂ (二进制) / 1 (布尔逻辑或) / 0 (模2异或)',
+          methodTips: '解题思路精要：明确命题所处的代数系统基数；初等数学牢记后继公理，计算机系统牢记半加器进位逻辑。',
+          optionDistractors: [
+            { label: '选项 A: 2', isCorrect: true, title: '正确选项 (标准十进制)', trap: '正确：标准十进制自然数加法，皮亚诺公理严格定义的自然数运算确定值。' },
+            { label: '选项 B: 10', isCorrect: false, title: '二进制逢二进一数码混淆', trap: '失误：在计算机二进制语境下代表数值 2，但在十进制算术试卷中直接写 10 属于进制数码混淆。' },
+            { label: '选项 C: 1', isCorrect: false, title: '布尔逻辑或与算术加法混淆', trap: '失误：将命题逻辑或运算（True OR True = True 即 1 ∨ 1 = 1）与算术加法混为一谈。' },
+            { label: '选项 D: 0', isCorrect: false, title: '模 2 异或与代数加法混淆', trap: '失误：误将异或运算（XOR）或有限域 GF(2) 模 2 加法当成标准实数加法。' }
+          ],
+          subjectiveTraps: [
+            { stage: '阶段一：进制与数系语境审题失误', trap: '未看清题目是计算机原理二进制题还是高等代数/离散数学题，混淆了十进制 2 与二进制 (10)₂ 的表达规范。', deduction: '扣 20%~50% 格式分' },
+            { stage: '阶段二：数列端点 Off-by-one 计算失误', trap: '在数列项数、区间植树等应用题中，误将两端点差值 (b - a) 当成项数，漏加 1，本质是对“连续自然数计数”概念的疏忽。', deduction: '扣全部最终答案分' },
+            { stage: '阶段三：混合算式优先级与结合律混乱', trap: '在 1 + 1 × 0 中盲目从左向右计算得出 0，违背了先乘除后加减的基本四则运算优先级。', deduction: '直接失分' }
+          ],
+          wrong: '在解题与考试中出现此类失误，主要源于三大认知偏差：① 概念越界混淆：将二进制进位（1+1=10）、布尔逻辑或（1+1=1）与初等算术相混；② 计算粗心（Slip）：在数列求和或区间端点计数时发生 Off-by-one 偏差；③ 运算优先级失序：面对混合运算从左向右心算。',
+          right: '明确命题所处的代数系统基数（初等十进制下恒为 2）；在数列项数与植树问题中严格套用标准端点公式；混合算式强制添加括号划分子表达式建立自检机制。',
+          probeQ: '【计算机数系探针】在现代计算机底层 CPU 算术逻辑单元（ALU）中，半加器执行无符号单比特二进制加法 1 + 1 时，本位和（Sum）与进位标志（Carry Out）的输出状态分别是？',
+          options: [
+            { text: 'A. 本位和 Sum = 0，进位 Carry = 1 (二进制输出 10，数值等同十进制 2)', correct: true },
+            { text: 'B. 本位和 Sum = 2，进位 Carry = 0 (混淆了二进制与十进制数码)', correct: false },
+            { text: 'C. 本位和 Sum = 1，进位 Carry = 0 (误套用布尔逻辑或运算)', correct: false },
+            { text: 'D. 本位和 Sum = 0，进位 Carry = 0 (丢失了关键的进位标志位)', correct: false }
+          ],
+          feedbackCorrect: '回答完全正确！在半加器电路中，Sum = A ⊕ B = 1 ⊕ 1 = 0，Carry = A · B = 1 · 1 = 1，拼接输出即为二进制 10！',
+          feedbackWrong: '回答错误。二进制中仅存在 0 和 1 两个数字，1+1 逢二进一，本位和为 0，高位进位为 1，故输出为 (10)₂。',
+          dag: ['自然数皮亚诺公理与进位制原理', '算术四则运算与运算符优先级法则', '初等代数方程与离散数系结构']
+        };
+      }
+
+      // 3. General Arithmetic Evaluator
+      const cleanArith = input.replace(/^(求|计算|请问)\s*/, '').replace(/(=|\?|？|等于几|是多少|\s)+$/, '').trim();
+      const arithRes = safeEvaluateMath(cleanArith);
+      if (arithRes) {
+        return {
+          verdict: '初等四则运算 · 运算符优先级与结合律推演',
+          badge: '计算策略疏漏 (Slip/Operator Precedence)',
+          summary: `已完成算式「${arithRes.expr}」的严密计算与优先级推演，准确结果为 ${arithRes.val}。`,
+          walkthrough: `本题考查初等算术四则混合运算与运算符优先级法则。原表达式为 ${arithRes.expr}。在算术与代数规范中，乘除运算具有高于加减运算的结合优先级，同级运算符从左向右顺序计算，有括号必须先计算括号内部子表达式。`,
+          derivation: `1. <strong>运算符号与层级分解：</strong>分析原式 ${arithRes.expr}，标记出高优先级的乘除项与同级加减项；<br>` +
+            `2. <strong>执行高优先级运算：</strong>先对算式中的乘除子式进行规约求值；<br>` +
+            `3. <strong>顺序加减求和：</strong>将化简后的有理数按正负符号结合，求得精确数学结果为：<strong>${arithRes.val}</strong>。`,
+          finalAnswer: `${arithRes.val}`,
+          methodTips: '解题思路精要：遇到长混合算式，草稿纸上手动圈画乘除项为独立整体，牢记“先乘除后加减、括号最优先”，严禁盲目从左到右心算。',
+          optionDistractors: [
+            { label: `选项 A: ${arithRes.val}`, isCorrect: true, title: '正确选项', trap: `正确：严格遵循标准算术运算优先级，先乘除后加减，精确求得数值 ${arithRes.val}。` },
+            { label: `选项 B: ${typeof arithRes.val === 'number' ? (arithRes.val + 2) : '计算偏差值'}`, isCorrect: false, title: '从左向右线性盲算陷阱', trap: '典型失误：忽略运算符优先级，机械从左到右依次运算，导致乘除项与加减项结合次序混乱。' },
+            { label: `选项 C: ${typeof arithRes.val === 'number' ? (-arithRes.val) : '符号颠倒值'}`, isCorrect: false, title: '负号去括号符号颠倒陷阱', trap: '严重失误：在遇到减号或负数乘除时未遵循“负负得正、正负得负”的符号法则，导致全式变号。' },
+            { label: `选项 D: ${typeof arithRes.val === 'number' ? (arithRes.val * 2) : '倍数偏差值'}`, isCorrect: false, title: '乘除约分结合律错误', trap: '失误：在除法与乘法连用时（如 a÷b×c）错误地先算乘法，导致除数扩大。' }
+          ],
+          subjectiveTraps: [
+            { stage: '阶段一：运算符层级审题失误', trap: '扫视题目时未圈出乘除号与括号，把加减法与乘除法混在一起做，产生严重的从左到右心算误判。', deduction: '扣 100% 答案分' },
+            { stage: '阶段二：去括号与变号规则疏漏', trap: '当算式括号外为减号时，展开去括号时括号内部各单项没有同步变号，导致符号失控。', deduction: '扣 50% 步骤分' },
+            { stage: '阶段三：除数为零与分数通分失误', trap: '在涉及分式或除法运算时，分母通分最小公倍数算错，或分子相加时分母也跟着相加。', deduction: '扣全部最终分' }
+          ],
+          wrong: '从左向右盲目单向心算，忽视了“先乘除后加减”或“括号优先”的标准规则；或在去括号遇到负号时漏变符号，导致基础运算全盘失真。',
+          right: '严格遵循算术运算优先级层级；遇到长式子时先在草稿纸标注乘除子块，运算完毕后运用逆运算（加减互逆、乘除互逆）进行 3 秒自检闭环。',
+          probeQ: '【四则运算优先级探针】计算表达式 4 + 6 × (5 - 2) ÷ 3 的正确数学结果是？',
+          options: [
+            { text: 'A. 10 (先算括号内 5-2=3，再算 6×3÷3=6，最后 4+6=10)', correct: true },
+            { text: 'B. 14 (误算括号与乘除顺序)', correct: false },
+            { text: 'C. 8', correct: false },
+            { text: 'D. 6', correct: false }
+          ],
+          feedbackCorrect: '回答完全正确！先括号后乘除再加减：4 + (6×3÷3) = 4 + 6 = 10，扎实避开计算粗心陷阱！',
+          feedbackWrong: '回答错误。运算步骤应为：(5-2)=3 → 6×3=18 → 18÷3=6 → 4+6=10。',
+          dag: ['有理数概念与正负数运算法则', '四则混合运算优先级与结合律', '初等代数式恒等化简']
+        };
+      }
+
+      // 4. Algebraic Equation (Linear or Quadratic)
+      const eqRes = parseEquation(input);
+      if (eqRes) {
+        if (eqRes.type === 'quadratic') {
+          const delta = eqRes.delta;
+          let rootStr = '';
+          if (delta > 0) {
+            const r1 = (-eqRes.b + Math.sqrt(delta)) / (2 * eqRes.a);
+            const r2 = (-eqRes.b - Math.sqrt(delta)) / (2 * eqRes.a);
+            rootStr = `x₁ = ${r1.toFixed(2).replace(/\.00$/, '')}, x₂ = ${r2.toFixed(2).replace(/\.00$/, '')}`;
+          } else if (delta === 0) {
+            const r = -eqRes.b / (2 * eqRes.a);
+            rootStr = `x₁ = x₂ = ${r.toFixed(2).replace(/\.00$/, '')}`;
+          } else {
+            rootStr = `在实数范围内无实解 (Δ < 0，有一对共轭复根)`;
+          }
+          return {
+            verdict: '一元二次方程求解 · 判别式与因式分解定理',
+            badge: '方程求解与判别式认知 (Algebraic Equation)',
+            summary: `已完成方程「${eqRes.raw}」的严密推导，判别式 Δ = ${delta}，求得根为：${rootStr}。`,
+            walkthrough: `本题考查一元二次方程求解、判别式检验与根系关系（韦达定理）。标准方程型态为 ax² + bx + c = 0（其中 a = ${eqRes.a}, b = ${eqRes.b}, c = ${eqRes.c}）。解一元二次方程首选因式分解法，若无法直接因式分解则采用求根公式法，求根前必须计算判别式 Δ = b² - 4ac 判定根的存在性。`,
+            derivation: `1. <strong>化为标准方程型态：</strong>二次项系数 a = ${eqRes.a}，一次项系数 b = ${eqRes.b}，常数项 c = ${eqRes.c}；<br>` +
+              `2. <strong>判别式检验：</strong>Δ = b² - 4ac = (${eqRes.b})² - 4×(${eqRes.a})×(${eqRes.c}) = <strong>${delta}</strong>；<br>` +
+              `3. <strong>公式法/因式分解求根：</strong>根据求根公式 x = (-b ± √Δ) / (2a)，计算求得方程根：${rootStr}。`,
+            finalAnswer: `${rootStr}`,
+            methodTips: '解题思路精要：方程两边绝不可直接除以含未知数式子；开平方务必保留双符号 ±；求得根后代入原式验算。',
+            optionDistractors: [
+              { label: `选项 A: ${rootStr}`, isCorrect: true, title: '正确选项', trap: '正确：因式分解或公式法求根步骤完备，判别式 Δ 正确计算，两根保全无遗漏。' },
+              { label: `选项 B: 遗漏一根的残缺解`, isCorrect: false, title: '方程两边同除非零式丢根陷阱', trap: '严重失误：方程两边直接同除以含未知数式子（如把 x²=3x 两边同除以 x 只得出 x=3），严重丢失 x=0 这一实根！' },
+              { label: `选项 C: 根的正负号全部颠倒`, isCorrect: false, title: '移项未变号 / 求根公式分子符号记反', trap: '典型失误：求根公式分子为 -b 而非 +b；或移项至等号另一侧时未变符号。' },
+              { label: `选项 D: 分母漏乘 2a`, isCorrect: false, title: '求根公式分母系数遗漏', trap: '失误：使用求根公式时分母误写为 a 而非 2a，导致最终实根数值整体扩大一倍。' }
+            ],
+            subjectiveTraps: [
+              { stage: '阶段一：移项化标准型变号失误', trap: '方程右侧非零时，未先移项化为 ax² + bx + c = 0 标准型，直接机械代入公式导致 c 符号搞错。', deduction: '扣 80% 步骤分' },
+              { stage: '阶段二：开平方遗漏负根 (±)', trap: '在利用配方法或直接开平方法时，开方后只写正号漏掉负号，导致直接丢失一个负根。', deduction: '扣 50% 步骤分' },
+              { stage: '阶段三：分式/实际问题增根检验缺失', trap: '若方程来自应用题或分式方程转化，求出实根后未检验是否满足实际物理意义（如长度不能为负）或分母不为零。', deduction: '扣 2~4 分增根分' }
+            ],
+            wrong: '移项漏变正负号、开平方遗漏负根（±），或方程两边盲目同除以含未知数代数式导致严重丢根（如 x(x-3)=0 直接除以 x 丢失 x=0）。',
+            right: '保持等式两边同解变形，优先将右侧归零后因式分解；开平方严格标注双符号；解分式/高次方程必须带回原方程检验增根与定义域。',
+            probeQ: '【方程检验探针】在求解方程 x(x - 3) = 2(x - 3) 时，下列哪种解法是数学上严格成立的？',
+            options: [
+              { text: 'A. 移项因式分解为 (x - 2)(x - 3) = 0，解得 x₁ = 2, x₂ = 3', correct: true },
+              { text: 'B. 两边直接同除以 (x - 3)，只得出 x = 2 (丢失了 x = 3 这一实根)', correct: false },
+              { text: 'C. 两边展开后两边除以 x', correct: false },
+              { text: 'D. 无法因式分解', correct: false }
+            ],
+            feedbackCorrect: '回答完全正确！绝对不能随意除以可能为零的因式 (x-3)，移项因式分解才能保全所有实根！',
+            feedbackWrong: '回答错误。若 x = 3 则 (x - 3) = 0，两边同除以零属于严重非法代数操作，会导致丢失根 x = 3。',
+            dag: ['等式基本性质与整式因式分解', '一元二次方程判别式与求根公式', '函数零点与韦达定理综合应用']
+          };
+        } else if (eqRes.type === 'linear') {
+          return {
+            verdict: '一元一次方程求解 · 移项与等式同解变形推演',
+            badge: '等式性质与移项认知 (Linear Equation)',
+            summary: `已完成一元一次方程「${eqRes.raw}」的求解，精确根为 x = ${eqRes.x}。`,
+            walkthrough: `本题考查一元一次方程求解与等式基本性质。解一元一次方程遵循“去分母 → 去括号 → 移项 → 合并同类项 → 系数化为 1”五步标准程序。`,
+            derivation: `1. <strong>移项同解变形：</strong>将含未知数项移至左端，常数项移至右端：${eqRes.a}x = ${eqRes.c} - (${eqRes.b}) = ${eqRes.c - eqRes.b}；<br>` +
+              `2. <strong>系数化为 1：</strong>方程两边同除以未知数系数 a = ${eqRes.a}，解得 <strong>x = ${eqRes.x}</strong>；<br>` +
+              `3. <strong>验算：</strong>将 x = ${eqRes.x} 代入原方程左侧，恒等于右侧，等式成立。`,
+            finalAnswer: `x = ${eqRes.x}`,
+            methodTips: '解题思路精要：跨越等号必须变号；系数化为 1 时分子在右、分母在左，解得后代回原式 3 秒验算。',
+            optionDistractors: [
+              { label: `选项 A: x = ${eqRes.x}`, isCorrect: true, title: '正确选项', trap: `正确：移项变号规范，系数化为 1 计算准确，代回原方程验证无误。` },
+              { label: `选项 B: x = ${-eqRes.x}`, isCorrect: false, title: '移项未变号陷阱', trap: '典型失误：移项跨越等号时忘记变号（把正号移过去依然写成正号，或负号写成负号）。' },
+              { label: `选项 C: x = ${(eqRes.c + eqRes.b) / (eqRes.a || 1)}`, isCorrect: false, title: '常数合并符号搞反', trap: '失误：右侧常数项合并时符号混乱。' },
+              { label: `选项 D: x = 0`, isCorrect: false, title: '常数抵消误判', trap: '失误：将非零常数项误算为零。' }
+            ],
+            subjectiveTraps: [
+              { stage: '阶段一：移项跨等号变号遗漏', trap: '将常数或未知数移至等号另一侧时未改变正负符号。', deduction: '扣 60% 步骤分' },
+              { stage: '阶段二：系数化为 1 上下颠倒', trap: '如将 3x = 12 误算为 x = 3/12 = 1/4，颠倒了除数与被除数位置。', deduction: '扣全部答案分' },
+              { stage: '阶段三：去括号漏乘外层常数', trap: '去括号时，括号外因数未与括号内每一项逐项相乘。', deduction: '扣 40% 分数' }
+            ],
+            wrong: '移项跨越等号时忘记变号（正负号颠倒），或系数化为 1 时分子分母位置颠倒。',
+            right: '牢记“跨越等号必须变号”的基本等式性质；解出数值后将结果代入原方程左端与右端进行 3 秒自检验算。',
+            probeQ: '【等式性质探针】解方程 3x - 5 = 7 时，第一步移项同解变形的正确表述是？',
+            options: [
+              { text: 'A. 3x = 7 + 5 (负项移至等号右侧变正项)', correct: true },
+              { text: 'B. 3x = 7 - 5 (移项未变号)', correct: false },
+              { text: 'C. x - 5 = 7 ÷ 3', correct: false },
+              { text: 'D. 3x = 5 - 7', correct: false }
+            ],
+            feedbackCorrect: '回答完全正确！负五移到等号右边变为正五：3x = 12，故 x = 4！',
+            feedbackWrong: '回答错误。移项的本质是等式两边同时加上 5，因此原式右端应为 7 + 5 = 12。',
+            dag: ['等式基本性质与移项法则', '一元一次方程标准解法与验算', '二元一次方程组与代数建模']
+          };
+        }
+      }
+
+      // 5. Calculus / Limits / Derivatives / Integrals
+      if (/lim|极限|导数|积分|微分|dx|洛必达|泰勒|极值|sin|cos/i.test(input)) {
+        const isLimit = /lim|极限|洛必达|未定式/i.test(input);
+        const isDerivative = /导数|微分|求导|斜率/i.test(input);
+        const isIntegral = /积分|不定积分|定积分|dx/i.test(input);
+
+        if (isLimit) {
+          return {
+            verdict: '高等数学极限求解 · 未定式判定与展开精度检验',
+            badge: '概念性漏洞 (Calculus Misconception)',
+            summary: `已完成关于「${input}」的微积分极限推演，分析未定式型态与导数/泰勒展开条件。`,
+            walkthrough: `本题考查微积分学极限理论与未定式求值核心方法。分析表达式「${input}」的趋近特征，计算极限必须严格经过“代入判型 → 路径决策（等价无穷小/泰勒展开/洛必达法则） → 规范演算 → 结果检验”四步规范程序。`,
+            derivation: `1. <strong>未定式型态前置验证：</strong>计算极限的第一步必须将自变量趋势代入，严格判定是否属于 0/0、∞/∞、0·∞、1^∞ 等经典未定式，非未定式绝不能直接套用洛必达法则；<br>` +
+              `2. <strong>算法路径对比：</strong>若属于 0/0 型未定式，高次幂分母下优先考虑低阶泰勒展开或等价无穷小代换，避免连续多次求导引发计算失误；<br>` +
+              `3. <strong>精度一致性：</strong>分母多项式次数为 n 时，分子各泰勒展开项必须保留至 o(xⁿ) 阶，不可过早截断。`,
+            finalAnswer: '极限值已通过未定式规约完成严格推演',
+            methodTips: '解题思路精要：坚持“先代入判型，后化简求值”；等价无穷小只代换乘除因子；高阶幂次优先选用泰勒展开。',
+            optionDistractors: [
+              { label: '选项 A: 规范求解所得极限值', isCorrect: true, title: '正确选项', trap: '正确：正确识别未定式型态，展开阶数匹配或洛必达导数商极限存在。' },
+              { label: '选项 B: 极限为 0', isCorrect: false, title: '加减法滥用等价无穷小直接相消', trap: '高频致命失误：在分子加减法中粗暴代入一阶等价无穷小，导致最高阶主部相互抵消得出假 0。' },
+              { label: '选项 C: 极限为无穷大 (∞)', isCorrect: false, title: '忽略分子亦趋于零的片面判定', trap: '失误：看到分母趋于 0 便直觉误判为无穷大，完全忽视了分子同样是无穷小量的博弈关系。' },
+              { label: '选项 D: 符号相反数值', isCorrect: false, title: '泰勒展开项负号或商导数符号丢失', trap: '失误：在展开式 -(x³/6) 或商导数分母求导时符号脱落。' }
+            ],
+            subjectiveTraps: [
+              { stage: '阶段一：未定式型态未检验直接求导', trap: '在非 0/0 或非 ∞/∞ 时直接使用洛必达法则，属于定理前提违背，全题得 0 分。', deduction: '扣 100% 卷面分' },
+              { stage: '阶段二：等价无穷小在加减项中局部替换', trap: '如将 (tan x - sin x) 替换为 (x - x)，直接抵消导致整个式子失真。', deduction: '扣 80% 步骤分' },
+              { stage: '阶段三：极限运算法则拆分条件不满足', trap: '将 lim(f + g) 拆成 lim f + lim g 时，未事先验证两个极限分别独立存在。', deduction: '扣 30% 逻辑分' }
+            ],
+            wrong: '未验证未定式前提直接盲目求导；或在等价无穷小代换时在加减法中滥用等价无穷小（等价无穷小代换原则上仅适用于乘除因子）。',
+            right: '坚持“先代入判型、后化简求值”；加减法优先使用泰勒展开式；求导前必须每一步检验 0/0 或 ∞/∞ 条件是否依然成立。',
+            probeQ: '【极限法则探针】下列关于等价无穷小代换的论述中，哪一项是严格正确的？',
+            options: [
+              { text: 'A. 等价无穷小代换原则上只能对因式分解后的乘除因子整体进行代换', correct: true },
+              { text: 'B. 只要是无穷小量，加减法中的任意一项都可以随意单独代换', correct: false },
+              { text: 'C. 洛必达法则对任何函数极限都一定能求出结果', correct: false },
+              { text: 'D. 0/0 型未定式极限必然等于 0', correct: false }
+            ],
+            feedbackCorrect: '回答完全正确！加减法中随意代换等价无穷小极易抵消最高阶主部，只有乘除因子才可直接代换！',
+            feedbackWrong: '回答错误。加减法中乱用等价无穷小代换是高数期末挂科率最高的经典陷阱！',
+            dag: ['函数连续性与极限四则运算', '未定式判定与洛必达/泰勒边界', '无穷级数收敛性与幂级数展开']
+          };
+        } else if (isDerivative) {
+          return {
+            verdict: '高等数学导数推演 · 复合函数链式法则与乘积法则',
+            badge: '计算策略疏漏与导数法则 (Derivatives)',
+            summary: `已完成关于「${input}」的导数与微分推演，锁定链式法则与乘积法则。`,
+            walkthrough: `本题考查导数定义、基本求导法则与复合函数链式法则（Chain Rule）。原式涉及「${input}」，求解时需准确识别函数外层骨架与内层嵌套关系。`,
+            derivation: `1. <strong>函数结构层级识别：</strong>分析目标函数是否包含复合嵌套（如 f(g(x))）或两项乘积（u(x)·v(x)）；<br>` +
+              `2. <strong>法则应用：</strong>乘积求导遵循 (u·v)' = u'v + uv'；复合求导遵循链式法则 dy/dx = (dy/du) · (du/dx)；<br>` +
+              `3. <strong>内层导数补偿：</strong>逐层剥离外层函数导数，并在尾部严格乘以内层函数的导数项，严防漏乘。`,
+            finalAnswer: '导数与微分已按链式法则完成分步求取',
+            methodTips: '解题思路精要：复合函数由外向内逐层求导，每求一层标记一层，内层导数项必须作为因式乘在末尾，决不能遗漏。',
+            optionDistractors: [
+              { label: '选项 A: 完整包含内层导数因式的正确导函数', isCorrect: true, title: '正确选项', trap: '正确：链式法则应用严密，外层求导乘以内层自变量导数项，乘积商法则无遗漏。' },
+              { label: '选项 B: 漏乘内层导数的表达式', isCorrect: false, title: '链式法则内层导数漏乘陷阱', trap: '全国期末最普遍失误：求导只完成了外层函数微分，忘记乘以内层函数导数 g\'(x)（例如 (sin 2x)\' 误写为 cos 2x）。' },
+              { label: '选项 C: 乘积求导误写为两项导数相乘 (u\'·v\')', isCorrect: false, title: '乘积求导法则心智模型混淆', trap: '严重失误：误以为乘积求导等于各因子导数乘积，违背莱布尼茨求导法则 (uv)\'=u\'v+uv\'。' },
+              { label: '选项 D: 符号颠倒或常数系数丢失', isCorrect: false, title: '负号与常数因子处理失误', trap: '失误：如 cos x 求导漏掉负号，或负指数幂求导符号混乱。' }
+            ],
+            subjectiveTraps: [
+              { stage: '阶段一：复合层次识别不清', trap: '分不清外层与内层，将底数与指数同时含自变量的幂指函数误按普通幂函数求导（未取对数求导）。', deduction: '扣 60% 分数' },
+              { stage: '阶段二：商法则分子正负号颠倒', trap: '将 (u/v)\' 的分子写成 (uv\' - u\'v)，负号前后颠倒。', deduction: '扣 40% 步骤分' },
+              { stage: '阶段三：求切线方程时斜率与切点混淆', trap: '算得导数后未代入切点横坐标求出具体斜率 k，直接将含 x 的导函数当成切线斜率。', deduction: '扣 50% 几何题分' }
+            ],
+            wrong: '乘积求导误写成 (u·v)\' = u\'·v\'；复合函数求导忘记乘以内层函数导数项（漏掉链式法则内层因子）。',
+            right: '复杂函数求导前先用括号分解外层与内层；每求导一层标记一层；计算完毕后用特殊点切线斜率进行几何直观自检。',
+            probeQ: '【导数链式法则探针】求函数 y = sin(2x) 的一阶导数 dy/dx 的正确结果是？',
+            options: [
+              { text: 'A. 2 cos(2x) (外层 cos(2x) 乘以内层 (2x)\' = 2)', correct: true },
+              { text: 'B. cos(2x) (漏掉了内层函数导数 2)', correct: false },
+              { text: 'C. -2 cos(2x)', correct: false },
+              { text: 'D. 2 sin(2x)', correct: false }
+            ],
+            feedbackCorrect: '回答完全正确！复合函数求导外层求导后，必须乘以自变量内层导数项 (2x)\'=2！',
+            feedbackWrong: '回答错误。漏乘内层导数 2 是复合函数求导最普遍的扣分点。',
+            dag: ['导数物理几何意义与基本导数表', '复合函数链式法则与隐函数求导', '微分中值定理与极值拐点应用']
+          };
+        } else {
+          return {
+            verdict: '高等数学积分推演 · 分部积分法与换元积分法',
+            badge: '积分计算与原函数构造 (Integrals)',
+            summary: `已完成关于「${input}」的积分学严密推演，包含原函数积分常数与方法选择。`,
+            walkthrough: `本题考查不定积分与定积分计算、微积分基本定理（牛顿-莱布尼茨公式）及换元/分部积分技巧。针对「${input}」，需识别被积函数特征选择积分策略。`,
+            derivation: `1. <strong>积分类型研判：</strong>明确为不定积分还是定积分；不定积分最终结果必须补齐任意积分常数 + C；<br>` +
+              `2. <strong>策略选择：</strong>被积函数为两类不同函数乘积时优先采用分部积分法 ∫ u dv = uv - ∫ v du；存在内层函数导数因子时优先采用第一类换元法（凑微分法）；<br>` +
+              `3. <strong>可微性验证：</strong>定积分必须核验被积函数在积分闭区间 [a, b] 上的有界性与连续性，避开瑕积分奇异点。`,
+            finalAnswer: '原函数积分结果已严密求得 (不定积分含常数 + C)',
+            methodTips: '解题思路精要：不定积分算完立即求导自检验算；定积分换元牢记“换元必换限，换限不还原”。',
+            optionDistractors: [
+              { label: '选项 A: 准确的原函数表达式 (含任意常数 + C)', isCorrect: true, title: '正确选项', trap: '正确：换元或分部积分推导完整，积分常数无遗漏，求导反向自检成立。' },
+              { label: '选项 B: 遗漏任意积分常数 + C', isCorrect: false, title: '不定积分常数缺失陷阱', trap: '失误：不定积分表示一族原函数，漏写 + C 在期末阅卷中直接扣分。' },
+              { label: '选项 C: 换元后未将中间变量代回原变量', isCorrect: false, title: '换元还原遗忘陷阱', trap: '典型失误：引入新变量 u 积分完成后，未将 u 换回含 x 的表达式直接交卷。' },
+              { label: '选项 D: 分部积分公式正负号写反', isCorrect: false, title: '分部积分公式负号颠倒', trap: '失误：把 ∫ u dv = uv - ∫ v du 误写为 uv + ∫ v du。' }
+            ],
+            subjectiveTraps: [
+              { stage: '阶段一：不定积分遗漏任意常数 + C', trap: '大题末尾未标明 + C，在规范考卷中按规程扣除 1~2 分。', deduction: '扣 1~2 分格式分' },
+              { stage: '阶段二：定积分换元未换限', trap: '定积分换元后积分限仍然保持原变量区间，导致上下限代入数值严重错误。', deduction: '扣 80% 分数' },
+              { stage: '阶段三：区间内存在奇点未判定（瑕积分）', trap: '被积函数在区间内部存在无定义断点（如 1/x² 在 [-1, 1]），未拆分为反常积分直接套公式。', deduction: '全题判错' }
+            ],
+            wrong: '不定积分遗漏任意常数 + C；换元积分后未将中间变量换回原自变量；分部积分公式中 uv 与 ∫ v du 正负号颠倒。',
+            right: '每次完成不定积分立即对所得结果求导，验证其导数是否严格等于原被积函数；定积分换元时务必同步更换积分上下限。',
+            probeQ: '【积分法则探针】在利用换元积分法计算定积分时，下列哪项操作是不可或缺的关键步骤？',
+            options: [
+              { text: 'A. 引入新变量后必须同步更换积分上下限，或积出原函数后换回原变量再代入原上下限', correct: true },
+              { text: 'B. 积分常数 C 必须参与定积分数值计算', correct: false },
+              { text: 'C. 任何函数都必须先转化为多项式', correct: false },
+              { text: 'D. 不需要验证被积函数在区间上是否连续', correct: false }
+            ],
+            feedbackCorrect: '回答完全正确！定积分换元必须“换元必换限”，或者还原回原变量再代入上下限！',
+            feedbackWrong: '回答错误。定积分换元若不换限会导致算出的数值全盘偏离原积分区间定义。',
+            dag: ['不定积分概念与基本积分表', '换元积分法与分部积分法', '牛顿-莱布尼茨公式与定积分应用']
+          };
+        }
+      }
+
+      // 6. Linear Algebra
+      if (/矩阵|向量|特征值|行列式|秩|对角化/i.test(input)) {
+        return {
+          verdict: '线性代数 · 矩阵特征多项式与不变量推演',
+          badge: '计算策略疏漏与概念界定 (Linear Algebra)',
+          summary: `已完成关于「${input}」的线性代数推演，利用迹与行列式不变量进行自检。`,
+          walkthrough: `本题考查线性代数核心考点：矩阵变换、行列式性质与特征理论。求解「${input}」需要借助特征方程、初等行变换或正交化定理。`,
+          derivation: `1. <strong>特征方程构建：</strong>求解行列式 |A - λE| = 0；<br>` +
+            `2. <strong>不变量核心自检：</strong>tr(A) = ∑λi，det(A) = ∏λi；<br>` +
+            `3. <strong>特征向量与线性无关性：</strong>解齐次方程组 (A - λE)x = 0 得到对应特征子空间。`,
+          finalAnswer: '特征值与矩阵不变量已完成严密计算与自检验算',
+          methodTips: '解题思路精要：算完特征值务必用迹与行列式进行 3 秒自检，瞬间查出符号失误。',
+          optionDistractors: [
+            { label: '选项 A: 严格满足迹与行列式约束的特征值集合', isCorrect: true, title: '正确选项', trap: '正确：行列式计算准确，经迹与行列式不变量检验完全吻合。' },
+            { label: '选项 B: 符号完全相反的特征值集合', isCorrect: false, title: '主对角线相减符号反向陷阱', trap: '典型失误：展开时提负号括号内未变号，得出完全相反的特征值。' },
+            { label: '选项 C: 误将非对角阵的主对角线直代', isCorrect: false, title: '对角矩阵前提误用陷阱', trap: '严重失误：非三角矩阵直接把对角线元素当作特征值。' },
+            { label: '选项 D: 因式分解降次丢解', isCorrect: false, title: '代数方程丢根陷阱', trap: '失误：因式分解时强行消去含 λ 因子，导致少求一个特征值。' }
+          ],
+          subjectiveTraps: [
+            { stage: '阶段一：三阶行列式副对角线符号写反', trap: '使用沙路法则时副对角线漏乘负号，导致三次多项式系数全错。', deduction: '扣 50% 分数' },
+            { stage: '阶段二：特征向量未排除零向量', trap: '特征向量由基础解系线性表示时，未注明系数不全为零 (k ≠ 0)。', deduction: '扣 2 分格式分' },
+            { stage: '阶段三：可对角化充分必要条件混淆', trap: '误以为所有矩阵都能对角化，未检验重特征值对应的线性无关特征向量个数是否达到重数。', deduction: '扣 40% 论证分' }
+          ],
+          wrong: '三阶行列式对角线展开符号跳步遗漏负号；误以为特征向量可以为零向量；遗漏相似对角化的充要条件（n 个线性无关特征向量）。',
+          right: '计算出全部特征值后，立即使用 tr(A) = ∑λᵢ 与 det(A) = ∏λᵢ 两道公式进行 3 秒口算验算，瞬间定位计算符号失误。',
+          probeQ: '【线代验算探针】若求得 3 阶方阵 A 的特征值为 1, 2, 4，则该方阵主对角线元素之和 tr(A) 必为多少？',
+          options: [
+            { text: 'A. tr(A) = 7 (因为方阵的迹恒等于全体特征值之和: 1 + 2 + 4 = 7)', correct: true },
+            { text: 'B. tr(A) = 8 (积为行列式 1×2×4=8)', correct: false },
+            { text: 'C. tr(A) = 14', correct: false },
+            { text: 'D. 无法通过特征值确定', correct: false }
+          ],
+          feedbackCorrect: '完全正确！tr(A) = ∑λi 是线代最强大的防粗心验算法宝，3 秒即可验证特征多项式是否算错！',
+          feedbackWrong: '回答错误。根据矩阵特征理论，主对角线元素之和严格等于所有特征值之和：tr(A) = 1 + 2 + 4 = 7。',
+          dag: ['矩阵初等变换与行列式性质', '特征方程构建与双向自检', '相似对角化与二次型化简']
+        };
+      }
+
+      // 7. Chemistry
+      if (/pH|缓冲|平衡|浓度|摩尔|HAc|Ka|滴定|弱酸/i.test(input)) {
+        return {
+          verdict: '普通化学 · 弱电解质平衡与缓冲体系推演',
+          badge: '概念性漏洞 (Core Misconception)',
+          summary: `已完成关于「${input}」的化学平衡与缓冲对解离推演。`,
+          walkthrough: `本题考查大学化学/无机化学核心考点：电离平衡与同离子效应。针对「${input}」，需要识别弱电解质与强电解质的相互作用。`,
+          derivation: `1. <strong>体系分类：</strong>辨别是单一弱酸电离，还是共轭酸碱对缓冲体系；<br>` +
+            `2. <strong>平衡移动：</strong>大量共轭离子抑制弱酸解离；<br>` +
+            `3. <strong>定量计算：</strong>应用亨德森方程 pH = pKa + lg([共轭碱] / [弱酸]) 进行对数求值。`,
+          finalAnswer: '化学平衡状态与溶液 pH 计算完毕',
+          methodTips: '解题思路精要：识别缓冲体系后切勿套用单一弱酸开平方公式，牢记同离子效应强烈抑制电离。',
+          optionDistractors: [
+            { label: '选项 A: 严格基于缓冲体系亨德森方程计算所得结果', isCorrect: true, title: '正确选项', trap: '正确：准确识别同离子效应，缓冲比代入对数式精确求解。' },
+            { label: '选项 B: 误套用一元弱酸开平方法算得的酸性值', isCorrect: false, title: '忽视共轭碱抑制作用陷阱', trap: '典型失误：把缓冲溶液当成纯弱酸，错误套用 [H⁺] = √(c·Ka)。' },
+            { label: '选项 C: 直觉主观臆断为中性 (pH = 7)', isCorrect: false, title: '酸碱强中和直觉盲目泛化', trap: '失误：误以为酸与盐混合等价于强中和，直觉断定为中性。' },
+            { label: '选项 D: 缓冲对分子分母颠倒计算所得结果', isCorrect: false, title: '亨德森方程对数项颠倒', trap: '失误：把 lg([碱]/[酸]) 写成 lg([酸]/[碱]) 导致正负号反转。' }
+          ],
+          subjectiveTraps: [
+            { stage: '阶段一：体系定性判定失误', trap: '未能识别出存在同离子效应，误用纯弱酸一元二次方程或开平方法。', deduction: '扣 80% 分数' },
+            { stage: '阶段二：亨德森方程分子分母颠倒', trap: '将公式写成 pH = pKa + lg([酸]/[碱])，导致在缓冲比不等于 1 时对数项正负号反转。', deduction: '扣 40% 步骤分' },
+            { stage: '阶段三：外加强酸碱时摩尔量未更新', trap: '加入外来酸碱时，忘记同步更新弱酸和共轭碱的物质的量。', deduction: '扣 50% 计算分' }
+          ],
+          wrong: '误将弱酸与共轭碱的缓冲混合体系当成单一纯弱酸体系，错误套用一元弱酸开平方公式，忽略外加同离子的强烈抑制作用。',
+          right: '先判别酸碱平衡体系类型（强电解质/弱电解质/缓冲溶液）；准确列出质子平衡方程与电荷守恒方程后再代入计算。',
+          probeQ: '【化学平衡探针】在醋酸-醋酸钠缓冲溶液中，向其中加入少量强碱 NaOH，体系 pH 仅轻微上升的核心原因是？',
+          options: [
+            { text: 'A. 加入的外来 OH⁻ 与储备的大量未解离弱酸分子 HAc 中和转化成水', correct: true },
+            { text: 'B. 强碱不与弱酸反应', correct: false },
+            { text: 'C. 溶液体积无限膨胀', correct: false },
+            { text: 'D. 温度迅速下降抑制了反应', correct: false }
+          ],
+          feedbackCorrect: '回答完全正确！缓冲容量的精髓在于体系储备有充足的弱酸中和外来碱，平滑吸收 pH 波动！',
+          feedbackWrong: '回答错误。缓冲机制是外来 OH⁻ 与体系储备的未电离弱酸反应转化为水，使得游离氢氧根增加极小。',
+          dag: ['化学平衡常数与电离度', '同离子效应与亨德森方程', '四大平衡综合计算与应用']
+        };
+      }
+
+      // 8. Physics / Mechanics
+      if (/力|速度|加速度|质量|动量|能量|功|压强|牛顿|重力|摩擦|转动/i.test(input)) {
+        return {
+          verdict: '大学物理 · 力学守恒定律与受力分析推演',
+          badge: '物理概念与守恒条件 (Mechanics Misconception)',
+          summary: `已完成关于「${input}」的经典力学推演，包含隔离受力分析与守恒条件研判。`,
+          walkthrough: `本题考查经典力学与动力学核心规律。针对题目「${input}」，需要进行隔离体受力分析，明确系统内力与外力，研判动量守恒、机械能守恒与角动量守恒成立的前置约束条件。`,
+          derivation: `1. <strong>隔离受力与坐标系建立：</strong>选取惯性参照系，对质点或刚体进行受力隔离分析；<br>` +
+            `2. <strong>列动力学方程：</strong>应用牛顿第二定律 ∑F = ma 或动能定理 W = ΔEk；<br>` +
+            `3. <strong>守恒条件检验：</strong>外力冲量为零时动量守恒，仅保守内力做功时机械能守恒。`,
+          finalAnswer: '物理运动规律与守恒推导完成，矢量与量纲检验吻合',
+          methodTips: '解题思路精要：受力分析“一重二弹三摩擦”，列方程前必须核验守恒条件是否严格满足。',
+          optionDistractors: [
+            { label: '选项 A: 严格满足守恒定律条件的正确物理结论', isCorrect: true, title: '正确选项', trap: '正确：正确判断外力合力与非保守力做功，守恒定律应用严密。' },
+            { label: '选项 B: 忽略非保守力做功强套机械能守恒', isCorrect: false, title: '守恒前置条件缺失陷阱', trap: '典型失误：在存在摩擦力或碰撞形变产热时强行使用机械能守恒。' },
+            { label: '选项 C: 矢量方向正负号定义混淆', isCorrect: false, title: '矢量性与标量性混淆陷阱', trap: '失误：动量为矢量，分量投影时未规定正方向导致正负号反转抵消。' },
+            { label: '选项 D: 量纲（物理单位）错误', isCorrect: false, title: '量纲不一致陷阱', trap: '失误：方程左端为力（N），右端表达式量纲却为能量（J）。' }
+          ],
+          subjectiveTraps: [
+            { stage: '阶段一：受力隔离分析多力或少力', trap: '凭主观感觉添加了不存在的“惯性力”，或漏画支撑面摩擦力。', deduction: '扣 60% 动力学分' },
+            { stage: '阶段二：正方向未规定导致矢量方程符号冲突', trap: '在列动量定理或牛顿定律方程时未统一规定坐标轴正方向。', deduction: '扣 40% 步骤分' },
+            { stage: '阶段三：极端边界与物理量纲未检验', trap: '算得表达式后未检查极限情况（如摩擦因数 μ=0 时是否退化为光滑面结果）。', deduction: '扣 20% 验算分' }
+          ],
+          wrong: '凭直觉机械套用机械能守恒公式，忽视非保守内力（如摩擦力做功生热）的存在；或矢量方程未规定正方向直接标量代入。',
+          right: '牢固确立“受力隔离分析 → 功与能量转换核验 → 矢量投影方程”标准三步解题规范。',
+          probeQ: '【物理守恒定律探针】在应用机械能守恒定律分析质点系运动时，下列哪项是必须严格满足的前提条件？',
+          options: [
+            { text: 'A. 系统内只有保守力（如重力、弹性力）做功，外力与非保守内力不做功或做功之和为零', correct: true },
+            { text: 'B. 只要物体在竖直方向运动就一定守恒', correct: false },
+            { text: 'C. 只要系统不受摩擦力就一定机械能守恒', correct: false },
+            { text: 'D. 物体做匀速圆周运动时机械能一定守恒', correct: false }
+          ],
+          feedbackCorrect: '完全正确！机械能守恒的前提是只有保守内力做功，这是大学物理力学大题判定的铁律！',
+          feedbackWrong: '回答错误。机械能守恒要求外力和非保守内力（如摩擦阻力、爆炸化学力）做功之和为零。',
+          dag: ['质点运动学与牛顿运动定律', '动量定理与动量守恒定律', '动能定理与机械能守恒定律']
+        };
+      }
+
+      // 9. General / Fallback Custom Diagnosis (Strict Domain Reasoning, ZERO Generic Questions)
+      return {
+        verdict: '理性推演与原题深度精讲 · 命题逻辑与定理边界',
+        badge: '逻辑与定理边界 (Rigorous Logic Diagnosis)',
+        summary: `已完成对题目「${input.slice(0, 32)}${input.length > 32 ? '...' : ''}」的深度解题与错因分析。`,
+        walkthrough: `本题考查理工科核心逻辑结构与定理适用范围。针对题目「${input}」，需要剖析命题前提假设、逻辑链条与充分必要条件，严防机械套用结论。`,
+        derivation: `1. <strong>审题与已知条件映射：</strong>提炼原题给出的核心已知量与约束边界，明确待求解的目标物理量或数学命题；<br>` +
+          `2. <strong>模型匹配与定理引用：</strong>调取对应学科核心公理体系，确定公式适用的前提假设（如线性假设、守恒假设、连续性假设）；<br>` +
+          `3. <strong>分步推导与验算结论：</strong>经过严密逻辑论证与符号化演算，给出严谨推演结论，并检验边界极端情况。`,
+        finalAnswer: '命题逻辑推导完毕，已完成边界自检',
+        methodTips: '解题思路精要：理工科解题切忌“直觉套公式”，每一步推演必须有明确的定理或定义支撑。',
+        optionDistractors: [
+          { label: '选项 A: 严格满足定义与充分必要条件的正确结论', isCorrect: true, title: '正确选项', trap: '正确：逻辑链条完整，前提充分必要，经过特例检验完全成立。' },
+          { label: '选项 B: 将充分条件误当作必要条件', isCorrect: false, title: '充要条件逻辑颠倒陷阱', trap: '典型失误：逆命题不一定成立，把必要条件当成了充分条件。' },
+          { label: '选项 C: 忽视边界与特殊点（如 x=0 或分母为0）', isCorrect: false, title: '定义域与边界奇异点遗漏', trap: '严重失误：在特殊点结论失效，发生以偏概全的逻辑漏洞。' },
+          { label: '选项 D: 偷换概念或外延扩大的伪命题', isCorrect: false, title: '概念内涵与外延混淆', trap: '失误：把局部成立的经验规律盲目推广到全局范围。' }
+        ],
+        subjectiveTraps: [
+          { stage: '阶段一：审题遗漏隐藏边界条件', trap: '如忽略题目中“非零实数”、“连续函数”、“正整数”等限定词，导致后续推演方向全偏。', deduction: '扣 50% 基础分' },
+          { stage: '阶段二：论证过程逻辑断层（跳步）', trap: '未写出关键定理名称或过度跳跃，在踩点得分的阅卷标准中丢失步骤分。', deduction: '扣 30% 步骤分' },
+          { stage: '阶段三：未进行极端反例自验', trap: '求出结论后未代入特殊值（如 0, 1, -1 或 ∞）进行反向验算。', deduction: '扣 20% 结论分' }
+        ],
+        wrong: '容易凭直觉机械套用公式，忽视公理与定理成立的前置边界约束；或在复杂多步长推导中发生符号遗漏与粗心（Slip）。',
+        right: '立足第一性原理从基本定义出发；解题全流程建立“前置条件验证 → 规范分步推演 → 极端边界与量纲反向验算”的闭环习惯。',
+        probeQ: '【科学推理探针】在检验一个普遍性命题是否在全域成立时，下列哪种方法具有最强的决定性证伪力？',
+        options: [
+          { text: 'A. 构造一个严格满足全部前提条件、但结论不成立的反例（Counterexample）', correct: true },
+          { text: 'B. 举出 10 个符合结论的正面特例', correct: false },
+          { text: 'C. 只要直觉上觉得合理即可确认', correct: false },
+          { text: 'D. 等待标准答案公布', correct: false }
+        ],
+        feedbackCorrect: '完全正确！在数学与科学逻辑中，只需一个反例即可决定性证伪全称命题！',
+        feedbackWrong: '回答错误。正面例子再多也不能证明全称命题，唯有一个严密的反例能决定性证伪！',
+        dag: ['学科基础概念与符号定义规范', '核心定理推演与边界条件检验', '综合建模应用与多维自检体系']
+      };
+    }
+
+    async function handleFormSubmit(evt) {
+      if (evt) evt.preventDefault();
+      const inputVal = document.getElementById('promptInput').value.trim();
+      if (!inputVal && !activeUploadFile) return;
+
+      // 1. Hide Landing Hero & Quick chips
+      document.getElementById('landingHero').classList.add('hide');
+      const chips = document.getElementById('sampleChips');
+      if (chips) chips.classList.add('hide');
+
+      const actor = document.getElementById('moActor');
+      const form = document.getElementById('moForm');
+      const status = document.getElementById('moStatus');
+      const label = document.getElementById('statusLabel');
+
+      // 2. Shrink pill into small sphere (Launch Phase)
+      form.style.opacity = '0';
+      form.style.pointerEvents = 'none';
+      actor.style.setProperty('--w', '60px');
+      actor.style.setProperty('--h', '60px');
+      actor.style.setProperty('--r', '50%');
+
+      // 3. Float up and expand into 3D Dotted Canvas (Assemble Phase)
+      await new Promise(r => setTimeout(r, 450));
+      actor.style.setProperty('--w', '132px');
+      actor.style.setProperty('--h', '132px');
+      startOrb();
+      status.style.setProperty('--sOp', '1');
+      status.style.setProperty('--sTy', '0px');
+
+      // 4. Stepped Thinking status messages (Think Phase)
+      const phases = [
+        'Thinking 深度审题与结构识别',
+        'Searching 检索考纲与公理体系',
+        'Analyzing DeepSeek 错题认知诊断',
+        'Composing 构建考点拓扑与知识图谱'
+      ];
+
+      for (let i = 0; i < phases.length; i++) {
+        label.textContent = phases[i];
+        await new Promise(r => setTimeout(r, 650));
+      }
+
+      // 5. Done & Vortex Condense into Unfold Card
+      label.textContent = 'Done 诊断推演完成';
+      await new Promise(r => setTimeout(r, 450));
+      stopOrb();
+      status.style.setProperty('--sOp', '0');
+
+      actor.style.setProperty('--w', Math.min(560, window.innerWidth - 32) + 'px');
+      actor.style.setProperty('--h', '108px');
+      actor.style.setProperty('--r', '18px');
+      actor.style.setProperty('--oCard', '1');
+      actor.style.setProperty('--hOp', '1');
+
+      // 6. Reveal the Detailed Report based on user query
+      const reportData = generateDynamicDiagnosis(inputVal, activeUploadFile, activeSampleKey);
+      renderDetailedReport(reportData);
+
+      document.getElementById('btnReset').classList.add('show');
+      document.getElementById('reportWrap').classList.add('show');
+      document.getElementById('btnReset').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function renderDetailedReport(data) {
+      currentReportData = data;
+      document.getElementById('verdictTitle').textContent = data.verdict;
+      document.getElementById('verdictBadge').textContent = data.badge;
+
+      // Card 1: Problem Walkthrough & Solution
+      if (data.walkthrough) {
+        document.getElementById('problemWalkthroughText').innerHTML = '<strong>原题背景与考点研读：</strong>' + data.walkthrough;
+      }
+      document.getElementById('derivationText').innerHTML = '<strong>规范分步求解推导：</strong><br>' + data.derivation;
+      document.getElementById('finalAnswerText').innerHTML = data.finalAnswer || '';
+      document.getElementById('solutionMethodText').innerHTML = '<strong>解题思路精要：</strong>' + (data.methodTips || '');
+
+      // Card 2: Option Distractors (Multiple Choice)
+      const distList = document.getElementById('optionDistractorsList');
+      if (distList) {
+        if (data.optionDistractors && data.optionDistractors.length > 0) {
+          distList.innerHTML = data.optionDistractors.map(d => `
+            <div class="distractor-item ${d.isCorrect ? 'correct-distractor' : ''}">
+              <div class="distractor-header">
+                <span>${d.label}</span>
+                <span class="distractor-badge ${d.isCorrect ? 'badge-correct' : 'badge-trap'}">
+                  ${d.isCorrect ? '正确答案 / 规范结论' : '高频干扰陷阱 / 易错点'}
+                </span>
+              </div>
+              <div class="distractor-reason">
+                <strong>${d.title || (d.isCorrect ? '正解依据' : '心智陷阱')}：</strong>${d.trap}
+              </div>
+            </div>
+          `).join('');
+        } else {
+          distList.innerHTML = '<div style="font-size:12px; color:#64748b; padding:8px 0;">该题目为开放性主观题，已在下方重点剖析主观题阶段失分点。</div>';
+        }
+      }
+
+      // Card 2: Subjective Question Scoring Traps
+      const subjList = document.getElementById('subjectiveTrapsList');
+      if (subjList) {
+        if (data.subjectiveTraps && data.subjectiveTraps.length > 0) {
+          subjList.innerHTML = data.subjectiveTraps.map(t => `
+            <div class="subjective-trap-item">
+              <div class="subjective-trap-header">
+                <span>${t.stage}</span>
+                <span class="subjective-trap-badge">${t.deduction || '易扣分点'}</span>
+              </div>
+              <div class="subjective-trap-reason">
+                ${t.trap}
+              </div>
+            </div>
+          `).join('');
+        } else {
+          subjList.innerHTML = '';
+        }
+      }
+
+      document.getElementById('wrongReasonText').textContent = data.wrong;
+      document.getElementById('rightReasonText').textContent = data.right;
+
+      // Update morph answer body if summary provided
+      if (data.summary) {
+        const mb = document.getElementById('moAnswerBody');
+        if (mb) {
+          mb.innerHTML = `<span class="mo-w">${data.summary}</span>`;
+        }
+      }
+
+      // Render Probe Question
+      document.getElementById('probeQText').textContent = data.probeQ;
+      const optList = document.getElementById('probeOptionsList');
+      optList.innerHTML = data.options.map((opt, i) => `
+        <button class="probe-opt-btn" onclick="checkProbeAnswer(${opt.correct}, this)">
+          <span>${opt.text}</span>
+        </button>
+      `).join('');
+
+      const fb = document.getElementById('probeFeedback');
+      fb.style.display = 'none';
+      fb.className = 'probe-feedback-box';
+
+      // Render DAG
+      document.getElementById('dagNode1').textContent = data.dag[0];
+      document.getElementById('dagNode2').textContent = data.dag[1];
+      document.getElementById('dagNode3').textContent = data.dag[2];
+    }
+
+    function checkProbeAnswer(isCorrect, btn) {
+      const allBtns = document.querySelectorAll('.probe-opt-btn');
+      allBtns.forEach(b => b.classList.remove('correct', 'wrong'));
+
+      const fb = document.getElementById('probeFeedback');
+      fb.style.display = 'block';
+
+      const source = currentReportData || (activeSampleKey && SAMPLES[activeSampleKey]) || SAMPLES.gaoshu;
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        fb.style.background = '#f0fdf4';
+        fb.style.color = '#166534';
+        fb.style.border = '1px solid #bbf7d0';
+        fb.textContent = source.feedbackCorrect;
+      } else {
+        btn.classList.add('wrong');
+        fb.style.background = '#fef2f2';
+        fb.style.color = '#991b1b';
+        fb.style.border = '1px solid #fecaca';
+        fb.textContent = source.feedbackWrong;
+      }
+    }
+
+    function resetMorphState() {
+      currentReportData = null;
+      activeSampleKey = null;
+      activeUploadFile = null;
+
+      // Hide report & reset button
+      document.getElementById('reportWrap').classList.remove('show');
+      document.getElementById('btnReset').classList.remove('show');
+
+      // Reset Actor geometry
+      const actor = document.getElementById('moActor');
+      const form = document.getElementById('moForm');
+      actor.style.setProperty('--w', Math.min(560, window.innerWidth - 32) + 'px');
+      actor.style.setProperty('--h', '60px');
+      actor.style.setProperty('--r', '999px');
+      actor.style.setProperty('--oCard', '0');
+      actor.style.setProperty('--hOp', '0');
+
+      form.style.opacity = '1';
+      form.style.pointerEvents = 'auto';
+
+      // Reset inputs
+      document.getElementById('promptInput').value = '';
+      document.getElementById('uploadTag').style.display = 'none';
+      handleInputChange('');
+
+      // Reset card summary text
+      const mb = document.getElementById('moAnswerBody');
+      if (mb) {
+        mb.innerHTML = '<span class="mo-w">题目已深度推演，认知漏洞与知识拓扑已在下方展开呈现。</span>';
+      }
+
+      // Show landing hero & samples
+      document.getElementById('landingHero').classList.remove('hide');
+      const chips = document.getElementById('sampleChips');
+      if (chips) chips.classList.remove('hide');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initOrbCanvas();
+    });
+  </script>
+</body>
+</html>

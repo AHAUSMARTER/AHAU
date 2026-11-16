@@ -1837,6 +1837,42 @@
       color: #ffffff !important;
     }
 
+    #cardMathLab:hover {
+      border-color: rgba(16, 185, 129, 0.3) !important;
+      background: #ffffff !important;
+    }
+    #cardMathLab:hover #arrowMathLab {
+      background: #059669 !important;
+      color: #ffffff !important;
+    }
+
+    #cardCourseRepo:hover {
+      border-color: rgba(217, 119, 6, 0.3) !important;
+      background: #ffffff !important;
+    }
+    #cardCourseRepo:hover #arrowCourseRepo {
+      background: #d97706 !important;
+      color: #ffffff !important;
+    }
+
+    #cardDiagnosis:hover {
+      border-color: rgba(13, 148, 136, 0.3) !important;
+      background: #ffffff !important;
+    }
+    #cardDiagnosis:hover #arrowDiagnosis {
+      background: #0d9488 !important;
+      color: #ffffff !important;
+    }
+
+    #cardAgentWeber:hover {
+      border-color: rgba(99, 102, 241, 0.3) !important;
+      background: #ffffff !important;
+    }
+    #cardAgentWeber:hover #arrowAgentWeber {
+      background: #6366f1 !important;
+      color: #ffffff !important;
+    }
+
   /* Uniform Sidebar Spacing Fix */
 
     .sidebar-new-chat-wrap {
@@ -2172,32 +2208,6 @@
               </div>
               <button class="service-action-pill">办理 ›</button>
             </div>
-
-            <!-- 11. 期末真题与课程资料共享 (Leaning in AAU) -->
-            <div class="service-item-row" data-keyword="期末 试卷 真题 往年卷 题库 复习 高数 线代 普化 生化 工图 微观经济 资料 共享 leaning" onclick="handleCardClick('期末真题库', '请帮我检索安徽农业大学历年期末考试真题与课程资料共享库（包含高数、线代、普化、工图、微观经济等）')">
-              <div class="service-row-icon icon-amber"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg></div>
-              <div class="service-row-info">
-                <div class="service-row-header">
-                  <h4 class="service-row-title">期末真题与课程资料共享</h4>
-                  <span class="service-dept-badge">学业共享</span>
-                </div>
-                <p class="service-row-desc">收录278+份历年原卷与详解，涵盖高数/线代/普化/微观经济等</p>
-              </div>
-              <button class="service-action-pill">查卷 ›</button>
-            </div>
-
-            <!-- 12. 期末真题认知错因诊断靶场 (认知探针与知识拓扑) -->
-            <div class="service-item-row" data-keyword="错因 诊断 探针 靶场 考点 知识依赖 拓扑 高数 离线复习" onclick="handleCardClick('错因诊断靶场', '请开启安徽农业大学期末统考真题智能认知诊断靶场与课程先后依赖拓扑图')">
-              <div class="service-row-icon icon-emerald"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-              <div class="service-row-info">
-                <div class="service-row-header">
-                  <h4 class="service-row-title">真题认知诊断与知识拓扑</h4>
-                  <span class="service-dept-badge" style="background:#ecfdf5; color:#047857;">认知诊断</span>
-                </div>
-                <p class="service-row-desc">错因双轨剖析（概念偏差vs粗心），课程拓扑DAG与确定性离线复习</p>
-              </div>
-              <button class="service-action-pill">靶场 ›</button>
-            </div>
           </div>
         </div>
       </div>
@@ -2232,6 +2242,40 @@
           <span class="accordion-arrow" id="arrowMathLab" style="background: rgba(16, 185, 129, 0.08); color: #059669;">探究 ›</span>
         </div>
       </div>
+
+      <!-- 模块 5: 安农课程资料库 (历年期末真题与复习共享库) - 侧边栏独立入口 -->
+      <div class="sidebar-accordion-group" id="groupCourseRepo">
+        <div class="accordion-trigger-card" id="cardCourseRepo" onclick="openCourseRepoPage()" title="点击直达安徽农业大学课程资料共享计划 (历年期末真题与复习库)">
+          <div class="accordion-trigger-left">
+            <div class="accordion-icon-wrap" style="background: rgba(217, 119, 6, 0.08); color: #d97706;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                <path d="M6 6h10"/><path d="M6 10h10"/>
+              </svg>
+            </div>
+            <span class="accordion-label">安农课程资料库</span>
+          </div>
+          <span class="accordion-arrow" id="arrowCourseRepo" style="background: rgba(217, 119, 6, 0.08); color: #d97706;">直达 ›</span>
+        </div>
+      </div>
+
+      <!-- 模块 6: AI错题认知诊断工坊 (考点拓扑与双轨探针靶场) - 侧边栏独立入口 -->
+      <div class="sidebar-accordion-group" id="groupDiagnosis">
+        <div class="accordion-trigger-card" id="cardDiagnosis" onclick="openDiagnosisPage()" title="点击直达AI错题认知诊断与考点拓扑工坊 (DeepSeek错因剖析与艾宾浩斯复习闭环)">
+          <div class="accordion-trigger-left">
+            <div class="accordion-icon-wrap" style="background: rgba(13, 148, 136, 0.08); color: #0d9488;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <span class="accordion-label">错题认知诊断工坊</span>
+          </div>
+          <span class="accordion-arrow" id="arrowDiagnosis" style="background: rgba(13, 148, 136, 0.08); color: #0d9488;">诊断 ›</span>
+        </div>
+      </div>
+
 
     </div>
 
@@ -2318,7 +2362,7 @@
   <!-- 离线 Markdown 渲染器 -->
   <script src="lib/marked.min.js"></script>
   <!-- 徽农智 · 安农智办 原创全栈智能体引擎 -->
-  <script src="anau_agent.js?v=39.0"></script>
+  <script src="anau_agent.js?v=41.0"></script>
 
   <script>
     function switchSidebarTab(tabName) {
@@ -2416,6 +2460,26 @@ function filterServices(query) {
       const win = window.open('math_lab.html?v=apple_math_v1', '_blank');
       if (!win || win.closed || typeof win.closed === 'undefined') {
         window.location.href = 'math_lab.html?v=apple_math_v1';
+      }
+    }
+
+    function openCourseRepoPage() {
+      autoCloseSidebarOnMobile();
+      window.open('https://ahau-course.pages.dev/', '_blank');
+    }
+
+    function openDiagnosisPage() {
+      autoCloseSidebarOnMobile();
+      const win = window.open('diagnosis.html?v=apple_v1', '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = 'diagnosis.html?v=apple_v1';
+      }
+    }
+
+    function openAgentWeberPage() {
+      autoCloseSidebarOnMobile();
+      if (window.AnauAgent) {
+        window.AnauAgent.sendUserMsg('请启动教务协同工作流，协助我进行跨部门业务协同与审核。');
       }
     }
 
