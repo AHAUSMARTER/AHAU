@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>安徽农业大学 · 数智安农身份网关</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" href="anau_ai_logo.png">
+  <link rel="apple-touch-icon" href="anau_ai_logo.png">
+  <style>
+    :root {
+      --ahau-green: #1f5e39;
+      --ahau-green-deep: #143e26;
+      --ahau-green-vibrant: #237346;
+      --ahau-green-tint: #f0f7f3;
+      --ahau-green-border: rgba(31, 94, 57, 0.15);
+      --apple-canvas: #f5f5f7;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: #f4f7f5;
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(35, 115, 70, 0.12) 0%, transparent 65%),
+        linear-gradient(180deg, rgba(246, 248, 246, 0.85) 0%, rgba(242, 247, 244, 0.92) 100%),
+        url('ahau_library.jpg');
+      background-position: center top, center top, center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      animation: floatUp 0.8s var(--ease-apple);
+    }
+
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 20px 48px rgba(20, 62, 38, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+      border-radius: 24px;
+      padding: 40px 36px 36px;
+      position: relative;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ffffff;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 16px rgba(31, 94, 57, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 255, 255, 0.95);
+    }
+
+    .logo-badge img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .gateway-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(31, 94, 57, 0.08);
+      border: 1px solid rgba(31, 94, 57, 0.15);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      color: var(--ahau-green);
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 7px;
+      letter-spacing: -0.01em;
+    }
+
+    .form-input-wrap {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px 0 44px;
+      background: rgba(245, 248, 245, 0.7);
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
+      border-radius: 14px;
+      font-size: 15px;
+      color: #111827;
+      font-family: inherit;
+      transition: all 0.25s var(--ease-apple);
+    }
+
+    .form-input:focus {
+      outline: none;
+      background: #ffffff;
+      border-color: var(--ahau-green);
+      box-shadow: 0 0 0 3px rgba(31, 94, 57, 0.15);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .remember-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember-left input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--ahau-green);
+      cursor: pointer;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, #1f5e39 0%, #16472b 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(31, 94, 57, 0.28);
+      transition: all 0.28s var(--ease-apple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(31, 94, 57, 0.35);
+    }
+
+    .submit-btn:active {
+      transform: translateY(1px);
+    }
+
+    .login-footer-hint {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    .error-banner {
+      display: none;
+      padding: 12px 14px;
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 12px;
+      color: #991b1b;
+      font-size: 13px;
+      margin-bottom: 18px;
+      animation: fadeIn 0.3s var(--ease-apple);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="anau_ai_logo.png" alt="ANAU Emblem">
+        </div>
+        <h1 class="brand-title">数智安农 · 身份网关</h1>
+        <p class="brand-subtitle">安徽农业大学学生专属智能体与教务协同中枢</p>
+        <div class="gateway-status-pill">
+          <span class="status-dot"></span>
+          <span>校园网 Agent 网关在席 · 实时直连</span>
+        </div>
+      </div>
+
+      <div class="error-banner" id="errorBanner"></div>
+
+      <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="studentId">安农大学工号 (Student ID)</label>
+          <div class="form-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="studentId" class="form-input" placeholder="请输入您的学工号 (如 2024****)" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="portalPass">统一身份认证密码 (Unified Password)</label>
+          <div class="form-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="portalPass" class="form-input" placeholder="请输入数智安农登录密码" required autocomplete="current-password">
+            <button type="button" class="toggle-pass-btn" onclick="togglePassVisibility()">显示</button>
+          </div>
+        </div>
+
+        <div class="remember-row">
+          <label class="remember-left">
+            <input type="checkbox" id="rememberCreds" checked>
+            <span>在本设备安全保留凭证（进入大厅免密调度）</span>
+          </label>
+        </div>
+
+        <button type="submit" class="submit-btn" id="loginSubmitBtn">
+          <span>登录并接入数智校园大厅</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+
+      <p class="login-footer-hint">
+        凭据仅在您本地受保护的浏览器环境中保存，用于调度教务 Agent 自动化穿透，不经由任何第三方公网服务器。
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function togglePassVisibility() {
+      const p = document.getElementById('portalPass');
+      const b = event.target;
+      if (p.type === 'password') {
+        p.type = 'text';
+        b.textContent = '隐藏';
+      } else {
+        p.type = 'password';
+        b.textContent = '显示';
+      }
+    }
+
+    // Check if already authenticated
+    (function checkExistingSession() {
+      const saved = localStorage.getItem('anau_auth_session');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.studentId && parsed.password) {
+            // Already logged in, redirect directly to index.html
+            window.location.replace('index.html');
+          }
+        } catch(e) {}
+      }
+    })();
+
+    async function handleGatewayLogin(e) {
+      e.preventDefault();
+      const sid = document.getElementById('studentId').value.trim();
+      const pwd = document.getElementById('portalPass').value.trim();
+      const errBanner = document.getElementById('errorBanner');
+      const btn = document.getElementById('loginSubmitBtn');
+
+      if (!sid || !pwd) {
+        errBanner.textContent = '请输入有效的安农大学号与密码';
+        errBanner.style.display = 'block';
+        return;
+      }
+
+      errBanner.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = `<span>正在接入身份网关并打通智能大厅...</span>`;
+
+      // Save credentials locally
+      const authSession = {
+        studentId: sid,
+        password: pwd,
+        authTime: Date.now(),
+        verified: true
+      };
+
+      localStorage.setItem('anau_auth_session', JSON.stringify(authSession));
+
+      // Visual feedback and transition
+      setTimeout(() => {
+        document.querySelector('.login-card').style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        document.querySelector('.login-card').style.opacity = '0';
+        document.querySelector('.login-card').style.transform = 'scale(0.96) translateY(-10px)';
+        setTimeout(() => {
+          window.location.replace('index.html');
+        }, 350);
+      }, 500);
+    }
+  </script>
+</body>
+</html>

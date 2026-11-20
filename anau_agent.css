@@ -189,7 +189,48 @@
 .native-chat-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+
+/* 开启新对话右上角按钮 - Apple 级毛玻璃高质感胶囊按钮 */
+.btn-new-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  outline: none;
+}
+
+.btn-new-chat:hover {
+  background: #ffffff;
+  color: #1f5e39;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+}
+
+.btn-new-chat:active {
+  transform: scale(0.96);
+}
+
+.btn-new-chat svg {
+  transition: transform 0.22s ease;
+}
+
+.btn-new-chat:hover svg {
+  transform: rotate(90deg);
 }
 
 .header-icon-btn {
@@ -800,6 +841,448 @@
   border: 1px solid rgba(255, 255, 255, 0.85);
 }
 
+/* ==============================================================================
+   49. 安徽农业大学 · 本科生返校销假审核报备与回执凭单模态窗 (严禁一键假销假)
+   ============================================================================== */
+.xiaojia-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.xiaojia-modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.xiaojia-modal-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: modalPop 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.xiaojia-modal-header {
+  background: linear-gradient(135deg, #1f5e39 0%, #154228 100%);
+  color: #ffffff;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.xiaojia-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.xiaojia-header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.xiaojia-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.xiaojia-subtitle {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 2px 0 0 0;
+}
+
+.xiaojia-close-btn {
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.xiaojia-close-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: rotate(90deg);
+}
+
+.xiaojia-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.xiaojia-sec-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.xiaojia-sec-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.xiaojia-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 6px 14px;
+  font-size: 12.5px;
+}
+
+.xiaojia-info-grid .label {
+  color: #64748b;
+}
+
+.xiaojia-info-grid .val {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.xiaojia-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.xiaojia-field-row .field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.xiaojia-field-row .field-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.xiaojia-input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  background: #ffffff;
+}
+
+.xiaojia-input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.field-badge-success {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.xiaojia-check-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.xiaojia-check-card .check-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.xiaojia-check-card .check-info {
+  flex: 1;
+}
+
+.xiaojia-check-card .check-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #166534;
+}
+
+.xiaojia-check-card .check-desc {
+  font-size: 11.5px;
+  color: #15803d;
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+.xiaojia-check-card .check-status-tag {
+  background: #15803d;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.xiaojia-field-group {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xiaojia-checkbox-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #334155;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.xiaojia-checkbox-item input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: #1f5e39;
+  cursor: pointer;
+}
+
+.xiaojia-upload-row {
+  margin-left: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11.5px;
+  margin-top: 4px;
+}
+
+.upload-file-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.btn-mock-reupload {
+  background: transparent;
+  border: 1px dashed #94a3b8;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.btn-mock-reupload:hover {
+  border-color: #1f5e39;
+  color: #1f5e39;
+}
+
+.xiaojia-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 10px;
+}
+
+.btn-xj-cancel {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-xj-cancel:hover {
+  background: #e2e8f0;
+}
+
+.btn-xj-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1f5e39;
+  border: none;
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-xj-submit:hover {
+  background: #17482c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(31, 94, 57, 0.25);
+}
+
+/* 销假凭单回执样式 */
+.xiaojia-receipt-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.receipt-stamp-badge {
+  text-align: center;
+  padding: 10px 0 6px 0;
+}
+
+.receipt-stamp-badge h3 {
+  margin: 8px 0 2px 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #065f46;
+}
+
+.receipt-stamp-badge p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.receipt-paper {
+  background: #fefce8;
+  border: 1.5px dashed #ca8a04;
+  border-radius: 12px;
+  padding: 16px 20px;
+  position: relative;
+}
+
+.receipt-paper-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #854d0e;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed rgba(202, 138, 4, 0.4);
+  padding-bottom: 6px;
+}
+
+.receipt-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.receipt-row .k {
+  color: #713f12;
+}
+
+.receipt-row .v {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.receipt-row .code-highlight {
+  font-family: ui-monospace, Menlo, monospace;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #1e40af;
+}
+
+.receipt-row .text-success {
+  color: #15803d;
+}
+
+.receipt-seal {
+  position: absolute;
+  right: 25px;
+  bottom: 15px;
+  width: 90px;
+  height: 90px;
+  border: 2px solid rgba(220, 38, 38, 0.7);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(220, 38, 38, 0.85);
+  font-size: 9px;
+  font-weight: 800;
+  transform: rotate(-15deg);
+  pointer-events: none;
+  line-height: 1.3;
+  letter-spacing: 0.5px;
+  background: rgba(254, 242, 242, 0.3);
+}
+
 .print-sheet-header-actions {
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
@@ -1045,8 +1528,8 @@ body.embedded-active .ai-callout-bubble {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1;
-  pointer-events: none;
+  z-index: 10;
+  pointer-events: auto;
   animation: fadeIn 0.4s ease-out;
 }
 
@@ -2788,4 +3271,952 @@ body.embedded-active .ai-callout-bubble {
     font-size: 10px !important;
     padding: 2px 7px !important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   数智安农 · 统一身份认证教务网关 & Agent 动作流水线 & 多维学业看板
+   -------------------------------------------------------------------------- */
+.anau-gateway-card {
+  margin: 14px 0 8px 0;
+  padding: 20px 22px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.08);
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Text", sans-serif;
+}
+
+.anau-gw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(16, 185, 129, 0.25);
+}
+
+.anau-gw-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.anau-gw-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.anau-gw-badge {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  font-weight: 600;
+}
+
+.anau-gw-desc {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.anau-gw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.anau-gw-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.anau-gw-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.anau-gw-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #d1d5db;
+  font-size: 13.5px;
+  color: #111827;
+  outline: none;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.anau-gw-input:focus {
+  background: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.anau-gw-privacy-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.anau-gw-btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-anau-gw-submit {
+  flex: 1;
+  min-width: 180px;
+  padding: 11px 18px;
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-anau-gw-submit:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-anau-gw-demo {
+  padding: 11px 16px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-anau-gw-demo:hover {
+  background: #e5e7eb;
+}
+
+/* Agent 动作流水线 (Step Trace) */
+.anau-step-trace {
+  margin: 14px 0 8px 0;
+  padding: 16px 18px;
+  background: #090d16;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #f3f4f6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.anau-trace-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+
+.anau-trace-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.anau-trace-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.anau-trace-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  line-height: 1.4;
+  opacity: 0.45;
+  transition: opacity 0.3s ease;
+}
+
+.anau-trace-item.active {
+  opacity: 1;
+  color: #38bdf8;
+}
+
+.anau-trace-item.done {
+  opacity: 1;
+  color: #e5e7eb;
+}
+
+.anau-trace-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.anau-trace-chip {
+  font-size: 11px;
+  color: #10b981;
+}
+
+/* 多维数智学业看板 */
+.anau-academic-board {
+  margin: 14px 0 8px 0;
+  padding: 22px 24px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Text", sans-serif;
+}
+
+.anau-board-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.anau-student-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.anau-student-sub {
+  font-size: 12.5px;
+  color: #6b7280;
+  margin-top: 3px;
+}
+
+.anau-board-hud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.anau-hud-card {
+  padding: 14px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.anau-hud-label {
+  font-size: 11.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.anau-hud-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 4px;
+  letter-spacing: -0.5px;
+}
+
+.anau-hud-val.highlight {
+  color: #059669;
+}
+
+.anau-courses-table-wrap {
+  margin-bottom: 18px;
+  overflow-x: auto;
+}
+
+.anau-courses-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.anau-courses-table th {
+  text-align: left;
+  padding: 9px 12px;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.anau-courses-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.anau-score-pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.anau-score-pill.excellent {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.anau-score-pill.good {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.anau-diagnosis-box {
+  padding: 14px 16px;
+  background: #f0fdf4;
+  border-radius: 12px;
+  border-left: 4px solid #10b981;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #166534;
+  margin-bottom: 18px;
+}
+
+.anau-board-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-anau-hook {
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-anau-hook:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+
+/* ==========================================================================
+   OS Agent Cross-Platform Academic Hub & System Integration Styles
+   ========================================================================== */
+.anau-os-board {
+  margin-top: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  font-family: inherit;
+}
+
+.anau-os-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 14px;
+}
+
+.anau-os-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.anau-os-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.anau-os-path-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 10px;
+}
+
+.anau-os-path-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.anau-os-tree {
+  background: #fafafa;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: #334155;
+}
+
+.anau-os-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.anau-os-tree-row svg {
+  flex-shrink: 0;
+}
+
+.anau-os-notice {
+  padding: 12px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  color: #166534;
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==============================================================================
+   48. 安徽农业大学 · 官方规范请假条 (三步流程 + A4双联纸质打印件 + 销假闭环)
+   ============================================================================== */
+.anau-leave-slip-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.anau-leave-steps-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  gap: 6px;
+}
+
+.anau-leave-steps-bar .step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  flex: 1;
+}
+
+.anau-leave-steps-bar .step-divider {
+  color: #cbd5e1;
+  font-weight: bold;
+}
+
+.anau-leave-steps-bar .step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11.5px;
+  flex-shrink: 0;
+}
+
+.anau-leave-steps-bar .step-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.anau-leave-steps-bar .step-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 12.5px;
+}
+
+.anau-leave-steps-bar .step-state {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.step-item.step-done .step-num {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.step-item.step-done .step-name {
+  color: #047857;
+}
+
+.step-item.step-done .step-state {
+  color: #059669;
+  font-weight: 600;
+}
+
+.step-item.step-active .step-num {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.step-item.step-active .step-name {
+  color: #0369a1;
+}
+
+.step-item.step-active .step-state {
+  color: #0284c7;
+  font-weight: 600;
+}
+
+.step-item.step-pending .step-num {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+/* 官方请假条 · 文档卡片样式 (代替生硬冗长的文字版) */
+.anau-doc-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.anau-doc-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
+}
+
+.anau-doc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.anau-doc-icon-wrap {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anau-doc-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.anau-doc-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.anau-doc-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.anau-doc-meta-badge {
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+}
+
+.anau-doc-meta-size {
+  color: #64748b;
+}
+
+.anau-doc-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.anau-doc-quick-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+}
+
+.anau-doc-card-body {
+  padding-top: 14px;
+}
+
+.anau-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px 18px;
+  margin-bottom: 14px;
+}
+
+.anau-doc-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.anau-doc-grid-item .grid-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.anau-doc-grid-item .grid-val {
+  font-size: 13px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.anau-doc-notice {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 9px;
+  padding: 10px 14px;
+  color: #1e40af;
+  font-size: 12px;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.anau-printable-paper {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 24px 28px;
+  font-family: "Songti SC", SimSun, "Noto Serif CJK SC", serif;
+  color: #111111;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+}
+
+.anau-slip-sheet {
+  line-height: 2.2;
+  font-size: 15px;
+}
+
+.anau-slip-title {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 10px;
+  margin-bottom: 2px;
+  color: #0f172a;
+}
+
+.anau-slip-copy-tag {
+  font-size: 11.5px;
+  text-align: center;
+  color: #64748b;
+  font-weight: bold;
+  margin-bottom: 14px;
+  font-family: -apple-system, sans-serif;
+  letter-spacing: 1px;
+}
+
+.anau-slip-content {
+  line-height: 2.3;
+  font-size: 15px;
+  color: #1a1a1a;
+  text-align: justify;
+}
+
+.anau-slip-underline {
+  display: inline-block;
+  border-bottom: 1.5px solid #000000;
+  padding: 0 8px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 40px;
+}
+
+.anau-slip-underline-blank {
+  display: inline-block;
+  border-bottom: 1.5px solid #000000;
+  min-width: 60px;
+  vertical-align: baseline;
+  margin: 0 2px;
+}
+
+.anau-slip-sign-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.anau-slip-sign-row .sign-col-left,
+.anau-slip-sign-row .sign-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.anau-slip-cutline {
+  text-align: center;
+  margin: 22px 0;
+  font-size: 11px;
+  color: #94a3b8;
+  border-top: 1.5px dashed #cbd5e1;
+  padding-top: 14px;
+  font-family: sans-serif;
+}
+
+.anau-slip-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.btn-slip-print, .btn-slip-download, .btn-slip-xiaojia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 15px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-slip-print {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.btn-slip-print:hover {
+  background: #0369a1;
+  transform: translateY(-1px);
+}
+
+.btn-slip-download {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-slip-download:hover {
+  background: #e2e8f0;
+}
+
+.btn-slip-xiaojia {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.btn-slip-xiaojia:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* ==============================================================================
+   49. 安徽农业大学 · 001号校宠「来福」多模态视觉档案卡片
+   ============================================================================== */
+.anau-cat-profile-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.cat-profile-img-box {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.cat-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  transition: transform 0.4s ease;
+}
+
+.anau-cat-profile-card:hover .cat-avatar-img {
+  transform: scale(1.02);
+}
+
+.cat-pill-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  color: #fde047;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(253, 224, 71, 0.4);
+}
+
+.cat-profile-body {
+  padding: 18px 20px;
+}
+
+.cat-header-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cat-main-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.cat-sub-tag {
+  background: #e0f2fe;
+  color: #0284c7;
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.cat-tags-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.cat-mini-tag {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.cat-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cat-info-item {
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.cat-info-item strong {
+  color: #0f172a;
+}
+
+.cat-warn-box {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #92400e;
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.6;
 }
