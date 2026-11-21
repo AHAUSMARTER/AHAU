@@ -1,0 +1,88 @@
+:root {
+  --site-paper: #fff;
+  --site-panel: #f7f7f4;
+  --site-line: #e4e6e0;
+  --site-ink: #232822;
+  --site-secondary: #525950;
+  --site-muted: #626b61;
+  --site-green: #20543a;
+  --site-selected: #e8eee8;
+  --site-green-tint: #edf2ed;
+  --site-serif: 'Songti SC', 'Noto Serif CJK SC', 'STSong', serif;
+}
+
+header.site-workshop-header {
+  box-sizing: border-box;
+  min-height: 64px;
+  padding-inline: 24px;
+  border-bottom: 1px solid var(--site-line);
+  background: var(--site-paper);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.site-workshop-header .site-workshop-name {
+  color: var(--site-ink);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.site-workshop-header .site-back {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 6px 11px;
+  border: 1px solid var(--site-line);
+  border-radius: 8px;
+  background: var(--site-paper);
+  color: var(--site-ink);
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.site-workshop-header .site-back:hover {
+  background: var(--site-selected);
+  color: var(--site-green);
+  box-shadow: none;
+  transform: none;
+}
+
+.site-back:focus-visible,
+.site-entry a:focus-visible {
+  outline: 2px solid var(--site-green);
+  outline-offset: 2px;
+}
+
+.site-entry {
+  display: grid;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 24px;
+  place-items: center;
+  background: var(--site-panel);
+  color: var(--site-ink);
+  font: 15px/1.6 system-ui, sans-serif;
+}
+
+.site-entry a {
+  color: var(--site-green);
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  header.site-workshop-header {
+    min-height: 56px;
+    padding-inline: 12px;
+  }
+
+  header.site-workshop-header.math-workshop-header { min-height: 88px; }
+  .site-workshop-header .site-workshop-name { font-size: 13px; }
+}

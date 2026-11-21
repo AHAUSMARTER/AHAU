@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>数智函数探究工坊 · 动态函数与立体空间工作台 | 安徽农业大学</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" href="favicon.ico">
@@ -1184,6 +1184,18 @@
         display: none !important; /* 隐藏文字，杜绝纵向折行难看问题 */
       }
 
+      header { position: relative; padding-bottom: 52px !important; }
+      .header-left { flex: 1; min-width: 0; }
+      .header-title-box { flex: 1; min-width: 0; }
+      .header-title { font-size: 14px !important; }
+      .segmented-control {
+        position: absolute; bottom: 6px; left: 10px; right: 10px;
+      }
+      .segmented-control .seg-pill { flex: 1; justify-content: center; }
+      .canvas-hud-toolbar { left: 6px !important; right: auto !important; }
+      .hud-btn { width: 36px !important; height: 36px !important; }
+      .canvas-status-bar { overflow: hidden; white-space: nowrap; }
+
       /* 底部状态指示栏 */
       .canvas-status-bar {
         height: 20px !important;
@@ -1275,25 +1287,136 @@
         font-size: 10.5px !important;
       }
     }
+    /* Drafting workspace. Inspired by Unslop by @heydamir (CC BY 4.0). */
+    :root {
+      --paper: var(--site-paper);
+      --panel: var(--site-panel);
+      --line: var(--site-line);
+      --text-primary: var(--site-ink);
+      --text-secondary: var(--site-secondary);
+      --text-tertiary: var(--site-muted);
+      --ahau-green: var(--site-green);
+      --ahau-green-tint: var(--site-green-tint);
+      --apple-canvas: #fcfcfa;
+    }
+    body { height: 100dvh; background: var(--paper); }
+    header {
+      flex-shrink: 0; height: 64px; padding-inline: 24px;
+      background: var(--paper); border-color: var(--line);
+      box-shadow: none; backdrop-filter: none;
+    }
+    .header-title { color: var(--text-primary); font-size: 16px; font-weight: 600; letter-spacing: 0; }
+    .header-left { flex: 1; min-width: 0; gap: 16px; }
+    .header-title-box { flex-shrink: 0; }
+    .header-actions { margin-left: 16px; }
+    .back-btn, .action-btn, .math-key, .var-pill {
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--paper); color: var(--text-secondary); box-shadow: none;
+    }
+    .back-btn, .header-actions .action-btn { min-height: 36px; }
+    .segmented-control, .mobile-layout-segmented {
+      border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+      box-shadow: none; padding: 3px; gap: 3px;
+    }
+    .seg-pill, .mobile-tab-btn { border-radius: 6px; font-weight: 500; }
+    .seg-pill.active, .mobile-tab-btn.active {
+      background: var(--paper); color: var(--ahau-green); box-shadow: none; font-weight: 600;
+    }
+    .workbench-container { flex: 1; min-height: 0; height: auto; }
+    .control-pane {
+      width: 384px; min-width: 336px; max-width: 40vw;
+      background: var(--paper); border-color: var(--line); padding: 8px 24px 24px; gap: 0;
+    }
+    .panel-card, .panel-card:hover {
+      padding: 16px 0; background: transparent; border: 0; border-bottom: 1px solid var(--line);
+      border-radius: 0; box-shadow: none; gap: 12px;
+    }
+    .card-header { gap: 8px; }
+    .card-title { color: var(--text-primary); font-size: 14px; font-weight: 600; }
+    .card-title svg { width: 16px; height: 16px; stroke-width: 1.6; color: var(--text-secondary); }
+    .card-tag {
+      background: none; border: 0; border-radius: 0; padding: 0;
+      font-size: 11px; font-weight: 400; color: var(--text-tertiary);
+    }
+    .math-field-box, .custom-var-input, .param-val-input, .calc-num-input, .ai-prompt-input {
+      background: var(--paper); border-color: #d7dcd4; box-shadow: none; border-radius: 8px;
+    }
+    .math-field-box { padding: 4px 8px; min-height: 44px; }
+    .math-field-box:focus-within { box-shadow: none; border-color: var(--ahau-green); }
+    .func-input { font-size: 16px; }
+    .math-key, .var-pill { min-height: 28px; }
+    .var-pill.active { background: var(--ahau-green-tint); color: var(--ahau-green); border-color: #c3d3c6; }
+    .calc-stat-box, .param-row, .preset-item, .ai-tag {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+      box-shadow: none; color: var(--text-primary);
+    }
+    #cardIntegral2D .calc-controls-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .calc-input-cell { white-space: nowrap; gap: 4px; }
+    .calc-num-input { min-width: 0; width: 56px; }
+    #cardIntegral3D .calc-input-cell { flex: 1; }
+    #cardIntegral3D .calc-num-input { width: clamp(35px, 4vw, 56px); }
+    .ai-assistant-box .action-btn.primary { flex-shrink: 0; white-space: nowrap; min-height: 36px; }
+    .calc-stat-box { padding: 8px 12px; }
+    .calc-stat-value { font-size: 16px; font-weight: 600; color: var(--ahau-green); }
+    .param-row { padding: 8px 12px; }
+    .param-slider { accent-color: var(--ahau-green); }
+    .param-anim-btn, .preset-item:hover, .ai-tag:hover { box-shadow: none; transform: none; }
+    .preset-category { color: var(--text-tertiary); }
+    .action-btn.primary { background: var(--ahau-green); color: #fff; border-color: var(--ahau-green); }
+    .action-btn.primary:hover { background: #173e2a; }
+
+    .canvas-stage { height: 100%; min-height: 0; }
+    .canvas-hud-toolbar, .stage-vertical-scrollbar, .probe-hud, .hud-3d-stats {
+      background: var(--paper); border-color: var(--line); box-shadow: none; backdrop-filter: none;
+    }
+    .canvas-hud-toolbar { padding: 4px; gap: 4px; border-radius: 8px; }
+    .hud-btn { min-height: 32px; border-radius: 6px; }
+    .hud-btn.active, .v-scroll-btn.active { background: var(--ahau-green-tint); color: var(--ahau-green); }
+    .v-scroll-track, .v-scroll-btn { background: var(--panel); border-color: var(--line); box-shadow: none; }
+    .v-scroll-thumb { background: var(--ahau-green); box-shadow: none; }
+    .canvas-status-bar {
+      padding-inline: 16px; background: var(--paper); backdrop-filter: none;
+      border-top: 1px solid var(--line); color: var(--text-tertiary);
+    }
+    :is(button, input, a):focus-visible { outline: 2px solid var(--ahau-green); outline-offset: 3px; }
+    :is(.btn-back, .back-btn, .seg-pill, .action-btn, .var-pill, .math-key, .param-anim-btn,
+        .preset-item, .ai-tag, .hud-btn, .v-scroll-btn, .mobile-tab-btn) {
+      transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+    }
+    @media (max-width: 768px) {
+      header { height: auto; min-height: 88px; }
+      .header-left { gap: 8px; }
+      .header-actions { margin-left: 8px; }
+      .mobile-layout-bar { backdrop-filter: none; background: var(--paper); border-color: var(--line); }
+      .mobile-layout-segmented { max-width: none; }
+      .workbench-container { height: auto !important; flex: 1; min-height: 0; }
+      .control-pane { max-width: none; }
+      .workbench-container:is(.mobile-mode-split, .mobile-mode-panel) .control-pane { padding-inline: 16px !important; gap: 0 !important; }
+      .panel-card, .panel-card:hover { padding: 16px 0 !important; border-radius: 0 !important; }
+      .canvas-status-bar #canvasTipsText { display: none; }
+      .header-actions .action-btn { min-height: 40px; min-width: 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
   </style>
+  <link rel="stylesheet" href="assets/site-theme.css?v=1">
 </head>
 <body>
 
   <!-- 顶部导航栏 -->
-  <header>
+  <header class="site-workshop-header math-workshop-header">
     <div class="header-left">
-      <a href="index.html" class="back-btn" title="返回安农智办门户大厅">
+      <a href="index.html" class="back-btn site-back" aria-label="返回大厅">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
-        <span>返回智办大厅</span>
+        <span>返回大厅</span>
       </a>
       <div class="header-title-box">
         <div class="header-title-row">
-          <span class="header-title">数智函数探究工坊</span>
-          <span class="apple-badge">数理仿真与立体空间</span>
+          <span class="header-title site-workshop-name">数智函数探究工坊</span>
         </div>
-        <span class="header-sub">面向高数、微积分与农林数理建模的连续动态仿真系统 · 实时解析与多维参数调控</span>
       </div>
       <!-- 2D / 3D 模式分段选择器 -->
       <div class="segmented-control">
@@ -1358,7 +1481,7 @@
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
-            自变量设定 (Independent Variable)
+            自变量
           </span>
           <span class="card-tag">支持任意字符</span>
         </div>
@@ -1384,7 +1507,7 @@
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
             </svg>
-            三维双自变量空间 (3D Domain)
+            三维坐标
           </span>
           <span class="card-tag">X-Y 平面基底</span>
         </div>
@@ -1401,14 +1524,14 @@
               <path d="M12 20h9"></path>
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
             </svg>
-            <span id="formulaCardTitle">函数表达式 (Equation)</span>
+            <span id="formulaCardTitle">函数表达式</span>
           </span>
           <span class="card-tag" id="varDisplayTag">自变量: x</span>
         </div>
         <div class="formula-input-wrap">
           <div class="math-field-box">
             <span class="func-prefix" id="funcPrefixLabel">f(x) =</span>
-            <input type="text" id="formulaInput" class="func-input" value="a * sin(b * x + c)" placeholder="输入函数如 a sin(x+b), 2x^2-3x+1, sin(sqrt(x^2+y^2))" autocomplete="off" spellcheck="false" oninput="onFormulaChanged()" onkeyup="onFormulaChanged()" onchange="onFormulaChanged()">
+            <input type="text" id="formulaInput" aria-label="函数表达式" class="func-input" value="a * sin(b * x + c)" placeholder="输入函数如 a sin(x+b), 2x^2-3x+1, sin(sqrt(x^2+y^2))" autocomplete="off" spellcheck="false" oninput="onFormulaChanged()" onkeyup="onFormulaChanged()" onchange="onFormulaChanged()">
             <button class="clear-input-btn" onclick="clearFormulaInput()" title="清空表达式">
               <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -1436,14 +1559,14 @@
         </div>
       </div>
 
-      <!-- 3. 定积分与曲边梯形面积测算 (2D 专属) -->
+      <!-- 3. 定积分与面积 (2D 专属) -->
       <div class="panel-card" id="cardIntegral2D">
         <div class="card-header">
           <span class="card-title">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
               <path d="M4 19h16M4 5h16M7 19V5M17 19V5"></path>
             </svg>
-            定积分与曲边梯形面积测算
+            定积分与面积
           </span>
           <span class="card-tag">辛普森数值积分</span>
         </div>
@@ -1451,11 +1574,11 @@
           <div class="calc-controls-row">
             <div class="calc-input-cell">
               <span>积分下限 a:</span>
-              <input type="number" step="0.1" class="calc-num-input" id="integral2D_a" value="0.0" oninput="onIntegral2DChanged()">
+              <input type="number" step="0.1" class="calc-num-input" id="integral2D_a" aria-label="积分下限" value="0.0" oninput="onIntegral2DChanged()">
             </div>
             <div class="calc-input-cell">
               <span>积分上限 b:</span>
-              <input type="number" step="0.1" class="calc-num-input" id="integral2D_b" value="3.14" oninput="onIntegral2DChanged()">
+              <input type="number" step="0.1" class="calc-num-input" id="integral2D_b" aria-label="积分上限" value="3.14" oninput="onIntegral2DChanged()">
             </div>
             <button class="action-btn" style="padding:3px 10px; font-size:11.5px;" onclick="setPresetIntegralBounds(0, Math.PI)">[0, π]</button>
             <button class="action-btn" style="padding:3px 10px; font-size:11.5px;" onclick="setPresetIntegralBounds(-2, 2)">[-2, 2]</button>
@@ -1480,24 +1603,24 @@
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
             </svg>
-            三维二重积分与立体体积测算
+            二重积分与体积
           </span>
           <span class="card-tag">二维复合数值积分</span>
         </div>
         <div class="calc-card-body">
           <div class="calc-controls-row">
             <div class="calc-input-cell">
-              <span>X范围: [</span>
-              <input type="number" step="0.5" class="calc-num-input" id="vol_x1" value="-2.0" oninput="onVolume3DChanged()">
+              <span>X [</span>
+              <input type="number" step="0.5" class="calc-num-input" id="vol_x1" aria-label="X 轴下限" value="-2.0" oninput="onVolume3DChanged()">
               <span>,</span>
-              <input type="number" step="0.5" class="calc-num-input" id="vol_x2" value="2.0" oninput="onVolume3DChanged()">
+              <input type="number" step="0.5" class="calc-num-input" id="vol_x2" aria-label="X 轴上限" value="2.0" oninput="onVolume3DChanged()">
               <span>]</span>
             </div>
             <div class="calc-input-cell">
-              <span>Y范围: [</span>
-              <input type="number" step="0.5" class="calc-num-input" id="vol_y1" value="-2.0" oninput="onVolume3DChanged()">
+              <span>Y [</span>
+              <input type="number" step="0.5" class="calc-num-input" id="vol_y1" aria-label="Y 轴下限" value="-2.0" oninput="onVolume3DChanged()">
               <span>,</span>
-              <input type="number" step="0.5" class="calc-num-input" id="vol_y2" value="2.0" oninput="onVolume3DChanged()">
+              <input type="number" step="0.5" class="calc-num-input" id="vol_y2" aria-label="Y 轴上限" value="2.0" oninput="onVolume3DChanged()">
               <span>]</span>
             </div>
           </div>
@@ -1529,7 +1652,7 @@
               <line x1="9" y1="8" x2="15" y2="8"></line>
               <line x1="17" y1="16" x2="23" y2="16"></line>
             </svg>
-            动态参数调控与连续动画
+            参数调节
           </span>
           <button class="action-btn" style="padding: 2px 8px; font-size:11px;" onclick="toggleAllAnimations()">全部动效</button>
         </div>
@@ -1545,7 +1668,7 @@
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
             </svg>
-            AI 智能数理函数生成助手
+            按描述生成函数
           </span>
           <span class="card-tag">自然语言语义</span>
         </div>
@@ -1553,11 +1676,11 @@
           <textarea id="aiPromptInput" class="ai-prompt-input" placeholder="输入自然语言描述，如：画一个带阻尼衰减的声波，或茶树光合作用的光响应曲线，或三维马鞍面..."></textarea>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="ai-quick-tags">
-              <span class="ai-tag" onclick="quickAiGenerate('茶树叶片光合作用光响应曲线')">茶树光响应</span>
-              <span class="ai-tag" onclick="quickAiGenerate('阻尼衰减振荡曲线')">阻尼衰减</span>
-              <span class="ai-tag" onclick="quickAiGenerate('三维水波波浪曲面')">3D水波纹</span>
-              <span class="ai-tag" onclick="quickAiGenerate('作物生长Logistic逻辑斯蒂模型')">作物Logistic</span>
-              <span class="ai-tag" onclick="quickAiGenerate('三维马鞍双曲抛物面')">3D马鞍面</span>
+              <button type="button" class="ai-tag" onclick="quickAiGenerate('茶树叶片光合作用光响应曲线')">茶树光响应</button>
+              <button type="button" class="ai-tag" onclick="quickAiGenerate('阻尼衰减振荡曲线')">阻尼衰减</button>
+              <button type="button" class="ai-tag" onclick="quickAiGenerate('三维水波波浪曲面')">3D水波纹</button>
+              <button type="button" class="ai-tag" onclick="quickAiGenerate('作物生长Logistic逻辑斯蒂模型')">作物Logistic</button>
+              <button type="button" class="ai-tag" onclick="quickAiGenerate('三维马鞍双曲抛物面')">3D马鞍面</button>
             </div>
             <button class="action-btn primary" style="padding:4px 12px; font-size:12px;" onclick="submitAiPrompt()">生成</button>
           </div>
@@ -1571,7 +1694,7 @@
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
-            <span id="presetCardTitle">经典名线与学科模型预设</span>
+            <span id="presetCardTitle">函数示例</span>
           </span>
           <span class="card-tag" id="presetCountTag">预设库</span>
         </div>
@@ -1588,21 +1711,21 @@
 
         <!-- 悬浮微调浮动工具栏 -->
         <div class="canvas-hud-toolbar">
-          <button class="hud-btn active" id="btnToggleTangent" onclick="toggleTangentLine()">
+          <button class="hud-btn active" id="btnToggleTangent" onclick="toggleTangentLine()" aria-label="切换切线探针">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="4" y1="20" x2="20" y2="4"></line>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
             <span>切线探针</span>
           </button>
-          <button class="hud-btn active" id="btnToggleIntegral" onclick="toggleIntegralShading()">
+          <button class="hud-btn active" id="btnToggleIntegral" onclick="toggleIntegralShading()" aria-label="切换积分阴影">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 19h16M4 5h16M7 19V5M17 19V5"></path>
             </svg>
             <span id="labelToggleIntegral">积分阴影</span>
           </button>
-          <button class="hud-btn" onclick="zoomIn()">放大 +</button>
-          <button class="hud-btn" onclick="zoomOut()">缩小 −</button>
+          <button class="hud-btn" onclick="zoomIn()" aria-label="放大"><span>放大</span> +</button>
+          <button class="hud-btn" onclick="zoomOut()" aria-label="缩小"><span>缩小</span> −</button>
         </div>
 
         <!-- 3D 专属右侧独立垂直视角与高程滚动控制条 (Vertical Scroll Control Bar for 3D) -->
@@ -2002,14 +2125,14 @@
       document.getElementById('btnToggleTangent').style.display = is2D ? 'flex' : 'none';
       document.getElementById('hud3DStats').style.display = is2D ? 'none' : 'flex';
 
-      document.getElementById('formulaCardTitle').innerText = is2D ? '函数表达式 (Equation)' : '空间曲面方程 (Surface Equation)';
+      document.getElementById('formulaCardTitle').innerText = is2D ? '函数表达式' : '曲面方程';
       document.getElementById('varDisplayTag').innerText = is2D ? `自变量: ${MathState.varName}` : '自变量: x, y';
       document.getElementById('funcPrefixLabel').innerText = is2D ? `f(${MathState.varName}) =` : 'z = f(x, y) =';
       document.getElementById('labelToggleIntegral').innerText = is2D ? '积分阴影' : '围成柱体';
-      document.getElementById('presetCardTitle').innerText = is2D ? '经典名线与学科模型预设' : '经典三维曲面与极值模型预设';
+      document.getElementById('presetCardTitle').innerText = is2D ? '函数示例' : '曲面示例';
       document.getElementById('canvasTipsText').innerText = is2D ?
         '操作提示：鼠标左键拖动画布平移 · 滚轮缩放 · 悬停吸附切线探针' :
-        '操作提示：鼠标左键拖拽旋转空间视角 · 滚轮缩放 · 右侧滑块独立调控高程视角';
+        '操作提示：鼠标左键拖动旋转曲面 · 滚轮缩放 · 右侧滑块独立调控高程视角';
 
       // 切换 3D 专属右侧独立垂直视角与高程滚动控制条
       const scroll3D = document.getElementById('stage3DScrollbar');
@@ -2157,9 +2280,9 @@
           statusRow.className = 'syntax-status-row valid';
           const pKeys = Object.keys(newParams);
           if (pKeys.length > 0) {
-            statusText.innerText = `解析就绪 · 待定形变参数: ${pKeys.join(', ')}`;
+            statusText.innerText = `可调参数: ${pKeys.join(', ')}`;
           } else {
-            statusText.innerText = `解析就绪 · 纯自变量表达式`;
+            statusText.innerText = `表达式有效`;
           }
         } else {
           statusRow.className = 'syntax-status-row pending';
@@ -2471,7 +2594,7 @@
 
       ctx.save();
       ctx.font = '10.5px "SF Pro Text", -apple-system, sans-serif';
-      ctx.strokeStyle = '#334155';
+      ctx.strokeStyle = '#5c665e';
       ctx.lineWidth = 1.4;
 
       // X 主轴
@@ -2489,7 +2612,7 @@
       // X 轴刻度标注
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillStyle = '#475569';
+      ctx.fillStyle = '#59625b';
       for (let x = firstX; x <= MathState.view2D.xMax; x += xStep) {
         if (Math.abs(x) < 1e-9) continue;
         const sx = toScreenX(x, width);
@@ -2518,7 +2641,7 @@
       }
 
       // 轴名标注
-      ctx.fillStyle = '#1a6b3c';
+      ctx.fillStyle = '#20543a';
       ctx.font = 'bold 13px -apple-system, sans-serif';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'bottom';
@@ -2537,7 +2660,7 @@
         const paramVals = Object.keys(MathState.params2D).map(k => MathState.params2D[k]);
 
         ctx.save();
-        ctx.fillStyle = 'rgba(26, 107, 60, 0.16)';
+        ctx.fillStyle = 'rgba(32, 84, 58, 0.12)';
         ctx.beginPath();
 
         const baseScreenY = toScreenY(0, height);
@@ -2557,7 +2680,7 @@
         ctx.fill();
 
         // 边界虚线立柱
-        ctx.strokeStyle = 'rgba(26, 107, 60, 0.45)';
+        ctx.strokeStyle = 'rgba(32, 84, 58, 0.38)';
         ctx.lineWidth = 1.2;
         ctx.setLineDash([3, 3]);
 
@@ -2586,11 +2709,9 @@
 
         ctx.save();
         ctx.lineWidth = 2.8;
-        ctx.strokeStyle = '#1a6b3c';
+        ctx.strokeStyle = '#20543a';
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
-        ctx.shadowColor = 'rgba(26, 107, 60, 0.25)';
-        ctx.shadowBlur = 6;
         ctx.shadowOffsetY = 2;
 
         ctx.beginPath();
@@ -2642,7 +2763,7 @@
           ctx.save();
           if (!isNaN(slope) && isFinite(slope)) {
             ctx.lineWidth = 1.5;
-            ctx.strokeStyle = '#0071e3';
+            ctx.strokeStyle = '#56635a';
             ctx.setLineDash([4, 4]);
 
             const tanLen = 80;
@@ -2659,7 +2780,7 @@
           ctx.fillStyle = '#ffffff';
           ctx.fill();
           ctx.lineWidth = 2.5;
-          ctx.strokeStyle = '#1a6b3c';
+          ctx.strokeStyle = '#20543a';
           ctx.stroke();
           ctx.restore();
 
@@ -2706,20 +2827,11 @@
       const range = (maxZ - minZ) || 1;
       const norm = Math.max(0, Math.min(1, (z - minZ) / range));
 
-      // 苹果级多段高雅色谱: 深海蓝(0.0) -> 翠绿青(0.5) -> 金黄暖绿(1.0)
-      let r, g, b;
-      if (norm < 0.5) {
-        const t = norm / 0.5;
-        r = Math.round(14 + (26 - 14) * t);
-        g = Math.round(116 + (167 - 116) * t);
-        b = Math.round(144 + (92 - 144) * t);
-      } else {
-        const t = (norm - 0.5) / 0.5;
-        r = Math.round(26 + (74 - 26) * t);
-        g = Math.round(167 + (222 - 167) * t);
-        b = Math.round(92 + (128 - 92) * t);
-      }
-      return `rgba(${r}, ${g}, ${b}, 0.85)`;
+      // Use tones of the same green to encode height.
+      const low = [39, 89, 62];
+      const high = [179, 204, 186];
+      const color = low.map((component, i) => Math.round(component + (high[i] - component) * norm));
+      return `rgb(${color.join(', ')})`;
     }
 
     function draw3DScene() {
@@ -2766,27 +2878,27 @@
       const orig = project3D(0, 0, 0, cx, cy);
       const axisLen = bound * 1.15;
 
-      // X 轴 (红色/深灰)
+      // X 轴
       const pX = project3D(axisLen, 0, 0, cx, cy);
-      ctx.strokeStyle = '#dc2626';
+      ctx.strokeStyle = '#59625b';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(orig.sx, orig.sy);
       ctx.lineTo(pX.sx, pX.sy);
       ctx.stroke();
 
-      // Y 轴 (蓝色)
+      // Y 轴
       const pY = project3D(0, axisLen, 0, cx, cy);
-      ctx.strokeStyle = '#2563eb';
+      ctx.strokeStyle = '#59625b';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(orig.sx, orig.sy);
       ctx.lineTo(pY.sx, pY.sy);
       ctx.stroke();
 
-      // Z 轴 (翡翠绿)
+      // Z 轴
       const pZ = project3D(0, 0, axisLen * 0.9, cx, cy);
-      ctx.strokeStyle = '#1a6b3c';
+      ctx.strokeStyle = '#20543a';
       ctx.lineWidth = 2.0;
       ctx.beginPath();
       ctx.moveTo(orig.sx, orig.sy);
@@ -2795,11 +2907,11 @@
 
       // 轴文字标注
       ctx.font = 'bold 12px "SF Pro Text", sans-serif';
-      ctx.fillStyle = '#dc2626';
+      ctx.fillStyle = '#59625b';
       ctx.fillText('X', pX.sx + 6, pX.sy);
-      ctx.fillStyle = '#2563eb';
+      ctx.fillStyle = '#59625b';
       ctx.fillText('Y', pY.sx + 6, pY.sy);
-      ctx.fillStyle = '#1a6b3c';
+      ctx.fillStyle = '#20543a';
       ctx.fillText('Z', pZ.sx, pZ.sy - 8);
       ctx.restore();
 
@@ -2877,7 +2989,7 @@
           const maxY = Math.max(y1, y2);
 
           ctx.save();
-          ctx.strokeStyle = 'rgba(26, 107, 60, 0.7)';
+          ctx.strokeStyle = 'rgba(32, 84, 58, 0.60)';
           ctx.lineWidth = 1.4;
           ctx.setLineDash([4, 4]);
 

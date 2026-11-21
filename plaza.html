@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>科研与学业互助广场 · 多智能体 P2P 撮合网络 | 安徽农业大学</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" href="favicon.ico">
@@ -1389,38 +1389,162 @@
         height: 12px;
       }
     }
+    /* Campus noticeboard styling. Inspired by Unslop by @heydamir (CC BY 4.0). */
+    :root {
+      --bg-canvas: var(--site-panel);
+      --bg-card-subtle: #f0f1ed;
+      --border-subtle: #e0e3dc;
+      --border-strong: #cbd2c8;
+      --border-focus: var(--site-green);
+      --text-primary: var(--site-ink);
+      --text-secondary: var(--site-secondary);
+      --text-tertiary: var(--site-muted);
+      --apple-blue: var(--site-green);
+      --apple-emerald: var(--site-green);
+      --plaza-selected: var(--site-selected);
+      --plaza-sheet: #fafbf8;
+    }
+
+    .top-nav { height: 64px; padding-inline: 32px; background: #fff; backdrop-filter: none; box-shadow: none; }
+    .nav-left, .nav-brand { gap: 12px; }
+    .brand-logo-badge {
+      width: 24px; height: 24px; color: var(--apple-blue);
+      background: transparent; box-shadow: none;
+    }
+    .brand-title { font-size: 14px; font-weight: 500; }
+    .back-btn, .btn-publish-demand, .btn-auth-cancel, .btn-auth-confirm, .btn-card-detail {
+      min-height: 36px; padding: 8px 12px; border-radius: 8px; box-shadow: none;
+      font-weight: 500; transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+    }
+    .back-btn, .btn-auth-cancel, .btn-card-detail {
+      background: #fff; border: 1px solid var(--border-subtle); color: var(--text-primary);
+    }
+    .back-btn:hover, .btn-auth-cancel:hover, .btn-card-detail:hover {
+      background: var(--plaza-selected); border-color: var(--border-strong); color: var(--apple-blue);
+      box-shadow: none; transform: none;
+    }
+    .btn-publish-demand, .btn-auth-confirm { background: var(--apple-blue); border-color: var(--apple-blue); color: #fff; }
+    .btn-publish-demand:hover, .btn-auth-confirm:hover { background: #173e2a; box-shadow: none; transform: none; }
+
+    .plaza-container { padding-block: 32px 64px; }
+    .hero-header { text-align: left; padding: 0; margin-bottom: 24px; }
+    .hero-tagline {
+      gap: 8px; margin-bottom: 12px; padding: 0; background: none; border: 0;
+      font-size: 12px; font-weight: 500; letter-spacing: 0;
+    }
+    .hero-tagline::before { content: ''; width: 16px; height: 1px; background: currentColor; }
+    .hero-title {
+      font-family: var(--site-serif);
+      font-size: clamp(34px, 4.1vw, 56px); font-weight: 600;
+      letter-spacing: -.03em; line-height: 1.14; margin-bottom: 8px;
+    }
+    .hero-desc { margin: 0; font-size: 14px; }
+    .search-spotlight-wrapper { max-width: 640px; margin: 0 0 16px; }
+    .spotlight-box {
+      height: 48px; background: #fff; border-color: var(--border-subtle);
+      border-radius: 10px; box-shadow: none; font-size: 16px;
+    }
+    .spotlight-box::placeholder { color: var(--text-tertiary); }
+    .spotlight-box:focus { border-color: var(--border-focus); box-shadow: none; }
+    .spotlight-icon { color: var(--text-secondary); }
+    .filter-pills-row { justify-content: flex-start; gap: 6px; margin: 0 0 16px; }
+    .filter-pill, .view-btn {
+      min-height: 36px; border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px;
+      font-weight: 500; box-shadow: none; transition: background-color 140ms ease, border-color 140ms ease;
+    }
+    .filter-pill { border: 1px solid transparent; background: transparent; color: var(--text-secondary); }
+    .filter-pill:hover, .filter-pill.active {
+      background: var(--plaza-selected); border: 1px solid #d4ded4; color: var(--apple-blue); box-shadow: none;
+    }
+    .filter-count, .stats-strong { font-variant-numeric: tabular-nums; }
+    .filter-count { color: var(--text-tertiary); }
+    .plaza-stats-bar { border-block: 1px solid var(--border-subtle); gap: 12px; padding-block: 8px; margin-bottom: 0; }
+    .stats-protocol { color: var(--text-tertiary); font-weight: 400; }
+    .view-switcher-group { border-radius: 8px; background: var(--bg-card-subtle); border-color: var(--border-subtle); }
+    .view-btn { border-radius: 6px; min-height: 30px; padding: 4px 10px; white-space: nowrap; }
+    .view-btn.active { color: var(--apple-blue); background: #fff; box-shadow: none; }
+
+    /* The sheet, stacking geometry and cut-out remain the focal point. */
+    .deck-sticky-stage { top: 64px; height: min(calc(100svh - 64px), 624px); }
+    .deck-card-inner { border-color: var(--border-subtle); box-shadow: 0 16px 40px #23282214, 0 2px 6px #2328220a; }
+    .deck-card-content { background: var(--plaza-sheet); }
+    .deck-badge { padding: 0; color: var(--apple-blue); font-weight: 500; letter-spacing: 0; }
+    .deck-badge-dot { background: var(--apple-blue); }
+    .deck-serial { color: var(--text-tertiary); letter-spacing: 0; }
+    .deck-heading, .demand-title { font-weight: 600; color: var(--text-primary); }
+    .deck-subheading, .deck-spec-status, .deck-footer-left, .deck-action-sub { color: var(--text-secondary); }
+    .deck-card-footer { border-color: var(--border-subtle); }
+    .deck-spec-box { background: #f0f2ee; border-color: var(--border-subtle); }
+    .deck-spec-tag { color: var(--apple-blue); font-size: 12px; letter-spacing: 0; font-weight: 500; }
+    .deck-card-dim { background: #e6e9e2; }
+    .deck-action-btn { background: #fff; box-shadow: -3px -3px 12px #2328220a; }
+    .deck-action-btn:hover { background: #fff; }
+    .deck-action-arrow { background: var(--apple-blue); color: #fff; box-shadow: none; }
+    .deck-action-btn:focus-visible { outline-offset: -4px; }
+    .deck-scroll-hint {
+      background: #fff; color: var(--text-secondary); border: 1px solid var(--border-subtle);
+      box-shadow: none; backdrop-filter: none; border-radius: 8px;
+    }
+    .demands-grid { margin-top: 24px; }
+    .demand-card { border-color: var(--border-subtle); background: #fff; box-shadow: 0 2px 8px #23282209; }
+    .demand-card:hover { border-color: var(--border-strong); transform: none; box-shadow: 0 2px 8px #2328220d; }
+    .dept-badge, .match-rate-badge { padding: 0; border: 0; background: transparent; color: var(--text-secondary); font-weight: 500; }
+    .card-tags-group { background: var(--bg-canvas); border-color: var(--border-subtle); }
+    .tag-chip.source, .tag-chip.target { background: #fff; border-color: var(--border-subtle); color: var(--text-secondary); }
+    .peer-avatar { background: var(--plaza-selected); color: var(--apple-blue); border-color: var(--border-subtle); }
+
+    .modal-backdrop { background: #23282266; backdrop-filter: none; }
+    .modal-sheet { background: #fff; border-color: var(--border-subtle); box-shadow: 0 16px 40px #23282224; }
+    .modal-header-tag, .topo-role { color: var(--apple-blue); font-weight: 500; letter-spacing: 0; }
+    .modal-title { font-weight: 600; }
+    .modal-topology-box, .modal-policy-box { background: var(--bg-canvas); border-color: var(--border-subtle); color: var(--text-secondary); }
+    .topo-channel, .channel-line { color: var(--text-secondary); border-color: var(--border-strong); }
+    .form-input, .form-textarea { border-color: var(--border-strong); border-radius: 8px; }
+    .form-input:focus, .form-textarea:focus { border-color: var(--border-focus); box-shadow: none; }
+    #authResultNotice { background: var(--plaza-selected); border: 1px solid #d4ded4; border-radius: 8px; padding: 12px; margin-top: 12px; color: var(--apple-blue); }
+    :is(button, a, input, textarea):focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+    .deck-action-btn:focus-visible { outline-offset: -4px; }
+    @media (max-width: 768px) {
+      .top-nav { height: 56px; padding-inline: 12px; }
+      .nav-left, .nav-brand { gap: 6px; }
+      .nav-divider, .brand-logo-badge { display: none; }
+      .brand-title { font-size: 12px; }
+      .back-btn, .btn-publish-demand { min-height: 40px; padding-inline: 8px; }
+      .plaza-container { padding-block: 20px 40px; }
+      .hero-title { font-size: clamp(28px, 8vw, 36px); }
+      .hero-header { margin-bottom: 16px; }
+      .search-spotlight-wrapper { margin: 0 0 12px; }
+      .filter-pills-row { gap: 4px; }
+      .filter-pill { min-height: 40px; padding-inline: 8px; font-size: 12px; }
+      .deck-sticky-stage { top: 56px; height: min(calc(100svh - 56px), 568px); }
+      .deck-spec-status { font-size: 11px; }
+      .stat-label, .stats-protocol { font-size: 11px; }
+    }
+    @media (max-width: 360px) {
+      .brand-title { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :is(.deck-card-article, .deck-card-dim, .modal-sheet, .modal-backdrop) { transition: none; }
+    }
   </style>
+  <link rel="stylesheet" href="assets/site-theme.css?v=1">
 </head>
 <body>
 
-  <!-- Ambient Backdrop -->
-  <div class="ambient-glow"></div>
-
   <!-- Top Navigation Bar -->
-  <header class="top-nav">
+  <header class="top-nav site-workshop-header">
     <div class="nav-left">
-      <a href="index.html" class="back-btn" title="返回安农智办对话大厅">
+      <a href="index.html" class="back-btn site-back">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        <span>返回办事大厅</span>
+        <span>返回大厅</span>
       </a>
-      <div class="nav-divider"></div>
-      <div class="nav-brand">
-        <div class="brand-logo-badge">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        </div>
-        <span class="brand-title">科研与学业互助广场</span>
-      </div>
-    </div>
-
-    <div class="nav-center-status">
-      <span class="status-pulse-dot"></span>
-      <span>校内分布式智能体 P2P 网络 · 142 个活跃互助节点</span>
+      <span class="brand-title site-workshop-name">科研互助</span>
     </div>
 
     <div class="nav-right">
       <button class="btn-publish-demand" onclick="openPublishModal()">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        <span>发布互助需求</span>
+        <span>新建需求</span>
       </button>
     </div>
   </header>
@@ -1430,12 +1554,9 @@
 
     <!-- Hero Header -->
     <section class="hero-header">
-      <div class="hero-tagline">
-        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <span>多智能体点对点撮合网络</span>
-      </div>
-      <h1 class="hero-title">打破学科壁垒，让智能体在校园互帮互助</h1>
-      <p class="hero-desc">农科真实数据资产与工科算法算力互补撮合 · 大型实验仪器机时互换 · 大创与挑战杯跨学科组队 · AI跑腿双端本人拍板</p>
+      <div class="hero-tagline">安农智办 · 校园协作</div>
+      <h1 class="hero-title">科研与学业互助广场</h1>
+      <p class="hero-desc">浏览跨学科组队、仪器机时和研究资源需求。</p>
     </section>
 
     <!-- Apple Spotlight Style Search Bar -->
@@ -1443,38 +1564,38 @@
       <svg class="spotlight-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" id="plazaSearchInput" class="spotlight-box" placeholder="搜索关键词：茶树病斑、多光谱、YOLO、计算机视觉、嵌入式、拖拉机振动、激光共聚焦、考研408..." oninput="handleSearchInput(this.value)">
+      <input type="text" id="plazaSearchInput" class="spotlight-box" placeholder="搜索需求，如：多光谱、显微镜、考研" aria-label="搜索互助需求" oninput="handleSearchInput(this.value)">
       <button id="clearSearchBtn" class="spotlight-clear-btn" onclick="clearSearch()" title="清空搜索">✕</button>
     </div>
 
     <!-- Filter Pills -->
     <div class="filter-pills-row" id="filterPillsRow">
-      <div class="filter-pill active" data-category="all" onclick="setCategoryFilter('all', this)">全部需求 <span class="filter-count" id="countAll">(6)</span></div>
-      <div class="filter-pill" data-category="data" onclick="setCategoryFilter('data', this)">农林数据资产 <span class="filter-count">(2)</span></div>
-      <div class="filter-pill" data-category="algo" onclick="setCategoryFilter('algo', this)">算法与工程 <span class="filter-count">(2)</span></div>
-      <div class="filter-pill" data-category="instrument" onclick="setCategoryFilter('instrument', this)">大型仪器机时 <span class="filter-count">(1)</span></div>
-      <div class="filter-pill" data-category="study" onclick="setCategoryFilter('study', this)">竞赛组队与考研 <span class="filter-count">(1)</span></div>
+      <button type="button" class="filter-pill active" aria-pressed="true" data-category="all" onclick="setCategoryFilter('all')">全部需求 <span class="filter-count" id="countAll">(6)</span></button>
+      <button type="button" class="filter-pill" aria-pressed="false" data-category="data" onclick="setCategoryFilter('data')">农林数据资产 <span class="filter-count">(2)</span></button>
+      <button type="button" class="filter-pill" aria-pressed="false" data-category="algo" onclick="setCategoryFilter('algo')">算法与工程 <span class="filter-count">(2)</span></button>
+      <button type="button" class="filter-pill" aria-pressed="false" data-category="instrument" onclick="setCategoryFilter('instrument')">大型仪器机时 <span class="filter-count">(1)</span></button>
+      <button type="button" class="filter-pill" aria-pressed="false" data-category="study" onclick="setCategoryFilter('study')">竞赛组队与考研 <span class="filter-count">(1)</span></button>
     </div>
 
     <!-- Stats Bar & Mode Switcher -->
     <div class="plaza-stats-bar">
-      <div class="stats-label">当前检索到 <span class="stats-strong" id="visibleDemandsCount">6</span> 条跨学科互助意向单</div>
+      <div class="stats-label"><span class="stats-strong" id="visibleDemandsCount">6</span> 条需求</div>
       
       <!-- Apple-Style View Switcher -->
       <div class="view-switcher-group">
-        <button class="view-btn active" id="btnDeckView" onclick="setViewMode('deck')" title="3D 景深堆叠流">
+        <button class="view-btn active" id="btnDeckView" aria-pressed="true" onclick="setViewMode('deck')" title="3D 堆叠">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-          <span>3D 景深堆叠流</span>
+          <span>3D 堆叠</span>
         </button>
-        <button class="view-btn" id="btnGridView" onclick="setViewMode('grid')" title="矩阵平铺全览">
+        <button class="view-btn" id="btnGridView" aria-pressed="false" onclick="setViewMode('grid')" title="网格">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>矩阵平铺全览</span>
+          <span>网格</span>
         </button>
       </div>
 
       <div class="stats-protocol">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>数字校园身份认证保障 · 敏感数据严禁AI越权交付</span>
+        <span>参赛演示 · 示例需求与本机草稿</span>
       </div>
     </div>
 
@@ -1485,7 +1606,7 @@
       </div>
       <div class="deck-scroll-hint" id="deckScrollHint">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-        <span>向下滚动翻阅 3D 互助意向单 · 点击角标查看对接详情</span>
+        <span>向下滚动，浏览更多需求</span>
       </div>
     </section>
 
@@ -1498,9 +1619,9 @@
           <div class="demand-card-header">
             <div class="card-meta-left">
               <span class="dept-badge">茶树生物学重点实验室</span>
-              <span class="card-time">10分钟前活跃</span>
+              <span class="card-time">示例需求</span>
             </div>
-            <span class="match-rate-badge">撮合契合度 98.6%</span>
+            <span class="match-rate-badge">示例契合度 98.6%</span>
           </div>
           <h2 class="demand-title">茶树叶部病斑多光谱图谱采样与端侧轻量化算法验证</h2>
           <p class="demand-desc">课题组已在舒城、黄山茶园采集5000+组高精度病害多光谱与叶绿素反射率样本并完成真值标注，急寻擅长YOLOv10轻量化剪枝与端侧部署的工科同学联合申报挑战杯。（本信息为虚构，仅供比赛展示）</p>
@@ -1528,7 +1649,7 @@
         <div class="demand-card-footer">
           <div class="peer-indicator">
             <div class="peer-avatar">信</div>
-            <span>匹配对端：信息与计算机学院 视觉课题组智能体</span>
+            <span>示例对端：信息与计算机学院 视觉课题组智能体</span>
           </div>
           <button class="btn-card-detail" onclick="openDetailModal(1)">查看对接详情 ›</button>
         </div>
@@ -1542,7 +1663,7 @@
               <span class="dept-badge">工学院 · 农机装备工程团队</span>
               <span class="card-time">35分钟前活跃</span>
             </div>
-            <span class="match-rate-badge">撮合契合度 95.2%</span>
+            <span class="match-rate-badge">示例契合度 95.2%</span>
           </div>
           <h2 class="demand-title">轮式农机作业振动时序信号边缘端轻量化异常预测</h2>
           <p class="demand-desc">团队搭建了农田旋耕机具振动多通道遥测台架，积累了完整非平稳振动加速度时序，希望匹配对端智能体引荐精通轻量化时序模型压缩与嵌入式下位的同学。（本信息为虚构，仅供比赛展示）</p>
@@ -1570,7 +1691,7 @@
         <div class="demand-card-footer">
           <div class="peer-indicator">
             <div class="peer-avatar">自</div>
-            <span>匹配对端：自动化与物联网工程课题组智能体</span>
+            <span>示例对端：自动化与物联网工程课题组智能体</span>
           </div>
           <button class="btn-card-detail" onclick="openDetailModal(2)">查看对接详情 ›</button>
         </div>
@@ -1584,7 +1705,7 @@
               <span class="dept-badge">生命科学学院 · 植物免疫组</span>
               <span class="card-time">1小时前发布</span>
             </div>
-            <span class="match-rate-badge">撮合契合度 97.4%</span>
+            <span class="match-rate-badge">示例契合度 97.4%</span>
           </div>
           <h2 class="demand-title">超分辨激光共聚焦显微镜周四机时与近红外时段置换</h2>
           <p class="demand-desc">本组持有勤学楼生科测试中心周四晚段18:00-22:00超分辨激光共聚焦显微镜已预约机时，因细胞样品培养延期，急需置换周五或周末近红外光谱机时，附赠荧光制样支持。（本信息为虚构，仅供比赛展示）</p>
@@ -1610,7 +1731,7 @@
         <div class="demand-card-footer">
           <div class="peer-indicator">
             <div class="peer-avatar">农</div>
-            <span>匹配对端：农学院 作物生理遗传实验室智能体</span>
+            <span>示例对端：农学院 作物生理遗传实验室智能体</span>
           </div>
           <button class="btn-card-detail" onclick="openDetailModal(3)">查看对接详情 ›</button>
         </div>
@@ -1624,7 +1745,7 @@
               <span class="dept-badge">植物保护学院 · 昆虫生理团队</span>
               <span class="card-time">2小时前发布</span>
             </div>
-            <span class="match-rate-badge">撮合契合度 96.8%</span>
+            <span class="match-rate-badge">示例契合度 96.8%</span>
           </div>
           <h2 class="demand-title">水稻稻飞虱病害无人机多光谱全景航测与比赛联合组队</h2>
           <p class="demand-desc">植保团队已获取庐江试验基地连片水稻田间无人机高清多光谱影像，具有专家级虫害危害分级金标准。招募算法主力同学组队冲击省挑战杯与全国农芯智大赛。（本信息为虚构，仅供比赛展示）</p>
@@ -1652,7 +1773,7 @@
         <div class="demand-card-footer">
           <div class="peer-indicator">
             <div class="peer-avatar">信</div>
-            <span>匹配对端：智能科学与技术本科大创团队智能体</span>
+            <span>示例对端：智能科学与技术本科大创团队智能体</span>
           </div>
           <button class="btn-card-detail" onclick="openDetailModal(4)">查看对接详情 ›</button>
         </div>
@@ -1666,7 +1787,7 @@
               <span class="dept-badge">园艺学院 · 果树生理课题组</span>
               <span class="card-time">4小时前发布</span>
             </div>
-            <span class="match-rate-badge">撮合契合度 94.1%</span>
+            <span class="match-rate-badge">示例契合度 94.1%</span>
           </div>
           <h2 class="demand-title">手持式便携探头近红外果实可溶性固形物(糖度)标定算法</h2>
           <p class="demand-desc">团队针对梨、桃等耐贮藏果品完成了2000组手持微型光谱探头实测曲线与折光仪糖度理化真实值的对照实验，急寻算法同学设计1D-CNN回归校准方程并固化为手机离线应用。（本信息为虚构，仅供比赛展示）</p>
@@ -1694,7 +1815,7 @@
         <div class="demand-card-footer">
           <div class="peer-indicator">
             <div class="peer-avatar">软</div>
-            <span>匹配对端：软件工程移动端开发团队智能体</span>
+            <span>示例对端：软件工程移动端开发团队智能体</span>
           </div>
           <button class="btn-card-detail" onclick="openDetailModal(5)">查看对接详情 ›</button>
         </div>
@@ -1708,7 +1829,7 @@
               <span class="dept-badge">信智学院 · 学业互助联合会</span>
               <span class="card-time">5小时前发布</span>
             </div>
-            <span class="match-rate-badge">撮合契合度 99.0%</span>
+            <span class="match-rate-badge">示例契合度 99.0%</span>
           </div>
           <h2 class="demand-title">2027考研数学一与计算机408核心概念断层互助探针小组</h2>
           <p class="demand-desc">已整理历年统考未定式极限、级数敛散性与数据结构DAG拓扑诊断题库。组织4人跨学科闭门自习攻坚搭档，每日基于确定性认知探针复盘错因，拒绝低效题海。（本信息为虚构，仅供比赛展示）</p>
@@ -1736,7 +1857,7 @@
         <div class="demand-card-footer">
           <div class="peer-indicator">
             <div class="peer-avatar">学</div>
-            <span>匹配对端：理学院 应用数学研学小组智能体</span>
+            <span>示例对端：理学院 应用数学研学小组智能体</span>
           </div>
           <button class="btn-card-detail" onclick="openDetailModal(6)">查看对接详情 ›</button>
         </div>
@@ -1749,8 +1870,8 @@
       <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
       </svg>
-      <h3 class="empty-title">未搜索到相关科研需求单</h3>
-      <p class="empty-desc">您可以尝试输入其他关键词（如：多光谱、YOLO、显微镜、考研、工学院），或点击右上角「发布互助需求」，智能体将自动为您在校内寻找匹配对端。</p>
+      <h3 class="empty-title">未找到相关需求</h3>
+      <p class="empty-desc">试试其他关键词，或清除筛选查看全部需求。</p>
       <button class="btn-publish-demand" onclick="clearSearch()">查看全部需求</button>
     </div>
 
@@ -1760,14 +1881,14 @@
   <div class="modal-backdrop" id="detailModalBackdrop" onclick="if(event.target===this) closeDetailModal()">
     <div class="modal-sheet">
       <button class="modal-close-btn" onclick="closeDetailModal()" title="关闭">✕</button>
-      <div class="modal-header-tag" id="modalTag">多智能体 P2P 撮合意向对接</div>
+      <div class="modal-header-tag" id="modalTag">互助需求 · 对接演示</div>
       <h3 class="modal-title" id="modalTitle">科研需求单详情与双端拍板</h3>
 
       <div id="modalDesc" style="font-size:13.5px; color:var(--text-secondary); line-height:1.6; margin-bottom:14px;"></div>
 
       <div class="modal-topology-box">
         <div class="topo-node">
-          <div class="topo-role">需求发起方智能体</div>
+          <div class="topo-role">需求方</div>
           <div class="topo-name" id="modalSourceTeam">茶学国家重点实验室</div>
           <div class="topo-dept" id="modalSourceDept">农林多模态数据本端</div>
         </div>
@@ -1777,31 +1898,31 @@
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
             <span>--›</span>
           </div>
-          <span style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">P2P加密信道</span>
+          <span style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">协作意向</span>
         </div>
         <div class="topo-node">
-          <div class="topo-role">匹配协作方智能体</div>
+          <div class="topo-role">协作方</div>
           <div class="topo-name" id="modalTargetTeam">信息与计算机学院视觉组</div>
           <div class="topo-dept" id="modalTargetDept">轻量化算法对端 (匹配 98.6%)</div>
         </div>
       </div>
 
       <div class="modal-policy-box">
-        <strong>安全伦理承诺（AI 跑腿，学生拍板）</strong>：<br>
-        智能体已自动化完成数据格式检验与初步合作意向匹配。依据高校科研数据安全管理规范，<strong>田间真实多光谱数据原件交付、代码仓库写权限授权与正式项目组队协议，必须由双方同学本人实名审定并点击授权！</strong>
+        <strong>演示说明</strong>：<br>
+        当前页面用于查看示例需求和管理本机草稿。请在校内渠道联系合作对象，并自行确认数据共享权限。
       </div>
 
       <div class="modal-actions" id="modalActionArea">
         <button class="btn-auth-confirm" id="btnAuthConfirm" onclick="confirmPeerCollaboration()">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          <span>本人实名认证 · 建立加密 P2P 协作通道</span>
+          <span>模拟确认协作意向</span>
         </button>
         <button class="btn-auth-cancel" onclick="closeDetailModal()">暂存待研判</button>
       </div>
 
-      <div id="authResultNotice" style="display:none; margin-top:14px; background:rgba(48,209,88,0.12); border:1px solid rgba(48,209,88,0.25); border-radius:12px; padding:12px 14px; font-size:12.5px; color:var(--apple-emerald); line-height:1.6;">
-        <strong>双方同学已完成数字校园实名授权！</strong><br>
-        点对点加密数据传输信道已开启，系统已为双方团队自动生成《安农大农工交叉科研项目意向推进备忘录》，双方可在专属工作区推进联合调优。
+      <div id="authResultNotice" style="display:none">
+        <strong>已确认演示意向。</strong><br>
+        状态仅用于页面演示。
       </div>
     </div>
   </div>
@@ -1810,41 +1931,43 @@
   <div class="modal-backdrop" id="publishModalBackdrop" onclick="if(event.target===this) closePublishModal()">
     <div class="modal-sheet">
       <button class="modal-close-btn" onclick="closePublishModal()" title="关闭">✕</button>
-      <div class="modal-header-tag">发布新科研互助需求单</div>
-      <h3 class="modal-title">智能体将自动提取标签并全网撮合</h3>
+      <div class="modal-header-tag">新建科研互助需求</div>
+      <h3 class="modal-title">填写互助需求，保存到当前浏览器</h3>
 
+      <form id="publishDemandForm">
       <div class="form-group">
-        <label class="form-label">需求标题 (简明概括)</label>
-        <input type="text" id="pubTitle" class="form-input" placeholder="例如：茶园土壤含水率遥测求物联网节点算法优化">
+        <label for="pubTitle" class="form-label">需求标题 (简明概括)</label>
+        <input type="text" id="pubTitle" required maxlength="80" class="form-input" placeholder="例如：茶园土壤含水率遥测求物联网节点算法优化">
       </div>
 
       <div class="form-group">
-        <label class="form-label">所属学院 / 课题组</label>
-        <input type="text" id="pubDept" class="form-input" placeholder="例如：茶与食品科技学院 · 茶树栽培团队">
+        <label for="pubDept" class="form-label">所属学院 / 课题组</label>
+        <input type="text" id="pubDept" maxlength="120" class="form-input" placeholder="例如：茶与食品科技学院 · 茶树栽培团队">
       </div>
 
       <div class="form-group">
-        <label class="form-label">本端持有资源 / 数据资产 (多个标签逗号隔开)</label>
-        <input type="text" id="pubSourceTags" class="form-input" placeholder="例如：#1000组土壤水势数据, #微孔注水实验台架">
+        <label for="pubSourceTags" class="form-label">本端持有资源 / 数据资产 (多个标签逗号隔开)</label>
+        <input type="text" id="pubSourceTags" maxlength="120" class="form-input" placeholder="例如：#1000组土壤水势数据, #微孔注水实验台架">
       </div>
 
       <div class="form-group">
-        <label class="form-label">期望匹配能力 / 技术栈 (多个标签逗号隔开)</label>
-        <input type="text" id="pubTargetTags" class="form-input" placeholder="例如：#时序预测, #LoRaWAN低功耗节点, #大创组队">
+        <label for="pubTargetTags" class="form-label">期望匹配能力 / 技术栈 (多个标签逗号隔开)</label>
+        <input type="text" id="pubTargetTags" maxlength="120" class="form-input" placeholder="例如：#时序预测, #LoRaWAN低功耗节点, #大创组队">
       </div>
 
       <div class="form-group">
-        <label class="form-label">详细需求描述与背景</label>
-        <textarea id="pubDesc" class="form-textarea" placeholder="详细说明您手头的科研素材、需要对端同学协助解决的算法/工程/仪器难点，以及成果联合署名或申报竞赛规划..."></textarea>
+        <label for="pubDesc" class="form-label">详细需求描述与背景</label>
+        <textarea id="pubDesc" required maxlength="600" class="form-textarea" placeholder="详细说明您手头的科研素材、需要对端同学协助解决的算法/工程/仪器难点，以及成果联合署名或申报竞赛规划..."></textarea>
       </div>
 
       <div class="modal-actions" style="margin-top:18px;">
-        <button class="btn-auth-confirm" onclick="submitNewDemand()">
+        <button type="submit" class="btn-auth-confirm">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          <span>智能体自动提取标签并发布</span>
+          <span>保存本机草稿</span>
         </button>
-        <button class="btn-auth-cancel" onclick="closePublishModal()">取消</button>
+        <button type="button" class="btn-auth-cancel" onclick="closePublishModal()">取消</button>
       </div>
+      </form>
     </div>
   </div>
 
@@ -1987,13 +2110,14 @@
       const btnGrid = document.getElementById('btnGridView');
       const deckSection = document.getElementById('deckSection');
       const demandsGrid = document.getElementById('demandsGrid');
+      btnDeck.setAttribute('aria-pressed', String(mode === 'deck'));
+      btnGrid.setAttribute('aria-pressed', String(mode === 'grid'));
 
       if (mode === 'deck') {
         btnDeck.classList.add('active');
         btnGrid.classList.remove('active');
         deckSection.style.display = 'block';
         demandsGrid.style.display = 'none';
-        updateDeckPhysics();
       } else {
         btnDeck.classList.remove('active');
         btnGrid.classList.add('active');
@@ -2001,11 +2125,59 @@
         demandsGrid.style.display = 'grid';
       }
       filterCards();
+      if (mode === 'deck' && deckFrame === null) deckFrame = requestAnimationFrame(updateDeckPhysics);
     }
 
     // --------------------------------------------------------------------------
     // 渲染 3D Scroll Stacking Deck (富语义排版卡片 + 切角按钮)
     // --------------------------------------------------------------------------
+    const draftKey = 'anau_plaza_drafts_v1';
+
+    function escapeCardText(value) {
+      const node = document.createElement('span');
+      node.textContent = value;
+      return node.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function makeDraft(fields, id) {
+      const { title, dept, desc, offer, seek } = fields;
+      return {
+        id, title, dept, desc, offer, seek,
+        category: 'data', categoryName: '本机草稿', isDraft: true,
+        sourceTeam: dept || '本机草稿', sourceDept: offer || '待补充',
+        targetTeam: '待联系', targetDept: seek || '待补充', display: '本机草稿 · 待联系',
+        accent: '#2997ff'
+      };
+    }
+
+    function renderDraftGrid() {
+      const grid = document.getElementById('demandsGrid');
+      grid.querySelectorAll('.local-draft-card').forEach(card => card.remove());
+      [...DEMANDS_DATA].reverse().filter(item => item.isDraft).forEach(item => {
+        const card = document.createElement('article');
+        card.className = 'demand-card local-draft-card';
+        card.dataset.category = item.category;
+        card.dataset.keywords = [item.title, item.dept, item.desc, item.offer, item.seek].join(' ');
+        card.innerHTML = `
+          <div class="demand-card-top">
+            <span class="dept-badge">本机草稿</span>
+            <h2 class="demand-title">${escapeCardText(item.title)}</h2>
+            <p class="demand-desc">${escapeCardText(item.desc)}</p>
+          </div>
+          <div class="demand-card-footer">
+            <span>待联系</span>
+            <button type="button" class="btn-card-detail">查看草稿 ›</button>
+          </div>`;
+        card.querySelector('button').addEventListener('click', () => openDetailModal(item.id));
+        grid.prepend(card);
+      });
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        const category = pill.dataset.category;
+        const count = DEMANDS_DATA.filter(item => category === 'all' || item.category === category).length;
+        pill.querySelector('.filter-count').textContent = '(' + count + ')';
+      });
+    }
+
     function renderDeck() {
       const stage = document.getElementById('deckStage');
       if (!stage) return;
@@ -2016,41 +2188,41 @@
         article.className = 'deck-card-article';
         article.id = `deckCard-${item.id}`;
         article.setAttribute('data-category', item.category);
-        article.setAttribute('data-keywords', `${item.title} ${item.dept} ${item.categoryName} ${item.offer} ${item.seek} ${item.desc}`);
+        article.setAttribute('data-keywords', `${escapeCardText(item.title)} ${item.dept} ${escapeCardText(item.categoryName)} ${escapeCardText(item.offer)} ${escapeCardText(item.seek)} ${item.desc}`);
 
         const R = 18;
         const cornerSvg = `<svg aria-hidden="true" width="${R}" height="${R}" viewBox="0 0 ${R} ${R}"><path d="M${R} 0 V${R} H0 A${R} ${R} 0 0 0 ${R} 0 Z" fill="#ffffff"/></svg>`;
 
         article.innerHTML = `
           <div class="deck-card-inner" onclick="openDetailModal(${item.id})">
-            <div class="deck-card-content" style="background: radial-gradient(circle at 85% 15%, ${item.accent}14 0%, transparent 65%), linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+            <div class="deck-card-content">
               
               <!-- Top bar -->
               <div class="deck-card-topbar">
-                <span class="deck-badge" style="background:${item.accent}18; color:${item.accent}; border:1px solid ${item.accent}40;">
-                  <span class="deck-badge-dot" style="background:${item.accent};"></span>
-                  ${item.categoryName}
+                <span class="deck-badge">
+                  <span class="deck-badge-dot" aria-hidden="true"></span>
+                  ${escapeCardText(item.categoryName)}
                 </span>
-                <span class="deck-serial">ANAU ACADEMIC MUTUAL-AID INTENTION SHEET</span>
+                <span class="deck-serial">安农科研互助意向单</span>
               </div>
 
               <!-- Main Heading & Pairing -->
               <div>
-                <h2 class="deck-heading">${item.title}</h2>
-                <div class="deck-subheading">协同对接端：${item.sourceTeam.split('·')[0].trim()} ‹—› ${item.targetTeam.split('·')[0].trim()} · <span style="font-size:12px; color:var(--text-tertiary); font-weight:500;">（本信息为虚构，仅供比赛展示）</span></div>
+                <h2 class="deck-heading">${escapeCardText(item.title)}</h2>
+                <div class="deck-subheading">协作方向：${escapeCardText(item.sourceTeam.split('·')[0].trim())} ‹—› ${escapeCardText(item.targetTeam.split('·')[0].trim())} · <span style="font-size:12px; color:var(--text-tertiary); font-weight:500;">（本信息为虚构，仅供比赛展示）</span></div>
               </div>
 
               <!-- Specs Grid -->
               <div class="deck-specs-grid">
                 <div class="deck-spec-box">
-                  <span class="deck-spec-tag" style="color:${item.accent};">资源供给 · OFFER</span>
-                  <p class="deck-spec-text">${item.offer}</p>
-                  <span class="deck-spec-status">科研存证核验通过 · 真实资源可用</span>
+                  <span class="deck-spec-tag">可提供的资源</span>
+                  <p class="deck-spec-text">${escapeCardText(item.offer)}</p>
+                  <span class="deck-spec-status">${item.isDraft ? '来自本机草稿' : '示例资源'}</span>
                 </div>
                 <div class="deck-spec-box">
-                  <span class="deck-spec-tag" style="color:${item.accent};">需求寻求 · SEEK</span>
-                  <p class="deck-spec-text">${item.seek}</p>
-                  <span class="deck-spec-status">预期目标：联合组队 / 论文署名 / 交叉申报</span>
+                  <span class="deck-spec-tag">希望获得的协助</span>
+                  <p class="deck-spec-text">${escapeCardText(item.seek)}</p>
+                  <span class="deck-spec-status">具体合作方式见需求详情</span>
                 </div>
               </div>
 
@@ -2058,7 +2230,7 @@
               <div class="deck-card-footer">
                 <div class="deck-footer-left">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <span>分布式智能体撮合网络 · 存证有效 · 本人拍板授权 · <strong style="color:var(--apple-blue); font-weight:600;">（本信息为虚构，仅供比赛展示）</strong></span>
+                  <span>${item.isDraft ? '本机草稿 · 未向他人发布' : '示例需求 · 仅供比赛展示'}</span>
                 </div>
               </div>
 
@@ -2070,12 +2242,12 @@
             <div class="deck-cutout-container" onclick="event.stopPropagation()">
               <div class="deck-cutout-top">${cornerSvg}</div>
               <div class="deck-cutout-left">${cornerSvg}</div>
-              <button class="deck-action-btn" onclick="openDetailModal(${item.id})" aria-label="查看意向单并对接：${item.title}">
+              <button class="deck-action-btn" onclick="openDetailModal(${item.id})" aria-label="查看意向单并对接：${escapeCardText(item.title)}">
                 <div class="deck-action-text">
-                  <span class="deck-action-title">${item.title}</span>
-                  <span class="deck-action-sub">${item.display}</span>
+                  <span class="deck-action-title">${escapeCardText(item.title)}</span>
+                  <span class="deck-action-sub">${escapeCardText(item.display)}</span>
                 </div>
-                <div class="deck-action-arrow" style="background:${item.accent}; color:#000000;">
+                <div class="deck-action-arrow">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="7" y1="17" x2="17" y2="7"></line>
                     <polyline points="7 7 17 7 17 17"></polyline>
@@ -2102,6 +2274,7 @@
     // --------------------------------------------------------------------------
     // 3D 景深堆叠物理运动引擎 (Spring Smoothed Scroll Transforms)
     // --------------------------------------------------------------------------
+    let deckFrame = null;
     let deckV = 0;
     let targetDeckV = 0;
     const ENTER_RATE = 0.72;
@@ -2124,6 +2297,7 @@
     }
 
     function updateDeckPhysics() {
+      deckFrame = null;
       if (currentViewMode !== 'deck') return;
 
       const section = document.getElementById('deckSection');
@@ -2170,7 +2344,7 @@
         hint.style.opacity = (deckV > 0.92 || count <= 1) ? '0' : '1';
       }
 
-      requestAnimationFrame(updateDeckPhysics);
+      deckFrame = requestAnimationFrame(updateDeckPhysics);
     }
 
     // --------------------------------------------------------------------------
@@ -2198,20 +2372,17 @@
       filterCards();
     }
 
-    function setCategoryFilter(cat, el) {
+    function setCategoryFilter(cat) {
       currentCategory = cat;
-      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-      if (el) el.classList.add('active');
+      updateFilterPillsActiveUI();
       filterCards();
     }
 
     function updateFilterPillsActiveUI() {
-      document.querySelectorAll('.filter-pill').forEach(p => {
-        if (p.getAttribute('data-category') === currentCategory) {
-          p.classList.add('active');
-        } else {
-          p.classList.remove('active');
-        }
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        const active = pill.dataset.category === currentCategory;
+        pill.classList.toggle('active', active);
+        pill.setAttribute('aria-pressed', String(active));
       });
     }
 
@@ -2280,6 +2451,7 @@
 
       document.getElementById('authResultNotice').style.display = 'none';
       document.getElementById('modalActionArea').style.display = 'flex';
+      document.getElementById('btnAuthConfirm').style.display = item.isDraft ? 'none' : '';
 
       const backdrop = document.getElementById('detailModalBackdrop');
       backdrop.classList.add('open');
@@ -2307,50 +2479,53 @@
       backdrop.classList.remove('open');
     }
 
-    function handlePublishSubmit(e) {
-      e.preventDefault();
-      const title = document.getElementById('pubTitle').value.trim();
-      const dept = document.getElementById('pubDept').value.trim();
-      const desc = document.getElementById('pubDesc').value.trim();
-      const sourceTags = document.getElementById('pubSourceTags').value.trim();
-      const targetTags = document.getElementById('pubTargetTags').value.trim();
-
-      if (!title || !desc) {
-        alert('请完整填写意向标题与详细互助诉求');
+    function handlePublishSubmit(event) {
+      event.preventDefault();
+      const get = id => document.getElementById(id).value.trim();
+      const fields = {
+        title: get('pubTitle'), dept: get('pubDept'), desc: get('pubDesc'),
+        offer: get('pubSourceTags'), seek: get('pubTargetTags')
+      };
+      if (!fields.title || !fields.desc) {
+        alert('请填写需求标题和详细说明。');
         return;
       }
-
-      const newId = DEMANDS_DATA.length + 1;
-      const newCard = {
-        id: newId,
-        title: title,
-        category: 'data',
-        categoryName: '自主发布',
-        dept: dept || '安徽农业大学相关课题组',
-        sourceTeam: dept || '校内自研课题团队',
-        sourceDept: sourceTags || '科研数据与实验耗材',
-        targetTeam: '对端匹配院系智能体',
-        targetDept: targetTags || '算法与实验协同',
-        display: `${dept || '发布团队'} ‹-› 待智能撮合`,
-        accent: '#2997ff',
-        offer: sourceTags || '自拟科研数据资产',
-        seek: targetTags || '自拟算法与机时诉求',
-        desc: desc,
-        bg: ['#0a0c14', '#121624']
-      };
-
-      DEMANDS_DATA.unshift(newCard);
+      const id = Math.max(...DEMANDS_DATA.map(item => item.id), 0) + 1;
+      const drafts = [
+        fields, ...DEMANDS_DATA.filter(item => item.isDraft).map(({ title, dept, desc, offer, seek }) => ({ title, dept, desc, offer, seek }))
+      ];
+      try {
+        localStorage.setItem(draftKey, JSON.stringify(drafts));
+      } catch {
+        alert('浏览器无法保存这条草稿，请检查存储设置。');
+        return;
+      }
+      DEMANDS_DATA.unshift(makeDraft(fields, id));
+      event.currentTarget.reset();
       renderDeck();
-      filterCards();
+      renderDraftGrid();
+      clearSearch();
       closePublishModal();
-      openDetailModal(newId);
+      openDetailModal(id);
     }
 
     // 初始化
     window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(draftKey) || '[]');
+        const fields = ['title', 'dept', 'desc', 'offer', 'seek'];
+        if (Array.isArray(saved)) {
+          saved.filter(item => item && fields.every(key => typeof item[key] === 'string'))
+            .forEach((item, index) => {
+              DEMANDS_DATA.splice(index, 0, makeDraft(item, 7 + index));
+            });
+        }
+      } catch {}
+      document.getElementById('publishDemandForm').addEventListener('submit', handlePublishSubmit);
+      renderDraftGrid();
       renderDeck();
       filterCards();
-      requestAnimationFrame(updateDeckPhysics);
+      deckFrame = requestAnimationFrame(updateDeckPhysics);
     });
   </script>
 </body>

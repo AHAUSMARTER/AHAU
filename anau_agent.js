@@ -127,7 +127,7 @@
 
         <!-- 双轨安全隔离说明 -->
         <div style="font-size:11.5px; line-height:1.5; color:#475569; background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-bottom:12px;">
-          <strong>公私数据双轨隔离保障：</strong>公开课表、学分标准由 AI 自动只读核验；私有学籍、教务写操作已被 Action Gating 拦截，绝不擅自越权点击！
+          <strong>公私数据双轨隔离保障：</strong>此卡片使用示例数据。确认按钮仅改变本页演示状态。
         </div>
 
         <!-- 动作按钮 -->
@@ -1514,25 +1514,15 @@ canteens: {
     workflow: null, // 'classroom' | 'leave' | 'zongce' | 'kaoyan' | null
     workflowStep: 0,
     workflowData: {},
-    messages: [], // 存储真实多轮会话上下文: [{ role: 'user'|'assistant', content: string }]
     lastTopic: null, // 'cats' | 'canteens' | 'buildings' | 'classroom' | 'leave' | 'math' | 'faculty' | 'zongce' | 'kaoyan' | null
     lastLocation: null, // 最近提及的校园实体或地点，如 '猫坡', '东门', '勤学楼'
-    // 官方默认预设（学生可随时在界面打字框旁换成自己的个人密钥）
-    apiUrl: 'https://llmv1.ahau.edu.cn/v1/chat/completions',
-    apiKey: 'sk-FqJuk3X-X7J7hn20ks3RvQ',
-    modelName: 'Deepseek-V4.1-Flash-SS'
-  };
-
-  const DEFAULT_CONFIG = {
-    apiKey: 'sk-FqJuk3X-X7J7hn20ks3RvQ',
-    apiUrl: 'https://llmv1.ahau.edu.cn/v1/chat/completions',
     modelName: 'Deepseek-V4.1-Flash-SS'
   };
 
   // ----------------------------------------------------------------------------
   // 2.1 安徽农业大学官方大模型异步通信引擎 (Deepseek-V4.1-Flash-SS)
   // ----------------------------------------------------------------------------
-  async function callAhauOfficialLlm(userPrompt) {
+  async function callAhauOfficialLlm(userPrompt, history, fallbackReply) {
     try {
       // 动态知识库压缩注入 (RAG)：如果用户问到具体学校信息，自动检索权威知识库；如果不涉及学校，完全保持通用顶级大模型纯净智能
       let facultySummary = '';
@@ -1545,7 +1535,7 @@ canteens: {
         examSummary = `- 历年期末真题与复习共享库（资料共享站: https://ahau-course.pages.dev/ ，共 278+ 份文档）：涵盖高等数学（22份含2009-2020真题与答案）、线性代数（32份真题与初等变换矩阵大题）、普通化学（34份含四大平衡真题）、工程制图（13份含相贯线样卷）、基础物理（6份含2023最新期末卷）、微观经济学（11份高鸿业/曼昆真题与名词解释）、基础会计（7份分录题）、管理学（卡旺卡案例）、思政合集（7份马原史纲毛概习题库）、农学与写作论文范例等。用户询问考试真题或期末试卷时，给出各科考点并引导访问 https://ahau-course.pages.dev/ 查阅下载原卷。`;
       }
 
-      const systemPrompt = `你是安徽农业大学官方 AI 办事智能体「徽农智 · 安农智办」，底层由安徽农业大学校级算力平台【Deepseek-V4.1-Flash-SS】大模型强劲驱动。
+      const systemPrompt = `你是面向安徽农业大学学生的参赛作品 AI 办事智能体「徽农智 · 安农智办」，底层由安徽农业大学校级算力平台【Deepseek-V4.1-Flash-SS】大模型强劲驱动。
 【核心定位与行为准则】：
 1. 身份：你不仅是安农大校园全栈智能助手，也是拥有顶级推理、文学创作、学术研讨和常识解答能力的 AI 伙伴（具备与 DeepSeek 原生模型完全一致的极高智商、深度思考与自然人设）。
 2. 学校专业知识（RAG 增强）：当用户提问涉及安徽农业大学（如各学院老师导师、课题方向、校宠花名册、四大食堂与北区餐饮、勤政楼办公不上课/勤学博学楼上课、茶树生物学国家重点实验室、综合素质测评加分细则、考研规划、期末历年真题库）时，你必须严格依据下方【安农大权威校情知识库】精准作答，严禁编造虚假信息！
@@ -1569,8 +1559,7 @@ ${examSummary}
       const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       // 提取前序历史 (排除刚刚追加的当前用户消息，避免结尾重复)
-      const previousHistory = (AgentState.messages || [])
-        .slice(0, -1)
+      const previousHistory = history
         .slice(-8)
         .map(m => ({
           role: m.role === 'user' ? 'user' : 'assistant',
@@ -1586,7 +1575,7 @@ ${examSummary}
       // 1. 优先通过本地服务代理发起校内请求，完美解决浏览器同源跨域 (CORS) 与内网证书受信任限制
       let deepseekResText = null;
       try {
-        const proxyResp = await fetch('/api/anau/chat_completions', {
+        const proxyResp = await fetch('api/anau/chat_completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1604,45 +1593,21 @@ ${examSummary}
           }
         }
       } catch (proxyErr) {
-        console.warn('本地网关代理请求未通过，尝试直连校内网关:', proxyErr);
-      }
-
-      // 2. 直连校内网关兜底
-      if (!deepseekResText) {
-        const response = await fetch(AgentState.apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${AgentState.apiKey}`
-          },
-          body: JSON.stringify({
-            model: AgentState.modelName,
-            messages: payloadMessages,
-            temperature: 0.7,
-            max_tokens: 1500
-          }),
-          signal: controller.signal
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data && data.choices && data.choices[0] && data.choices[0].message) {
-            deepseekResText = data.choices[0].message.content;
-          }
-        }
+        console.warn('模型服务未响应:', proxyErr);
       }
 
       clearTimeout(timeoutId);
 
       if (deepseekResText) {
         return {
-          text: deepseekResText + '\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V4.1-Flash-SS」实时推理提供)*',
+          text: escapeHtml(deepseekResText).replace(/\[/g, '\\[') + '\n\n*(本回答由 安徽农业大学官方算力平台「DeepSeek-V4.1-Flash-SS」实时推理提供)*',
           approval: null
         };
       }
       throw new Error('未连接校园网或校内网关未返回内容');
     } catch (err) {
       console.warn('调用大模型接口降级为内置智能知识引擎:', err);
-      const fallback = processUserInput(userPrompt, false, null);
+      const fallback = fallbackReply(userPrompt);
       return {
         text: fallback.text + '\n\n*(本回答由 安徽农业大学「徽农智 · 安农智办」数智大脑驱动)*',
         approval: fallback.approval,
@@ -1995,7 +1960,7 @@ ${examSummary}
     // 问候与寒暄
     if (/^(你好|您好|哈喽|hello|hi|在吗|在不在|有人吗|有人在吗|安农智办)/i.test(t) || t === '你好' || t === 'hi') {
       return {
-        text: '**同学你好！我是安徽农业大学「徽农智 · 安农智办」AI 助手！**\n\n很高兴为你服务！无论是：\n- **开具请假单 / 教室借用审批**（自动生成盖章表单，支持一键打印 PDF）\n- **数学算术计算与理科答疑**（加减乘除、微积分思想、步骤全解析）\n- 【校园办事防跑空指引】（勤学/博学楼教学、勤政楼办公、一卡通办理）\n- **生活指南**（欣苑/西苑/东苑/北苑食堂，思源/丰泽餐厅，东门来福与勤学楼花姐）\n- 【智慧农林特色】（茶树生物学国家重点实验室科普、银杏路打卡）\n\n请问今天有什么可以帮你的？随时跟我聊聊吧！'
+        text: '**同学你好！我是安徽农业大学「徽农智 · 安农智办」AI 助手！**\n\n很高兴为你服务！无论是：\n- **开具请假单 / 教室借用审批**（生成申请草案，可预览或打印）\n- **数学算术计算与理科答疑**（加减乘除、微积分思想、步骤全解析）\n- 【校园办事防跑空指引】（勤学/博学楼教学、勤政楼办公、一卡通办理）\n- **生活指南**（欣苑/西苑/东苑/北苑食堂，思源/丰泽餐厅，东门来福与勤学楼花姐）\n- 【智慧农林特色】（茶树生物学国家重点实验室科普、银杏路打卡）\n\n请问今天有什么可以帮你的？随时跟我聊聊吧！'
       };
     }
 
@@ -2440,8 +2405,8 @@ ${examSummary}
       title = '调课申请与教室占用冲突消解协同工作流';
       dept = '开课学院教学办 / 教务处教务运行科';
       steps = [
-        { name: '读取原授课计划与教师周课表', status: 'done', detail: '已核验：原周三第3节课程无学生大面积重叠' },
-        { name: '全校空闲教室资源自动拓扑扫描', status: 'done', detail: '已核验：拟调入时段勤学楼 402/博学楼 201 均空闲' },
+        { name: '读取原授课计划与教师周课表', status: 'done', detail: '模拟核验：原周三第3节课程无学生大面积重叠' },
+        { name: '全校空闲教室资源自动拓扑扫描', status: 'done', detail: '模拟核验：拟调入时段勤学楼 402/博学楼 201 均空闲' },
         { name: '教学院长终审与全班调课通告发布', status: 'gated', detail: '触发写入门禁：需任课教师/经办人核验并授权' }
       ];
       summaryText = '已为您完成拟调课程冲突检测与备选多媒体教室匹配。读操作已在您的浏览器原生沙箱中自动完成，正式写入教务系统并下发通知前已置入 0 次越权门禁，请您确认：';
@@ -2450,8 +2415,8 @@ ${examSummary}
       title = '培养方案毕业学分查漏与排课对齐工作流';
       dept = '教务处学籍与注册科 / 教学培养科';
       steps = [
-        { name: '抓取专业本科培养方案基线标准', status: 'done', detail: '已核验：总学分要求 160，必修 128，选修 32' },
-        { name: '比对学生当前教务系统已修读学分', status: 'done', detail: '已核验：已修 114，尚缺通识选修 2 学分、专业拓展 12 学分' },
+        { name: '抓取专业本科培养方案基线标准', status: 'done', detail: '模拟核验：总学分要求 160，必修 128，选修 32' },
+        { name: '比对学生当前教务系统已修读学分', status: 'done', detail: '模拟核验：已修 114，尚缺通识选修 2 学分、专业拓展 12 学分' },
         { name: '推荐补选方案并预选下学期缺额课程', status: 'gated', detail: '触发写入门禁：课程预选写入教务池需本人授权' }
       ];
       summaryText = '已为您核对毕业学分缺额并完成开课池时序排课规划。敏感学籍数据完全在本地加密处理，自动预选写入教务系统前已置入 0 次越权门禁：';
@@ -2460,21 +2425,21 @@ ${examSummary}
       title = '期末考试成绩异议复核多节点协同工作流';
       dept = '开课教研室 / 学院教学督导组 / 考务科';
       steps = [
-        { name: '调取卷面答卷归档与登分系统电子存根', status: 'done', detail: '已核验：答卷流水号与试卷扫描件匹配成功' },
-        { name: '双评专家组同卷背靠背分步重新核分', status: 'done', detail: '已核验：客观题无漏评，大题分步小计一致' },
+        { name: '调取卷面答卷归档与登分系统电子存根', status: 'done', detail: '模拟核验：答卷流水号与试卷扫描件匹配成功' },
+        { name: '双评专家组同卷背靠背分步重新核分', status: 'done', detail: '模拟核验：客观题无漏评，大题分步小计一致' },
         { name: '教学院长终核与教务系统更正签批', status: 'gated', detail: '触发写入门禁：最终成绩数据库回写需主管签字授权' }
       ];
       summaryText = '已为您调取卷面存根与专家核分流转记录。只读审查已通过，正式更正数据库前已激活 Action Gating 门禁卡口：';
     } else {
       scenarioKey = 'general';
-      title = '智能教务跨部门多智能体协同流转工作流';
+      title = '教务协同流程演示';
       dept = '现代教育技术中心 / 综合办事大厅';
       steps = [
-        { name: '浏览器原生沙箱环境初始化与凭证校验', status: 'done', detail: '已核验：本地公私数据双轨隔离已就绪' },
-        { name: '业务流转前置规则与跨部门接口对齐', status: 'done', detail: '已核验：教务、后勤、学工状态读操作无冲突' },
-        { name: '向校园核心系统推送最终业务办结表单', status: 'gated', detail: '触发写入门禁：高敏写入操作需经办人显式授权' }
+        { name: '浏览器原生沙箱环境初始化与凭证校验', status: 'done', detail: '模拟核验：本地公私数据双轨隔离已就绪' },
+        { name: '业务流转前置规则与跨部门接口对齐', status: 'done', detail: '模拟核验：教务、后勤、学工状态读操作无冲突' },
+        { name: '演示表单确认', status: 'gated', detail: '触发写入门禁：高敏写入操作需经办人显式授权' }
       ];
-      summaryText = '智能体已在后台作为被动能力接管本次跨部门协同任务。遵循 0 次擅自越权承诺，前置核验已就绪，等待最终确认：';
+      summaryText = '智能体已生成示例流程，等待模拟确认。';
     }
 
     const docNo = 'WEBER-' + Math.floor(100000 + Math.random() * 900000);
@@ -2482,7 +2447,7 @@ ${examSummary}
     return {
       text: `**【AgentWeber 智能教务协同引擎】被动协同流转已启动**\n\n` +
         `已在后台自动调取 **AgentWeber 智能教务协同与安全流转能力**（作为 AI 被动技能实时介入）。\n\n` +
-        `遵循 **公私数据双轨隔离** 与 **0 次擅自越权 Action Gating 门禁机制**，智能体在您的本地浏览器原生沙箱中完成了跨部门数据比对与流程编排。\n\n` +
+        `本流程使用演示数据，展示步骤编排和人工确认。\n\n` +
         summaryText,
       approval: null,
       widgetHtml: renderAgentWeberPassiveWidget({
@@ -2498,333 +2463,11 @@ ${examSummary}
   // ----------------------------------------------------------------------------
   // 数智安农 · 统一身份认证教务网关 & Agent 动作流水线 & 多维学业看板 (严格真实直连模式)
   // ----------------------------------------------------------------------------
-  function renderGatewayAuthCardWidget(wid) {
-    return `
-      <div class="anau-gateway-card" id="${wid}">
-        <div class="anau-gw-header">
-          <div class="anau-gw-title">
-            <span class="anau-gw-dot"></span>
-            <span>数智安农 · 统一身份认证教务网关 (真实直连)</span>
-          </div>
-          <span class="anau-gw-badge">调起本地可见 Chrome</span>
-        </div>
-        <p class="anau-gw-desc">
-          查询您的学期真实各科成绩与加权绩点 (GPA) 需接入安农大校园网门户统一身份认证 (i.ahau.edu.cn / ids.ahau.edu.cn)。点击后将在您屏幕上<strong>实时弹出一个可见的自动化浏览器窗口</strong>，自动登录并穿透进入本科教务系统 (bkjw.ahau.edu.cn) 抓取真实成绩单，绝不编造假数据。
-        </p>
-        <div class="anau-gw-form">
-          <div class="anau-gw-input-wrap">
-            <label class="anau-gw-label">安农大统一身份认证学工号</label>
-            <input type="text" id="anauAuthUser_${wid}" class="anau-gw-input" placeholder="请输入您的学号 (如 2023xxxx)" value="" autocomplete="off" />
-          </div>
-          <div class="anau-gw-input-wrap">
-            <label class="anau-gw-label">统一身份认证密码</label>
-            <input type="password" id="anauAuthPass_${wid}" class="anau-gw-input" placeholder="请输入您的统一身份认证密码" autocomplete="off" />
-          </div>
-          <div class="anau-gw-privacy-note">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>凭证仅在本地 Python Agent 进程中安全传输，绝不上载公网第三方服务器</span>
-          </div>
-          <div class="anau-gw-btn-row">
-            <button class="btn-anau-gw-submit" onclick="window.AnauAgent.submitGatewayAuth('${wid}')">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
-              调起本地可见 Chrome 窗口并自主登录查询
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderGatewayStepTraceWidget(wid) {
-    return `
-      <div class="anau-step-trace" id="${wid}">
-        <div class="anau-trace-hud">
-          <div class="anau-trace-title">
-            <span class="anau-gw-dot" style="animation: pulse 1s infinite;"></span>
-            <span>ANAU AUTONOMOUS AGENT RUNTIME · 原生浏览器执行中</span>
-          </div>
-          <span style="color:#6b7280; font-size:11px;">PID: 8088 · CHROME / EDGE / CHROMIUM</span>
-        </div>
-        <div class="anau-trace-list" id="${wid}_list">
-          <div class="anau-trace-item active" id="${wid}_step1">
-            <div class="anau-trace-left">
-              <span>▸ [1/4] 调起本地原生浏览器 (Chrome / Edge / 系统级引擎) 访问教务登录入口 (bkjw.ahau.edu.cn/login)...</span>
-            </div>
-            <span class="anau-trace-chip" id="${wid}_chip1">运行中...</span>
-          </div>
-          <div class="anau-trace-item" id="${wid}_step2">
-            <div class="anau-trace-left">
-              <span>▸ [2/4] 自主精准点击“从统一认证平台”，穿透统一身份认证 (ids.ahau.edu.cn)...</span>
-            </div>
-            <span class="anau-trace-chip" id="${wid}_chip2">等待中</span>
-          </div>
-          <div class="anau-trace-item" id="${wid}_step3">
-            <div class="anau-trace-left">
-              <span>▸ [3/4] 进入本科教务系统主页，扫描点击导航菜单“我的成绩 / 成绩查询”...</span>
-            </div>
-            <span class="anau-trace-chip" id="${wid}_chip3">等待中</span>
-          </div>
-          <div class="anau-trace-item" id="${wid}_step4">
-            <div class="anau-trace-left">
-              <span>▸ [4/4] 提取真实各科期末成绩单与加权平均绩点 (GPA)...</span>
-            </div>
-            <span class="anau-trace-chip" id="${wid}_chip4">等待中</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderAcademicIntelligenceBoardWidget(data) {
-    const student = data.student || {};
-    const courses = data.courses || [];
-    const gpa = data.gpa || '--';
-    const totalCredits = data.totalCredits || '--';
-    const ranking = data.rankingEstimate || '教务处官方排位';
-    const diagnosis = data.diagnosis || {};
-
-    const rowsHtml = courses.map(c => {
-      const scoreNum = parseFloat(c.score);
-      const isEx = !isNaN(scoreNum) && scoreNum >= 90;
-      const pillClass = isEx ? 'excellent' : 'good';
-      return `
-        <tr>
-          <td><strong style="color:#111827;">${c.name}</strong></td>
-          <td><span style="color:#64748b; font-size:11.5px;">${c.type || '必修'}</span></td>
-          <td>${c.credit}</td>
-          <td><span class="anau-score-pill ${pillClass}">${c.score}</span></td>
-          <td style="font-weight:700; color:#059669;">${c.gpa}</td>
-          <td><span style="font-size:11px; color:#475569;">已归档</span></td>
-        </tr>
-      `;
-    }).join('');
-
-    return `
-      <div class="anau-academic-board">
-        <div class="anau-board-profile">
-          <div>
-            <div class="anau-student-title">${student.name || '在籍学生'} · 真实教务成绩单</div>
-            <div class="anau-student-sub">${student.college || '安徽农业大学'} · ${student.major || '在读专业'} · 学号 ${student.id || ''}</div>
-          </div>
-          <div style="font-size:12px; font-weight:600; padding:4px 10px; border-radius:8px; background:#ecfdf5; color:#059669; border:1px solid #a7f3d0;">
-            ${data.semester || '真实学期成绩'}
-          </div>
-        </div>
-
-        <div class="anau-board-hud-grid">
-          <div class="anau-hud-card">
-            <div class="anau-hud-label">真实加权平均绩点 (GPA)</div>
-            <div class="anau-hud-val highlight">${gpa}</div>
-          </div>
-          <div class="anau-hud-card">
-            <div class="anau-hud-label">专业排位参考</div>
-            <div class="anau-hud-val" style="font-size:18px; color:#0284c7;">${ranking}</div>
-          </div>
-          <div class="anau-hud-card">
-            <div class="anau-hud-label">本期修读总学分</div>
-            <div class="anau-hud-val" style="font-size:18px;">${totalCredits} <span style="font-size:13px; font-weight:500; color:#64748b;">学分</span></div>
-          </div>
-          <div class="anau-hud-card">
-            <div class="anau-hud-label">已录入课程总数</div>
-            <div class="anau-hud-val" style="font-size:18px; color:#10b981;">${courses.length} <span style="font-size:13px; font-weight:500; color:#64748b;">门</span></div>
-          </div>
-        </div>
-
-        <div class="anau-courses-table-wrap">
-          <table class="anau-courses-table">
-            <thead>
-              <tr>
-                <th>课程名称</th>
-                <th>课程属性</th>
-                <th>学分</th>
-                <th>期末成绩</th>
-                <th>单科绩点</th>
-                <th>状态</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rowsHtml}
-            </tbody>
-          </table>
-        </div>
-
-        <div class="anau-diagnosis-box">
-          <div style="font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-            <span>教务系统官方数据核验提示</span>
-          </div>
-          <p style="margin:0 0 4px 0;">${diagnosis.strengths || '成绩数据已从安徽农业大学教务系统实时提取，原样反映学籍档案真实情况。'}</p>
-          <p style="margin:0; font-size:12px; color:#15803d;">${diagnosis.recommendations || '如对具体某门课程分数有异议，可通过教务处考务科或开课学院教学办提出成绩复核申请。'}</p>
-        </div>
-
-        <div class="anau-board-actions">
-          <button class="btn-anau-hook" onclick="window.AnauAgent.openZongceFromBoard(${gpa})">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#059669" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-            一键推演保研综测排位
-          </button>
-          <button class="btn-anau-hook" onclick="window.AnauAgent.openDiagnosisFromBoard()">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#2563eb" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            针对弱项启动错题探针
-          </button>
-          <button class="btn-anau-hook" onclick="window.print()">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#475569" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-            导出官方样式 PDF 成绩单
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  function handleGradeQueryWorkflow(raw) {
-    AgentState.lastTopic = 'grades';
-    const wid = 'gw-' + Math.floor(100000 + Math.random() * 900000);
-
-    let savedAuth = null;
-    try {
-      const stored = localStorage.getItem('anau_auth_session');
-      if (stored) savedAuth = JSON.parse(stored);
-    } catch(e) {}
-
-    if (savedAuth && savedAuth.studentId && savedAuth.password) {
-      setTimeout(() => {
-        runGradeFetchPipeline(wid, savedAuth.studentId, savedAuth.password);
-      }, 350);
-
-      return {
-        text: `**【数智安农 · 教务智能网关】正在自主调度**\n\n已检测到您在身份网关绑定的统一身份认证凭据（学号：**${savedAuth.studentId}**）。\n\nAgent 正在**在您屏幕上唤起本地浏览器（自适应适配 Chrome / Edge / 系统环境）**，穿透校园网 CAS 统一认证与本科教务系统 (bkjw.ahau.edu.cn) 提取您的最新学期成绩单...`,
-        approval: null,
-        widgetHtml: renderGatewayStepTraceWidget(wid)
-      };
-    }
-
+  function handleGradeQueryWorkflow() {
     return {
-      text: `**【数智安农 · 统一身份认证教务网关】**\n\n查询您在安徽农业大学教务系统的真实学期成绩与加权平均绩点 (GPA)，需先输入您的安农大学工号与密码。\n\n**严格真实执行承诺**：系统绝不包含任何预设假账号或离线模拟数据。您输入学号密码后，Agent 将**直接在您屏幕上调起本地原生浏览器窗口（支持 Chrome / Edge 等）**，当场登录并抓取您的真实成绩。若当前学校网络断开，将如实提示错误，绝不编造。`,
-      approval: null,
-      widgetHtml: renderGatewayAuthCardWidget(wid)
+      text: '**本科教务查询**\n\n请在[安徽农业大学本科教务系统](https://bkjw.ahau.edu.cn/home/#/home)完成统一身份认证，再查询课表或成绩。校外可使用[学校 WebVPN](https://myvpn.ahau.edu.cn/)。',
+      approval: null
     };
-  }
-
-  function submitGatewayAuth(wid) {
-    let userEl = document.getElementById('anauAuthUser_' + wid);
-    let passEl = document.getElementById('anauAuthPass_' + wid);
-    let username = userEl ? userEl.value.trim() : '';
-    let password = passEl ? passEl.value.trim() : '';
-
-    if (!username || !password) {
-      if (window.AnauAgent && window.AnauAgent.showToast) {
-        window.AnauAgent.showToast('请输入您的安农大学工号与统一身份认证密码');
-      } else {
-        alert('请输入学工号与密码，Agent 需要您的凭证以调起浏览器登录');
-      }
-      return;
-    }
-
-    try {
-      localStorage.setItem('anau_auth_session', JSON.stringify({
-        studentId: username,
-        password: password,
-        loginTime: new Date().toISOString()
-      }));
-    } catch(e) {}
-
-    const cardEl = document.getElementById(wid);
-    if (!cardEl) return;
-
-    cardEl.outerHTML = renderGatewayStepTraceWidget(wid);
-    runGradeFetchPipeline(wid, username, password);
-  }
-
-  async function runGradeFetchPipeline(wid, user, pass) {
-    const step1 = document.getElementById(wid + '_step1');
-    const chip1 = document.getElementById(wid + '_chip1');
-    const step2 = document.getElementById(wid + '_step2');
-    const chip2 = document.getElementById(wid + '_chip2');
-    const step3 = document.getElementById(wid + '_step3');
-    const chip3 = document.getElementById(wid + '_chip3');
-    const step4 = document.getElementById(wid + '_step4');
-    const chip4 = document.getElementById(wid + '_chip4');
-
-    if (chip1) { chip1.textContent = '浏览器已调起...'; chip1.style.color = '#38bdf8'; }
-
-    let data = null;
-    try {
-      const fetchPromise = fetch('/api/anau/fetch_grades', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: user,
-          password: pass
-        })
-      }).then(r => r.json());
-
-      // Step 1 animation
-      await new Promise(r => setTimeout(r, 600));
-      if (chip1) { chip1.textContent = '✓ 窗口已就绪'; chip1.style.color = '#10b981'; }
-      if (step1) { step1.className = 'anau-trace-item done'; }
-      if (step2) { step2.className = 'anau-trace-item active'; }
-      if (chip2) { chip2.textContent = '输入账号密码...'; }
-
-      // Step 2 animation
-      await new Promise(r => setTimeout(r, 800));
-      if (chip2) { chip2.textContent = '✓ 认证握手'; chip2.style.color = '#10b981'; }
-      if (step2) { step2.className = 'anau-trace-item done'; }
-      if (step3) { step3.className = 'anau-trace-item active'; }
-      if (chip3) { chip3.textContent = '进入教务处...'; }
-
-      // Await real backend Playwright execution
-      data = await fetchPromise;
-
-      if (data && data.success) {
-        if (chip3) { chip3.textContent = '✓ 已定位表格'; chip3.style.color = '#10b981'; }
-        if (step3) { step3.className = 'anau-trace-item done'; }
-        if (step4) { step4.className = 'anau-trace-item active'; }
-        if (chip4) { chip4.textContent = '✓ 抓取完成'; chip4.style.color = '#10b981'; }
-        if (step4) { step4.className = 'anau-trace-item done'; }
-
-        await new Promise(r => setTimeout(r, 500));
-
-        const sbBadge = document.getElementById('anauGatewayStatusBadge');
-        if (sbBadge) {
-          sbBadge.textContent = '教务网关: 真实连通';
-          sbBadge.style.color = '#10b981';
-        }
-
-        const traceEl = document.getElementById(wid);
-        if (traceEl) {
-          traceEl.outerHTML = renderAcademicIntelligenceBoardWidget(data);
-          const newBoard = document.querySelector('.anau-academic-board');
-          if (newBoard) {
-            newBoard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        }
-      } else {
-        const traceEl = document.getElementById(wid);
-        if (traceEl) {
-          const errMsg = data ? data.message : '连接教务网关超时或网络阻断';
-          traceEl.innerHTML = `
-            <div style="padding:16px 18px; background:#fff1f2; border:1px solid #fecdd3; border-radius:14px; color:#be123c; font-size:13px; line-height:1.6;">
-              <div style="font-weight:700; margin-bottom:6px; font-size:14px; display:flex; align-items:center; gap:6px;">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>教务网关真实执行反馈：未完成抓取</span>
-              </div>
-              <div><strong>具体原因：</strong>${errMsg}</div>
-              <div style="margin-top:6px; font-size:12px; color:#9f1239;">提示：若提示认证失败，请核对学工号与统一身份认证密码；若校园网连接中断或教务处处于选课维护期，请稍候重试。</div>
-              <button class="btn-anau-hook" style="margin-top:10px;" onclick="window.AnauAgent.sendUserMsg('重新查询成绩')">重新输入真实学号与密码</button>
-            </div>
-          `;
-        }
-      }
-    } catch(err) {
-      const traceEl = document.getElementById(wid);
-      if (traceEl) {
-        traceEl.innerHTML = `
-          <div style="padding:16px 18px; background:#fff1f2; border:1px solid #fecdd3; border-radius:14px; color:#be123c; font-size:13px;">
-            <strong>连接本地 Agent 守护进程失败：</strong>${err.message}<br>
-            <button class="btn-anau-hook" style="margin-top:10px;" onclick="window.AnauAgent.sendUserMsg('重新查询成绩')">重试</button>
-          </div>
-        `;
-      }
-    }
   }
 
   function openZongceFromBoard(gpa) {
@@ -3031,21 +2674,26 @@ ${examSummary}
     }).catch(e => console.error(e));
   }
 
-  function processUserInput(text, hasImage = false, imageInfo = null) {
+  function processUserInput(text) {
     const raw = (text || '').trim();
     const t = raw.toLowerCase();
 
     // 智能多轮意图消解与话题抢占（解决用户问了综测后中途跳到茶树国重室/校猫/楼宇等新问题）
+    if (AgentState.workflow === 'classroom') {
+      if (/^(取消|退出|停止)(?:借教室|借用|申请)?[。！!]*$/.test(raw)) {
+        AgentState.workflow = null;
+        AgentState.workflowData = {};
+        return { text: '已取消这次教室借用草案。' };
+      }
+      const details = readClassroomDetails(raw);
+      if (Object.keys(details).length) return handleClassroomWorkflow(raw, details);
+    }
+
     const detectedIntent = detectIntentSwitch(raw, t);
     if (detectedIntent && AgentState.workflow && AgentState.workflow !== detectedIntent) {
       AgentState.workflow = null;
       AgentState.workflowStep = 0;
       AgentState.workflowData = {};
-    }
-
-    // 优先：如果用户上传了照片，进入多模态智能快诊分支
-    if (hasImage) {
-      return handleMultimodalInput(raw, imageInfo);
     }
 
     // 优先：正在进行的借教室工作流
@@ -3073,16 +2721,23 @@ ${examSummary}
       return handleKaoyanWorkflow(raw);
     }
 
+    if (/调课|排课对齐|培养方案|毕业学分|学分查漏|成绩复核|成绩异议|协同工作流|教务协同|agentweber|weber|跨部门审批|公文流转|审批流程/.test(t)) return handleAgentWeberPassiveWorkflow(raw);
+    if (/综测|测评|评优|奖学金|志愿汇/.test(t)) return handleZongceWorkflow(raw);
+    if (/课表|成绩|绩点|gpa|查分|及格|挂科/.test(t)) {
+      return handleGradeQueryWorkflow(raw);
+    }
+
+    if (/借.{0,10}教室|开班会|多媒体.{0,6}申请/.test(t)) {
+      AgentState.workflow = 'classroom';
+      AgentState.workflowData = {};
+      return handleClassroomWorkflow(raw);
+    }
+
     // 优先：数学算术计算
     const mathResult = solveMath(raw);
     if (mathResult) {
       AgentState.lastTopic = 'math';
       return mathResult;
-    }
-
-    // 优先：数智安农教务成绩与加权绩点 (GPA) 智能网关
-    if (/成绩|绩点|gpa|查分|期末成绩|教务成绩|查成绩|我的成绩|考试成绩|及格|挂科|挂了几门|考了多少分|分数/.test(t)) {
-      return handleGradeQueryWorkflow(raw);
     }
 
     // 优先：跨平台 OS Agent 本地电脑设备自动化调度与学业工作区部署
@@ -3091,9 +2746,6 @@ ${examSummary}
     }
 
     // 优先：直接触发三大全新硬核场景 (综测、考研、师资)
-    if (t.includes('综测') || t.includes('测评') || t.includes('算综测') || t.includes('奖学金') || t.includes('志愿汇')) {
-      return handleZongceWorkflow(raw);
-    }
     if (t.includes('考研') || t.includes('择校') || t.includes('专硕') || t.includes('学硕') || t.includes('读博') || t.includes('408') || t.includes('414') || t.includes('314') || t.includes('315') || t.includes('考研时间线') || t.includes('考研科目') || t.includes('复习进度') || t.includes('择校方案')) {
       return handleKaoyanWorkflow(raw);
     }
@@ -3116,11 +2768,6 @@ ${examSummary}
     if (/科研广场|互助广场|科研互助|找队友|跨学科|组队|科研合作|借仪器|借设备|数据共享|互帮互助|找搭档|芯片量化|多光谱|病斑数据|p2p撮合|智能体撮合|找搭子|合作组队/.test(t) ||
         (t.includes('科研') && (t.includes('广场') || t.includes('撮合') || t.includes('合作') || t.includes('找人') || t.includes('组队') || t.includes('互助')))) {
       return handleResearchPlazaWorkflow(raw);
-    }
-
-    // 优先：教务跨部门协同工作流 (AgentWeber 被动触发能力)
-    if (/调课|排课对齐|培养方案|毕业学分|学分查漏|成绩复核|成绩异议|协同工作流|教务协同|agentweber|weber|跨部门审批|公文流转|审批流程/.test(t)) {
-      return handleAgentWeberPassiveWorkflow(raw);
     }
 
     // =========================================================================
@@ -3211,19 +2858,6 @@ ${examSummary}
     if (cleanFollowUp === '猫坡' || (raw.length <= 6 && raw.includes('猫坡'))) {
       AgentState.lastTopic = 'cats';
       return getCatsByLocation('猫坡');
-    }
-
-    // 意图 1：借教室 / 借用多媒体阶梯教室
-    if (t.includes('借教室') || t.includes('开班会') || (t.includes('多媒体') && t.includes('申请')) || t.includes('借用教室')) {
-      AgentState.workflow = 'classroom';
-      AgentState.workflowStep = 1;
-      AgentState.workflowData = {};
-      if ((/人|\d+人/.test(raw) || /班|学院/.test(raw)) && (/点|晚上|下午|周|日|月/.test(raw) || /会|学术|沙龙|讲座|动员/.test(raw))) {
-        return handleClassroomWorkflow(raw);
-      }
-      return {
-        text: `**收到！正在为您启动「安徽农业大学多媒体/阶梯教室借用工作流」**\n\n请依次告诉我以下 4 项信息，我将为您自动生成《正规教室借用审批表》：\n1. **申请学院与班级**（例如：农学院 23种子科学1班）\n2. **拟使用时间与时长**（例如：本周五晚上 19:00-21:00）\n3. **参会预估人数**（例如：45人）\n4. **借用用途**（例如：主题团日班会 / 竞赛动员会）\n\n*（提示：您可以一次性全部发给我，也可以逐一输入）*`
-      };
     }
 
     // 意图 2.1：学生返校销假 (严禁随意一键销假，进入规范审核核验流)
@@ -3410,69 +3044,67 @@ ${examSummary}
   // ----------------------------------------------------------------------------
   // 4. 多轮工作流：教室借用状态机 (公私安全分级与溯源)
   // ----------------------------------------------------------------------------
-  function handleClassroomWorkflow(input) {
-    const d = AgentState.workflowData;
+  function readClassroomDetails(input) {
+    const text = input.normalize('NFKC');
+    const details = {};
+    const count = text.match(/(\d+)\s*(?:位|名|人)/);
+    const date = text.match(/(?:\d{4}\s*[-年]\s*)?\d{1,2}\s*[-月]\s*\d{1,2}\s*日?|(?:(?:本|下|这)\s*)?(?:周|星期)[一二三四五六日天]|今天|明天|后天/);
+    const time = text.match(/(?:[01]?\d|2[0-3])\s*[:点时]\s*(?:[0-5]\d\s*分?|半)?(?:\s*(?:[-–—~]|至|到)\s*(?:[01]?\d|2[0-3])\s*[:点时]\s*(?:[0-5]\d\s*分?|半)?)?/);
+    const partOfDay = text.match(/上午|中午|下午|晚上|早上/);
+    const duration = text.match(/\d+(?:\.\d+)?\s*(?:个?小时|分钟)/);
+    const dept = text.match(/(?:申请(?:单位|班级)|学院班级)\s*[:：]\s*([^,，。；;]+)/) ||
+      text.match(/(?:^|[,，。；;\s])([^,，。；;\s]{1,18}学院(?:[^,，。；;\s]{1,14}(?:专业|班))?)/);
+    const reason = text.match(/(?:用途|事由)\s*[:：]\s*([^,，。；;]+)/) ||
+      text.match(/((?:召开|举行|举办|开)\s*[^,，。；;]{0,24}(?:班会|讲座|沙龙|动员会|研讨会|答辩|培训))/) ||
+      text.match(/^(班会|讲座|沙龙|答辩|培训)$/);
+    if (count && Number(count[1]) > 0) details.count = Number(count[1]);
+    if (date) details.date = date[0].trim();
+    if (time) details.clock = [(partOfDay || [])[0], time[0].trim()].filter(Boolean).join(' ');
+    if (duration) details.duration = duration[0];
+    if (dept) details.dept = dept[1].trim();
+    if (reason) details.reason = reason[1].trim();
+    if (/投影/.test(text)) details.equipment = '投影仪';
+    return details;
+  }
 
-    // 智能提取学院班级 (去除具体学院偏向，保持中立权威)
-    if (!d.dept) {
-      if (input.includes('学院') || input.includes('班') || input.length >= 4) {
-        d.dept = input;
-      } else {
-        d.dept = '安徽农业大学本科在读班级';
-      }
+  function handleClassroomWorkflow(input, details = readClassroomDetails(input)) {
+    const draft = Object.assign(AgentState.workflowData, details);
+    const missing = [
+      [draft.dept, '学院或班级'],
+      [draft.date && draft.clock, '日期和时间（如 11月25日 19:00–21:00）'],
+      [draft.count, '参加人数（如 45人）'],
+      [draft.reason, '借用用途']
+    ].filter(([value]) => !value).map(([, label]) => label);
+    if (missing.length) {
+      return { text: '**教室借用申请草案**\n\n请补充：' + missing.join('、') + '。' };
     }
 
-    // 提取时间
-    if (!d.time) {
-      d.time = input.match(/\d+月\d+日|\d+点|周[一二三四五六日天]|晚上|下午/g) ? input : '本周五 19:00 - 21:00';
-    }
-
-    // 提取人数
-    if (!d.count) {
-      const matchNum = input.match(/\d+/);
-      d.count = matchNum ? `${matchNum[0]}人` : '45人';
-    }
-
-    // 提取事由
-    if (!d.reason) {
-      d.reason = input.length > 5 ? input : '召开“学风建设与期末备考”主题班会';
-    }
-
-    // 推荐教室
-    d.room = parseInt(d.count) > 60 ? '勤学楼 606（大阶梯多媒体教室）' : '博学楼 204（标准多媒体教室）';
-    d.docNo = 'AHAU-CR-' + Math.floor(100000 + Math.random() * 900000);
-    d.applicant = '当前认证学生';
-    d.studentId = '230101****';
-
-    // 工作流完成，生成审批卡片
+    const { dept, date, clock, duration, count, reason, equipment = '待确认' } = draft;
+    const room = count > 60 ? '勤学楼 606（大阶梯多媒体教室）' : '博学楼 204（标准多媒体教室）';
+    const docNo = 'DRAFT-CR-' + Date.now().toString(36).toUpperCase();
+    const data = {
+      dept, time: [date, clock, duration].filter(Boolean).join(' '), count: count + '人',
+      reason, equipment, room, docNo
+    };
     AgentState.workflow = null;
-
+    AgentState.workflowData = {};
     return {
-      text: `**教室借用审批单已为您智能编排生成完毕！**\n\n` +
-        `系统已结合您的使用人数与用途，依据校规 <span class="fact-citation-tag" onclick="window.AnauAgent.openCitationDrawer('ahau-hq-2022-09')">[安农资后·2022-09号]</span> 自动推荐了最优可用教室。\n\n` +
-        `您可核对下方拟办审批表并预览打印；依据公私安全分级机制，请在安全栅栏卡片中完成最终电子授权：`,
+      text: '**教室借用申请草案已生成。**\n\n请核对信息后预览或打印。场地建议根据人数生成，实际空闲情况和审批结果请向教室管理方确认。',
       approval: {
         type: 'classroom',
-        title: '安徽农业大学多媒体/阶梯教室借用申请审批表',
-        docNo: d.docNo,
+        title: '教室借用申请草案',
+        docNo,
         data: [
-          { label: '申请班级', val: d.dept },
-          { label: '经办人 / 学号', val: `${d.applicant} (${d.studentId})` },
-          { label: '拟借用时间', val: d.time },
-          { label: '拟使用人数', val: d.count },
-          { label: '系统匹配教室', val: d.room },
-          { label: '借用事由与用途', val: d.reason },
-          { label: '多媒体设备需求', val: '投影仪、无线麦克风、中央空调、扩音音响' },
-          { label: '当前审批状态', val: '<span class="approval-status-tag"><span class="status-indicator-dot"></span> 智能预审通过 · 待本人确认签署</span>' }
+          { label: '学院或班级', val: dept },
+          { label: '拟借用时间', val: data.time },
+          { label: '拟使用人数', val: data.count },
+          { label: '场地建议', val: room },
+          { label: '借用用途', val: reason },
+          { label: '设备需求', val: equipment },
+          { label: '当前状态', val: '草案 · 待学校审核' }
         ],
-        rawObj: d
-      },
-      widgetHtml: renderActionGatingWidget({
-        bizType: '多媒体/阶梯教室场地借用',
-        applicant: `${d.applicant} (${d.studentId})`,
-        targetDept: '教务处 / 后勤保障处',
-        docNo: d.docNo
-      })
+        rawObj: data
+      }
     };
   }
 
@@ -3642,14 +3274,7 @@ ${examSummary}
 
   function handleLeaveWorkflow(input) {
     const raw = (input || '').trim();
-    let authUser = '洪一豪 (学号 24114059)';
-    try {
-      const stored = localStorage.getItem('anau_auth_session');
-      if (stored) {
-        const p = JSON.parse(stored);
-        if (p && p.studentId) authUser = (p.studentName || '学生') + ' (学号 ' + p.studentId + ')';
-      }
-    } catch(e) {}
+    const authUser = '学生（待填写）';
 
     const d = {
       applicant: authUser
@@ -3845,7 +3470,7 @@ ${examSummary}
         `4. **外语等级凭证**：CET-4/6 成绩单原件与扫描件。\n\n` +
         `*(注：最终评定结果请以所在学院综合素质测评评定小组官方公示为准)*\n\n` +
         `**您也可以通过下方动态微调沙盘实时拖动 GPA、志愿工时与竞赛加分，动态观察奖学金概率与排名波动：**`,
-      widgetHtml: renderInteractiveSliderWidget(gpa, volunteer, compBonus)
+      widgetHtml: renderZongceSlidersWidget(gpa, volunteer, compBonus)
     };
   }
 
@@ -4185,165 +3810,31 @@ ${examSummary}
     `;
   }
 
-  function handleMultimodalInput(promptText, imageInfo) {
-    const pt = (promptText || '').toLowerCase();
-    const fileName = (imageInfo && imageInfo.name ? imageInfo.name : '').toLowerCase();
-    const combined = pt + ' ' + fileName;
-
-    // 0. 细分场景 · 试卷真题与错题多模态认知诊断 (数学 / 高数 / 微积分 / 题 11 优先匹配)
-    if (combined.includes('infinitesimal') || combined.includes('29e9a945') || combined.includes('1794920526807') || combined.includes('gaoshu') || 
-        combined.includes('错题') || combined.includes('高数') || combined.includes('微积分') || combined.includes('无穷小') || 
-        combined.includes('极限') || combined.includes('试卷') || combined.includes('题目') || combined.includes('题11') || combined.includes('第11题') || 
-        combined.includes('1-e') || combined.includes('sin') || combined.includes('同阶') || combined.includes('等价')) {
-      return {
-        text: `**【数智安农 · 多模态视觉 OCR 解析完成 · 场景：试卷错题诊断】**\n\n` +
-          `📸 **试卷图像考点定位**：成功解析图像题面：\n` +
-          `**「11. 当 $x \\to 0$ 时，函数 $f(x) = 1 - e^{\\sin x}$ 是函数 $g(x) = x$ 的 (    )\n` +
-          `A. 高阶无穷小    B. 低阶无穷小    C. 同阶无穷小    D. 等价无穷小」**\n\n` +
-          `🎯 **正确答案**：**【C. 同阶无穷小】** (极限比值为有限非零常数 $C = -1 \\neq 0$ 且 $\\neq 1$)\n\n` +
-          `📐 **推导要点**：分子 $1 - e^{\\sin x} = -(e^{\\sin x} - 1) \\sim -\\sin x \\sim -x$，故比值极限 $\\lim_{x \\to 0} \\frac{-x}{x} = -1$。\n\n` +
-          `⚠️ **选项排雷警告**：绝不可选 **D（等价无穷小）**！等价无穷小要求常数必须严格为 $+1$，选 D 是典型的负号脱落失误（错选率 72%）！\n\n` +
-          `💡 *您可点击下方卡片或前往左侧导航进入「AI 错题分析与认知诊断工坊」查看全景知识拓扑图谱与防遗忘自测题。*`,
-        approval: null,
-        widgetHtml: `
-          <div style="background:linear-gradient(135deg, #f0fdf4, #ecfdf5); border:1px solid #a7f3d0; border-radius:12px; padding:14px; margin-top:8px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-              <span style="font-size:12px; font-weight:700; color:#065f46; display:flex; align-items:center; gap:5px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                错题考点拓扑与强化自测已就绪
-              </span>
-              <span style="font-size:11px; background:#10b981; color:#fff; padding:2px 8px; border-radius:10px; font-weight:600;">标准答案: C</span>
-            </div>
-            <div style="font-size:12px; color:#047857; line-height:1.6; margin-bottom:10px;">
-              考点：<strong>等价无穷小负号提取与同阶无穷小定义判定</strong>。已为您在知识图谱中关联《高等数学（上）》第一章极限与连续拓扑。
-            </div>
-            <button onclick="window.open('diagnosis.html', '_blank')" style="background:#0d9488; color:#fff; border:none; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; width:100%; transition:all 0.2s ease;">
-              直达错题认知诊断工坊 (查看艾宾浩斯复习闭环) →
-            </button>
-          </div>
-        `
-      };
+  async function handleMultimodalInput(promptText, imageData) {
+    let digest = '';
+    try {
+      const binary = atob(imageData.split(',')[1]);
+      const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+      const hash = await crypto.subtle.digest('SHA-256', bytes);
+      digest = Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, '0')).join('');
+    } catch {
+      // The browser may not expose hashing in an insecure context.
     }
 
-    // 1. 细分场景 · 校宠与猫咪多模态识别 (精准识别全校63只花名册猫咪，来福优先匹配)
-    if (combined.includes('来福') || combined.includes('猫') || combined.includes('cat') || combined.includes('校宠') || 
-        fileName.includes('c281347b') || fileName.includes('cat')) {
+    if (digest === 'ffe0cd8073f1301e3379426c32a56ab6cbd909557a51b93e175eeff69857cf1d') {
+      return { text: '已匹配到内置参考照片「来福」。下方是它的校园资料卡。', widgetHtml: renderLaifuProfileCard() };
+    }
+    if (digest === '656b2543687c5ff6bd7c5d667e1971be7f6580271aab0eaf4a4ffc71efe18984') {
       return {
-        text: `**【数智安农 · 多模态视觉识别完成 · 场景：拍猫识宠【001号 · 来福】】**\n\n` +
-          `📸 **图像特征检索锁定**：基于视觉纹理检测与特征匹配，检测到猫咪翡翠绿瞳孔、经典狸花白胸及标志性吐舌动作，与安徽农业大学官方在册 63 只校宠图谱比对，**置信度 99.8% 确认为安农大东门名猫「来福」**！\n\n` +
-          `为您调取安农大官方校宠专属成长档案如下：`,
-        approval: null,
-        widgetHtml: renderLaifuProfileCard()
+        text: '已匹配到内置参考照片「高数第 11 题」。答案是 **C. 同阶无穷小**。比值极限为 −1，可在[错题工坊](diagnosis.html)查看完整样题解析。'
       };
     }
-
-    // 2. 细分场景 · 校园平面图与地图智能导览
-    if (combined.includes('map') || combined.includes('地图') || combined.includes('平面图') || combined.includes('campus') || combined.includes('main_campus') || combined.includes('north_dorm')) {
-      if (combined.includes('north') || combined.includes('北区') || combined.includes('宿舍')) {
-        return {
-          text: `【「安农智办」多模态视觉识别完成 · 场景：北区学生宿舍区平面图智能导览】\n\n` +
-            `**图纸定位**：【安徽农业大学 · 北区学生宿舍区平面图】（校外宿舍区）\n` +
-            `**关键生活服务地标指引**：\n` +
-            `- **丰泽食堂**：位于北区西侧，下楼即达，供应一日三餐与暖心夜宵；\n` +
-            `- **思源餐厅**：位于北区东侧，环境现代化；\n` +
-            `- **学生一站式服务中心**：紧邻思源餐厅，办理党团接转、助学贷款、户籍迁移等；\n` +
-            `- **校本部往返通勤**：出北区过街步行约 5-8 分钟即可直达校本部教学区。`
-        };
-      }
-      return {
-        text: `【「安农智办」多模态视觉识别完成 · 场景：校本部全景平面图智能导览】\n\n` +
-          `**图纸定位**：【安徽农业大学 · 校本部核心全景平面图】\n` +
-          `【关键地标与功能分区指引】：\n` +
-          `- **教学上课区**：【勤学楼】（本科公共大课阶梯教室）与【博学楼】（专业课与考研自习）；\n` +
-          `- **行政办公区**：【勤政楼】（党政机关老师办公， 严禁学生跑去上课！）；\n` +
-          `- **校内四大食堂**：东苑食堂（近勤学楼/东门）、西苑食堂（西区小炒瓦罐汤）、北苑食堂（近北门出餐快）、欣苑食堂（全校最高人气铁板烧快餐）；\n` +
-          `- 【重点科研基地】：【茶树生物学与资源利用国家重点实验室】与茶树品种圃；\n` +
-          `- 【名宠打卡点】：东门（来福）、勤学楼（花姐）、猫坡（英国佬）、图书馆（馆长）。`
-      };
+    if (promptText) {
+      const result = processUserInput(promptText);
+      result.text = '这张照片未匹配到内置参考素材。以下是根据你输入的文字查询到的内容：\n\n' + result.text;
+      return result;
     }
-
-    // 3. 细分场景 · 茶树与病虫害诊断 (联动国家重点实验室)
-    if (combined.includes('茶') || combined.includes('树') || combined.includes('叶') || combined.includes('病') || combined.includes('tea') || combined.includes('leaf') || combined.includes('plant')) {
-      return {
-        text: `【「安农智办」多模态视觉快诊完成 · 场景：智慧农林与病害快诊】\n\n` +
-          `【作物/植物辨识】：画面叶片呈现典型互生披针形特征，呈现山茶科茶属（*Camellia sinensis*）形态特征；\n` +
-          `【安农王牌科研印记】：\n` +
-          `- 安徽农业大学拥有全省唯一的【茶树生物学与资源利用国家重点实验室】；\n` +
-          `- 茶学为国家一流重点学科，校内设有国家级茶树活体品系圃（引种有舒茶早、鸠坑种等）；\n` +
-          `**健康与病理快诊推测**：\n` +
-          `- 叶脉清晰、组织饱满，未见明显茶炭疽病、云纹叶枯病或茶尺蠖虫咬斑块；\n` +
-          `- 农林管护建议：推行绿色生物防控，保持水肥平衡，定期清理落叶以减少越冬菌源！`
-      };
-    }
-
-    // 4. 细分场景 · 楼宇精准识别与防跑空 (勤政楼 vs 勤学楼 vs 博学楼)
-    if (combined.includes('勤政') || combined.includes('行政') || combined.includes('办公') || combined.includes('qinzheng')) {
-      return {
-        text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【勤政楼】】\n\n` +
-          `【识别楼宇】：【安徽农业大学 · 勤政楼】（全校党政领导与机关老师办公大楼）\n` +
-          `**地理位置**：校园南北主轴线南段，靠近长江西路南门；\n` +
-          `**极其关键防跑空提醒**：\n` +
-          `- **【勤政楼绝对不是学生上课的教学楼，严禁在此上课！】**\n` +
-          `- 勤政楼是办理学生事务的行政窗口：教务处（学籍/成绩）、学生处（资助/评优）、校团委、保卫处均在此楼；\n` +
-          `- 本科生日常上课请务必前往【勤学楼】或【博学楼】，切勿跑错！`
-      };
-    }
-
-    if (combined.includes('勤学') || combined.includes('qinxue')) {
-      return {
-        text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【勤学楼】】\n\n` +
-          `**识别楼宇**：【安徽农业大学 · 勤学楼】（全校主要本科公共教学楼）\n` +
-          `**地理位置**：校园东部教学区，紧邻银杏路与学校东门；\n` +
-          `**楼宇用途与特色**：\n` +
-          `- 配置大量多媒体大阶梯教室（如 606、302 等），高数、大物、外语、思政公共大课核心主楼；\n` +
-          `- 一楼设有自习区与直饮水机，全校公认著名的校猫【花姐】常年在此楼内巡视陪读！`
-      };
-    }
-
-    if (combined.includes('博学') || combined.includes('boxue')) {
-      return {
-        text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【博学楼】】\n\n` +
-          `**识别楼宇**：【安徽农业大学 · 博学楼】（核心专业课与研讨教学楼）\n` +
-          `**地理位置**：校园教学核心区，绿树掩映；\n` +
-          `**楼宇用途与特色**：\n` +
-          `- 承担各学院专业课程教学、实验统考与学术讲座；\n` +
-          `- 考研与自主学习自习室充足，学习氛围浓郁。`
-      };
-    }
-
-    if (combined.includes('图书馆') || combined.includes('library')) {
-      return {
-        text: `【「安农智办」多模态视觉识别完成 · 场景：拍楼识楼【安徽农业大学图书馆】】\n\n` +
-          `**识别楼宇**：【安徽农业大学 · 图书馆】（校内文献资源、学术检索与自主研读中心）\n` +
-          `**地理位置**：校园景观核心中轴带，邻近第二报告厅与科技楼；\n` +
-          `**核心功能与温馨提示**：\n` +
-          `- **学术与文献服务**：海量馆藏纸质图书借阅、知网/Web of Science学术文献数字终端；\n` +
-          `- **静音研读空间**：多层自习席位、考研专区，进馆请保持安静并出示校园卡/微校园码；\n` +
-          `- **名宠打卡偶遇**：图书馆周边常驻安农知名校宠【008号 · 馆长】与【010号 · 哑嗓子】，轻手轻脚可偶遇！`
-      };
-    }
-
-    if (combined.includes('南门') || combined.includes('校门') || combined.includes('门头') || combined.includes('大门') || combined.includes('长江西路') || combined.includes('south_gate')) {
-      return {
-        text: `【「安农智办」多模态视觉识别完成 · 场景：地标识别【安徽农业大学 · 正南门】】\n\n` +
-          `【识别地标】：【安徽农业大学 · 长江西路正南门】（学校历史最悠久的正门地标）\n` +
-          `**地理位置**：合肥市蜀山区长江西路130号（合肥轨道交通2号线三里庵站/安农大站直达）；\n` +
-          `**校园导览指引**：\n` +
-          `- 进南门正前方即为绿意盎然的银杏大道与省级历史文保建筑【勤政楼】；\n` +
-          `- 防跑空提醒：勤政楼为全校行政办公大楼（严禁上课），若去往勤学楼请沿主干道往东步行。`
-      };
-    }
-
-    // 默认校园实景照片识别
-    return {
-      text: `【「安农智办」多模态视觉识别完成 · 场景：校园实景智能导览与防跑空】\n\n` +
-        `【识别画面】：【安徽农业大学 · 校园实景风貌】\n` +
-        `**安农核心办事与上课防跑空指南**：\n` +
-        `- 找行政老师、盖章审批、办学籍证明：请前往【勤政楼】（严禁上课！）；\n` +
-        `- 日常本科公共课与大阶梯教室：请前往【勤学楼】（偶遇校宠花姐）；\n` +
-        `- 专业课与考研自主研读：请前往【博学楼】；\n` +
-        `- 就餐选择：校内可去东苑、西苑、北苑、欣苑四大食堂，校外北区宿舍可去丰泽食堂与思源餐厅！`
-    };
+    return { text: '这张照片未匹配到内置参考素材。可以补充楼名、校宠名字或题目文字，我再帮你查询。' };
   }
 
   // ----------------------------------------------------------------------------
@@ -4365,7 +3856,7 @@ ${examSummary}
 
     const initSession = {
       id: 'session_' + Date.now(),
-      title: '当前会话 · 实时帮办',
+      title: '新对话',
       time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
       badge: '在席',
       updated: Date.now(),
@@ -4393,9 +3884,8 @@ ${examSummary}
     return session;
   }
 
-  function appendMessageToCurrentSession(msgObj) {
-    const session = getActiveSession();
-    if (!session) return;
+  function appendMessageToCurrentSession(msgObj, session = getActiveSession()) {
+    if (!realSessions.includes(session)) return;
     session.messages.push(msgObj);
     session.updated = Date.now();
     session.time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
@@ -4418,21 +3908,15 @@ ${examSummary}
     let html = `<div class="history-vertical-list">`;
     realSessions.forEach(s => {
       const isActive = s.id === currentActiveSessionId;
-      const count = s.messages ? s.messages.length : 0;
-      const badgeText = isActive ? '在线交互中' : (count > 0 ? `${count} 条记录` : '空会话');
       html += `
-        <div class="history-session-item ${isActive ? 'active' : ''}" data-session="${s.id}" onclick="window.AnauAgent.loadSession('${s.id}')">
-          <div class="history-session-top">
-            <span class="history-session-title">
-              <svg class="session-type-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
-              ${escapeHtml(s.title || '办事会话')}
-            </span>
-            <span class="history-session-time">${s.time || ''}</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
-            <div class="history-session-badge">${badgeText}</div>
-            <button class="history-session-del-btn" onclick="event.stopPropagation(); window.AnauAgent.deleteSession('${s.id}')" title="删除此会话">✕</button>
-          </div>
+        <div class="history-session-item ${isActive ? 'active' : ''}" data-session="${escapeHtml(s.id)}">
+          <button type="button" class="history-session-open" ${isActive ? 'aria-current="true"' : ''} onclick="window.AnauAgent.loadSession(this.closest('[data-session]').dataset.session)">
+            <span class="history-session-title">${escapeHtml(s.title || '办事会话')}</span>
+            <span class="history-session-time">${escapeHtml(s.time || '')}</span>
+          </button>
+          <button type="button" class="history-session-del-btn" onclick="window.AnauAgent.deleteSession(this.closest('[data-session]').dataset.session)" aria-label="删除此会话">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
         </div>
       `;
     });
@@ -4445,10 +3929,11 @@ ${examSummary}
     const hero = document.getElementById('askbHeroCenter');
     if (!list) return;
     list.innerHTML = '';
-    currentActiveSessionId = sessionKey;
-    localStorage.setItem(ACTIVE_SESSION_KEY, currentActiveSessionId);
-
     const session = realSessions.find(s => s.id === sessionKey) || realSessions[0];
+    if (session) {
+      currentActiveSessionId = session.id;
+      localStorage.setItem(ACTIVE_SESSION_KEY, currentActiveSessionId);
+    }
     if (!session || !session.messages || session.messages.length === 0) {
       if (hero) hero.style.display = 'flex';
     } else {
@@ -4457,7 +3942,7 @@ ${examSummary}
         if (msg.role === 'user') {
           appendUserMessage(msg.content, msg.image || null);
         } else {
-          appendBotMessage(msg.content, msg.approval || null, msg.widgetHtml || '');
+          appendBotMessage(msg, session);
         }
       });
       list.scrollTop = list.scrollHeight;
@@ -4496,7 +3981,6 @@ ${examSummary}
     saveSessionsToStorage(realSessions);
     AgentState.workflow = null;
     AgentState.workflowData = {};
-    AgentState.messages = [];
     AgentState.lastTopic = null;
     AgentState.lastLocation = null;
     renderSidebarSessionList();
@@ -4510,7 +3994,7 @@ ${examSummary}
   function deleteSession(sid) {
     if (realSessions.length <= 1) {
       realSessions[0].messages = [];
-      realSessions[0].title = '当前会话 · 实时帮办';
+      realSessions[0].title = '新对话';
       saveSessionsToStorage(realSessions);
       renderSidebarSessionList();
       renderSessionMessages(realSessions[0].id);
@@ -4530,6 +4014,14 @@ ${examSummary}
   // ----------------------------------------------------------------------------
   function injectNativeChatUI() {
     const mountEl = document.getElementById('chatMountPoint');
+    const lobbyHeading = mountEl?.hasAttribute('data-particle-lobby') ? `
+      <div class="lobby-particle-title" data-particle-title>
+        <h2 class="askb__hello" aria-label="安农智办 AgriCore">
+          <span aria-hidden="true" data-particle-label="AgriCore">安农智办</span>
+        </h2>
+        <canvas aria-hidden="true"></canvas>
+      </div>
+    ` : '<h2 class="askb__hello">安农智办</h2>';
 
     // 1. 浮动悬浮球与呼吸光环
     const fabHtml = `
@@ -4549,12 +4041,7 @@ ${examSummary}
             <img src="anau_ai_logo.png" alt="徽农智" class="native-chat-header-avatar">
             <div>
               <div class="native-chat-header-title">
-                <span>徽农智 · 安农智办</span>
-                <span class="native-chat-header-tag">数智工作台</span>
-              </div>
-              <div class="native-chat-header-sub">
-                <span class="status-dot-pulse"></span>
-                <span id="agentStatusText">DeepSeek 官方算力直连 · 就绪</span>
+                <span>${mountEl ? '校园咨询' : '徽农智 · 安农智办'}</span>
               </div>
             </div>
           </div>
@@ -4574,32 +4061,30 @@ ${examSummary}
         <div class="chat-stage-body" id="chatStageBody">
           <!-- AskBar 风格静谧开场 (未发起对话时展示，零碎片化卡片) -->
           <div class="askb-hero-center" id="askbHeroCenter">
-            <div class="askb__glow" aria-hidden="true"></div>
-            <div class="askb-hero-emblem">
-              <img src="anau_ai_logo.png" alt="徽农智">
-            </div>
-            <h2 class="askb__hello">
-              <span>同学你好，</span><span>今天想办理什么？</span>
-            </h2>
-            <p class="askb-hero-sub">安徽农业大学 · 校园数智帮办智能体 · 随时在下方输入或点击快捷指令</p>
-            <div class="askb-hero-quick-pills">
-              <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('帮我接入数智安农教务系统，查询最新期末成绩和加权GPA')">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
-                数智教务查成绩与GPA
-              </button>
-              <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('帮我自动化部署本地学业工作区并同步系统日历')">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                电脑设备自动化 (OS Agent)
-              </button>
-              <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('我想借勤学楼教室开班会')">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                勤学楼借教室
-              </button>
-              <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('帮我测算这一学年的综测分和国家励志奖学金')">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                综测奖学金测算
-              </button>
-            </div>
+            ${mountEl ? `
+              <div class="lobby-intro">${lobbyHeading}</div>
+            ` : `
+              <h2 class="askb__hello">安农智办</h2>
+              <p class="askb-hero-sub">校园咨询与办事指引</p>
+              <div class="askb-hero-quick-pills">
+                <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('帮我接入数智安农教务系统，查询最新期末成绩和加权GPA')">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                  查询成绩
+                </button>
+                <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('帮我自动化部署本地学业工作区并同步系统日历')">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  学业工作区
+                </button>
+                <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('我想借勤学楼教室开班会')">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  申请借教室
+                </button>
+                <button type="button" class="askb-pill" onclick="window.sendQuickPrompt('帮我测算这一学年的综测分和国家励志奖学金')">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                  综测估算
+                </button>
+              </div>
+            `}
           </div>
 
           <!-- 消息流容器 (内嵌安农大图书馆淡雅水印) -->
@@ -4619,7 +4104,7 @@ ${examSummary}
             <form class="askb__bar" id="askbBar" onsubmit="event.preventDefault(); window.AnauAgent.submitInput();">
               <!-- 附件功能菜单 (+) -->
               <div class="askb__plus-wrap">
-                <button type="button" class="askb__icon" id="askbPlusBtn" onclick="window.AnauAgent.togglePlusMenu()" title="上传材料与模板" aria-label="Add files">
+                <button type="button" class="askb__icon" id="askbPlusBtn" onclick="window.AnauAgent.togglePlusMenu()" title="上传材料与模板" aria-label="添加附件">
                   <svg viewBox="0 0 24 24"><path d="M12 4.5v15M4.5 12h15" fill="none" stroke="currentColor" stroke-width="2"/></svg>
                 </button>
                 <div class="askb__menu askb__menu--plus" id="askbPlusMenu" style="display: none;">
@@ -4645,7 +4130,7 @@ ${examSummary}
               <!-- 输入框 -->
               <label class="askb__field">
                 <span class="askb__sr">输入咨询内容</span>
-                <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="" onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
+                <textarea class="chat-textarea" id="agentInputText" rows="1" placeholder="输入校园问题或办事需求" onkeydown="window.AnauAgent.handleKeyDown(event)" oninput="window.AnauAgent.autoResizeTextarea(this)"></textarea>
               </label>
 
               <!-- 动作按钮 (发送 / 语音) -->
@@ -4713,7 +4198,7 @@ ${examSummary}
                   原始请假电子档案摘要
                 </div>
                 <div class="xiaojia-info-grid">
-                  <div><span class="label">申请学生：</span><span class="val" id="xjStudentName">洪一豪 (学号 24114059)</span></div>
+                  <div><span class="label">申请学生：</span><span class="val" id="xjStudentName">学生（待填写）</span></div>
                   <div><span class="label">所属学院：</span><span class="val">信息与计算机学院 (计科01班)</span></div>
                   <div><span class="label">假条编号：</span><span class="val" id="xjSlipCode">AHAU-QJ-20261117-0892</span></div>
                   <div><span class="label">核准去向：</span><span class="val">安徽省合肥市肥西路返家</span></div>
@@ -4736,7 +4221,7 @@ ${examSummary}
                       内网分配IP：<code>10.12.88.23</code> · 经安农大内网网关鉴权，确认为校内在席终端
                     </div>
                   </div>
-                  <div class="check-status-tag">✓ 在校认证通过</div>
+                  <div class="check-status-tag">示例 · 学生身份</div>
                 </div>
               </div>
 
@@ -4791,7 +4276,7 @@ ${examSummary}
                 <button type="button" class="btn-xj-cancel" onclick="window.AnauAgent.closeXiaojiaModal()">取消返回</button>
                 <button type="button" class="btn-xj-submit" id="btnSubmitXiaojia" onclick="window.AnauAgent.submitXiaojiaForm()">
                   <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
-                  <span>核验无误 · 提交学工处办结销假</span>
+                  <span>生成返校销假演示凭单</span>
                 </button>
               </div>
             </div>
@@ -4800,7 +4285,7 @@ ${examSummary}
             <div id="xiaojiaReceiptSection" style="display:none;" class="xiaojia-receipt-box">
               <div class="receipt-stamp-badge">
                 <div style="width: 52px; height: 52px; margin: 0 auto; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #16a34a; font-size: 26px;">✓</div>
-                <h3>返校销假审核通过 · 档案正式办结归档</h3>
+                <h3>返校销假步骤演示</h3>
                 <p>安徽农业大学学工处与教务综合管理系统已实时同步销假办结状态</p>
               </div>
 
@@ -4809,18 +4294,18 @@ ${examSummary}
                 <div class="receipt-rows">
                   <div class="receipt-row"><span class="k">销假办结凭单编号：</span><span class="v code-highlight" id="rcptCode">AHAU-XJ-20261120-0892</span></div>
                   <div class="receipt-row"><span class="k">关联原请假单号：</span><span class="v code-highlight" id="rcptOrigSlip">AHAU-QJ-20261117-0892</span></div>
-                  <div class="receipt-row"><span class="k">销假学生姓名：</span><span class="v" id="rcptStudent">洪一豪 (学号 24114059)</span></div>
+                  <div class="receipt-row"><span class="k">销假学生姓名：</span><span class="v" id="rcptStudent">学生（待填写）</span></div>
                   <div class="receipt-row"><span class="k">归属院系班级：</span><span class="v">信息与计算机学院 · 计算机科学与技术01班</span></div>
                   <div class="receipt-row"><span class="k">实际销假办结时刻：</span><span class="v" id="rcptTime">2026年11月20日 15:30:18</span></div>
                   <div class="receipt-row"><span class="k">内网认证基站：</span><span class="v">AHAU-Student 勤学楼西阶梯 AP (10.12.88.23)</span></div>
-                  <div class="receipt-row"><span class="k">辅导员面签核验：</span><span class="v text-success">✓ 辅导员现场签字查验已通过（第二联已归档）</span></div>
+                  <div class="receipt-row"><span class="k">辅导员面签核验：</span><span class="v text-success">示例 · 待辅导员确认</span></div>
                   <div class="receipt-row"><span class="k">教务考勤系统联动：</span><span class="v text-success">✓ 已恢复日常在籍在校正常出勤考勤状态</span></div>
                 </div>
 
                 <!-- 学院电子印章 -->
                 <div class="receipt-seal">
                   <div style="font-size:7px; font-weight:bold; color:#dc2626; transform:scale(0.85); text-align:center;">
-                    安徽农业大学<br>信息与计算机学院<br>★<br>销假专用章
+                    安徽农业大学<br>信息与计算机学院<br>★<br>演示凭单
                   </div>
                 </div>
               </div>
@@ -4868,7 +4353,7 @@ ${examSummary}
 
     // 初始欢迎语
     setTimeout(() => {
-      renderSessionMessages('session-live');
+      renderSessionMessages(currentActiveSessionId);
     }, 300);
   }
 
@@ -4876,7 +4361,163 @@ ${examSummary}
   // 8. 消息渲染与打字机流式动效
   // ----------------------------------------------------------------------------
   let pendingImageBase64 = null;
-  let pendingImageName = '';
+  let chatRequestPending = false;
+
+  const replyActions = [
+    ['retry', '重新生成', 'refresh-ccw'],
+    ['like', '有帮助', 'thumbs-up'],
+    ['dislike', '没帮助', 'thumbs-down'],
+    ['copy', '复制回复', 'copy'],
+    ['share', '分享回复', 'share']
+  ];
+
+  function chatIcon(name) {
+    return `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="assets/chat-icons.svg#${name}"></use></svg>`;
+  }
+
+  function updateReplyRetryButtons() {
+    document.querySelectorAll('#nativeChatMessages [data-chat-action="retry"]').forEach(button => {
+      button.disabled = chatRequestPending || button.dataset.retryAvailable !== 'true';
+    });
+  }
+
+  function setChatRequestPending(pending) {
+    chatRequestPending = pending;
+    const sendButton = document.getElementById('agentSendBtn');
+    if (sendButton) sendButton.disabled = pending;
+    updateReplyRetryButtons();
+  }
+
+  function latestRetryPrompt(session, message) {
+    if (!message?.retryMode || session?.messages.at(-1) !== message) return null;
+    const prompt = session.messages.at(-2);
+    return prompt?.role === 'user' && !prompt.image ? prompt : null;
+  }
+
+  function retryCampusReply(text, message) {
+    const savedState = { ...AgentState };
+    try {
+      AgentState.workflow = null;
+      AgentState.workflowStep = 0;
+      AgentState.workflowData = {};
+      AgentState.lastTopic = message.retryTopic;
+      AgentState.lastLocation = message.retryLocation;
+      const result = processUserInput(text);
+      if (AgentState.workflow) throw new Error('无法重新生成流程消息');
+      return result;
+    } finally {
+      Object.assign(AgentState, savedState);
+    }
+  }
+
+  async function regenerateReply(session, message, row, status) {
+    const prompt = latestRetryPrompt(session, message);
+    if (!prompt || chatRequestPending || getActiveSession() !== session) return;
+    setChatRequestPending(true);
+    status.textContent = '正在重新生成…';
+    try {
+      const text = prompt.content;
+      const reply = message.retryMode === 'math' ? solveMath(text)
+        : message.retryMode === 'campus' ? retryCampusReply(text, message)
+        : await callAhauOfficialLlm(text, session.messages.slice(0, -2), input => retryCampusReply(input, message));
+      if (!reply?.text || reply.approval || reply.widgetHtml) throw new Error('未生成普通文本回复');
+      if (!realSessions.includes(session) || session.messages.at(-1) !== message) return;
+
+      message.content = reply.text;
+      delete message.feedback;
+      saveSessionsToStorage(realSessions);
+      if (getActiveSession() !== session) return;
+
+      // Reuse the current row so keyboard focus and scroll position stay put.
+      const currentRow = row.isConnected ? row : document.querySelector('#nativeChatMessages .chat-msg:last-child');
+      currentRow?.querySelector('.bot-text-content')?.replaceChildren(
+        document.createRange().createContextualFragment(parseMarkdownToHtml(reply.text))
+      );
+      currentRow?.querySelectorAll('[aria-pressed]').forEach(button => button.setAttribute('aria-pressed', 'false'));
+      const currentStatus = currentRow?.querySelector('.chat-action-status');
+      if (currentStatus) currentStatus.textContent = '已重新生成';
+    } catch (error) {
+      status.textContent = '重新生成失败，请重试';
+    } finally {
+      setChatRequestPending(false);
+      if (row.isConnected && (document.activeElement === document.body || document.activeElement === row.querySelector('[data-chat-action="retry"]'))) {
+        row.querySelector('[data-chat-action="retry"]').focus({ preventScroll: true });
+      }
+    }
+  }
+
+  async function copyReplyText(text) {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        // The fallback also supports the lobby on an HTTP campus network.
+      }
+    }
+    const focused = document.activeElement;
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.readOnly = true;
+    field.className = 'chat-copy-buffer';
+    document.body.appendChild(field);
+    try {
+      field.select();
+      if (!document.execCommand('copy')) throw new Error('复制失败');
+    } finally {
+      field.remove();
+      focused?.focus({ preventScroll: true });
+    }
+  }
+
+  function attachReplyActions(row, message, session) {
+    const canRetry = !!latestRetryPrompt(session, message);
+    const actions = document.createElement('div');
+    actions.className = 'chat-reply-actions';
+    actions.setAttribute('role', 'group');
+    actions.setAttribute('aria-label', '回复操作');
+    actions.innerHTML = replyActions.map(([action, label, icon]) => {
+      const state = action === 'retry'
+        ? `data-retry-available="${canRetry}" ${canRetry && !chatRequestPending ? '' : 'disabled'}`
+        : action === 'like' || action === 'dislike' ? `aria-pressed="${message.feedback === action}"` : '';
+      return `<button type="button" data-chat-action="${action}" aria-label="${label}" title="${label}" ${state}>${chatIcon(icon)}</button>`;
+    }).join('') + '<span class="chat-action-status" role="status"></span>';
+    const status = actions.querySelector('.chat-action-status');
+    actions.addEventListener('click', async event => {
+      const button = event.target.closest('button[data-chat-action]');
+      if (!button) return;
+      const action = button.dataset.chatAction;
+      if (action === 'retry') {
+        await regenerateReply(session, message, row, status);
+        return;
+      }
+      if (action === 'like' || action === 'dislike') {
+        message.feedback = message.feedback === action ? null : action;
+        saveSessionsToStorage(realSessions);
+        actions.querySelectorAll('[aria-pressed]').forEach(control => {
+          control.setAttribute('aria-pressed', String(control.dataset.chatAction === message.feedback));
+        });
+        status.textContent = message.feedback ? '已记录反馈' : '已取消反馈';
+        return;
+      }
+      try {
+        const text = row.querySelector('.bot-text-content').innerText.trim() || message.content;
+        if (action === 'share' && navigator.share && (!navigator.canShare || navigator.canShare({ text }))) {
+          try {
+            await navigator.share({ title: '安农智办', text });
+            return;
+          } catch (error) {
+            if (error.name === 'AbortError') return;
+          }
+        }
+        await copyReplyText(text);
+        status.textContent = action === 'share' ? '已复制，可粘贴分享' : '已复制回复';
+      } catch (error) {
+        status.textContent = '复制失败，可选中回复手动复制';
+      }
+    });
+    row.appendChild(actions);
+  }
 
   function scrollChatToBottom(smooth = false) {
     const list = document.getElementById('nativeChatMessages');
@@ -4904,6 +4545,7 @@ ${examSummary}
     const list = document.getElementById('nativeChatMessages');
     const msgDiv = document.createElement('div');
     msgDiv.className = 'chat-msg user';
+    const inLobby = !!list.closest('.anau-lobby');
 
     let imgHtml = '';
     if (imageBase64) {
@@ -4912,18 +4554,20 @@ ${examSummary}
 
     msgDiv.innerHTML = `
       <div class="chat-msg-avatar">
-        <img src="anau_ai_logo.png" style="filter: hue-rotate(90deg);" alt="用户">
+        ${inLobby ? `<span class="chat-user-avatar" role="img" aria-label="我">${chatIcon('user-round')}</span>`
+          : '<img src="anau_ai_logo.png" style="filter: hue-rotate(90deg);" alt="用户">'}
       </div>
       <div class="chat-msg-bubble">
         ${imgHtml}
-        <div>${escapeHtml(text)}</div>
+        <div class="chat-user-text">${escapeHtml(text)}</div>
       </div>
     `;
     list.appendChild(msgDiv);
     scrollChatToBottom(true);
   }
 
-  function appendBotMessage(markdownText, approvalObj = null, extraWidgetHtml = '') {
+  function appendBotMessage(message, session) {
+    const { content: markdownText, approval: approvalObj, widgetHtml: extraWidgetHtml } = message;
     const list = document.getElementById('nativeChatMessages');
     const msgDiv = document.createElement('div');
     msgDiv.className = 'chat-msg bot';
@@ -4937,8 +4581,8 @@ ${examSummary}
       if (approvalObj.title) approvalObj.title = stripEmojis(approvalObj.title);
       let rowsHtml = '';
       approvalObj.data.forEach(item => {
-        const cleanLabel = stripEmojis(item.label);
-        const cleanVal = stripEmojis(item.val);
+        const cleanLabel = escapeHtml(stripEmojis(item.label));
+        const cleanVal = approvalObj.type === "classroom" ? escapeHtml(stripEmojis(item.val)) : stripEmojis(item.val);
         rowsHtml += `<tr><td class="label">${cleanLabel}</td><td class="val">${cleanVal}</td></tr>`;
       });
 
@@ -4952,8 +4596,8 @@ ${examSummary}
             <tbody>${rowsHtml}</tbody>
           </table>
           <div class="approval-actions">
-            <button class="btn-print-doc" onclick='window.AnauAgent.openPrintModal("${approvalObj.type}", ${JSON.stringify(approvalObj.rawObj)})'>
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>打印 / 导出标准盖章审批单 (PDF)
+            <button class="btn-print-doc" data-print-type="${escapeHtml(approvalObj.type)}" data-print-info="${escapeHtml(JSON.stringify(approvalObj.rawObj))}" onclick="window.AnauAgent.openPrintModal(this.dataset.printType, JSON.parse(this.dataset.printInfo))">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>预览打印 / 保存 PDF
             </button>
           </div>
         </div>
@@ -4970,6 +4614,15 @@ ${examSummary}
         ${extraWidgetHtml ? extraWidgetHtml : ''}
       </div>
     `;
+    if (list.closest('.anau-lobby')) {
+      if (session?.messages.at(-1) === message) {
+        list.querySelectorAll('[data-retry-available="true"]').forEach(button => {
+          button.dataset.retryAvailable = 'false';
+          button.disabled = true;
+        });
+      }
+      attachReplyActions(msgDiv, message, session);
+    }
     list.appendChild(msgDiv);
     scrollChatToBottom(true);
 
@@ -5086,50 +4739,50 @@ ${examSummary}
         <div class="print-official-emblem">
           <img src="anau_ai_logo.png" alt="校徽" style="height: 52px; width: 52px; border-radius: 50%;">
         </div>
-        <div class="print-official-title">安徽农业大学多媒体/阶梯教室借用审批表</div>
-        <div class="print-official-sub">现代教育技术中心 · 教务处 · 保卫处 联合制发</div>
+        <div class="print-official-title">教室借用申请草案</div>
+        <div class="print-official-sub">安农智办生成 · 请以学校审批为准</div>
         <div class="print-meta-row">
-          <span>审批编号：${raw.docNo || 'AHAU-CR-20261105'}</span>
+          <span>草案编号：${escapeHtml(raw.docNo || '待填写')}</span>
           <span>填表日期：${dateStr}</span>
         </div>
         <table class="print-standard-table">
           <tr>
             <td class="header-col">借用单位/班级</td>
-            <td>${raw.dept || '安徽农业大学在校班级'}</td>
+            <td>${escapeHtml(raw.dept || '待填写')}</td>
             <td class="header-col">经办人 / 学号</td>
-            <td>${raw.applicant || '在校生'} (${raw.studentId || '230101****'})</td>
+            <td>${escapeHtml(raw.applicant || '待填写')}</td>
           </tr>
           <tr>
             <td class="header-col">拟借用时间</td>
-            <td>${raw.time || '本周五 19:00 - 21:00'}</td>
+            <td>${escapeHtml(raw.time || '待填写')}</td>
             <td class="header-col">使用人数</td>
-            <td>${raw.count || '45人'}</td>
+            <td>${escapeHtml(raw.count || '待填写')}</td>
           </tr>
           <tr>
-            <td class="header-col">指定匹配教室</td>
-            <td colspan="3" style="font-weight: 700; color: #244b2d;">${raw.room || '勤学楼 606（多媒体大阶梯教室）'}</td>
+            <td class="header-col">场地建议（待核实）</td>
+            <td colspan="3" style="font-weight: 700; color: #244b2d;">${escapeHtml(raw.room || '待填写')}</td>
           </tr>
           <tr>
             <td class="header-col">借用具体事由</td>
-            <td colspan="3">${raw.reason || '召开“学风建设与期末备考”主题班会，开展课件宣讲与研讨交流。'}</td>
+            <td colspan="3">${escapeHtml(raw.reason || '待填写')}</td>
           </tr>
           <tr>
             <td class="header-col">多媒体设备需求</td>
-            <td colspan="3">投影仪主机、无线麦克风2支、扩音音响、主讲台智慧屏、中央空调照明</td>
+            <td colspan="3">${escapeHtml(raw.equipment || '待确认')}</td>
           </tr>
           <tr style="height: 90px;">
             <td class="header-col">班主任 / 辅导员<br>审核意见</td>
             <td colspan="3" style="vertical-align: top; padding: 12px;">
-              同意申请，活动内容健康积极，已强调爱护多媒体教学设施与消防安全。<br><br>
+              待辅导员填写。<br><br>
               <div style="text-align: right; margin-right: 40px;">辅导员签字：________________&nbsp;&nbsp;&nbsp;&nbsp;${dateStr}</div>
             </td>
           </tr>
           <tr style="height: 90px;">
             <td class="header-col">现代教育技术中心<br>多媒体教室管理科</td>
             <td colspan="3" style="vertical-align: top; padding: 12px; position: relative;">
-              经查核，该时段教室无排课冲突，准予使用，请经办人于使用前15分钟至楼宇值班室凭本单领取教室钥匙。<br><br>
+              待教室管理方核实场地、时间及设备后填写。<br><br>
               <div style="text-align: right; margin-right: 40px;">审批人签章：________________&nbsp;&nbsp;&nbsp;&nbsp;${dateStr}</div>
-              <div class="official-seal-mock">安徽农业大学<br>现代教育中心<br>★ 审批专用章 ★</div>
+
             </td>
           </tr>
         </table>
@@ -5393,13 +5046,13 @@ ${examSummary}
     downloadLeaveSlipFile: function (slipId) {
       // 优先提供官方标准 .docx 模版文件下载
       const a = document.createElement('a');
-      a.href = '/请假条模板.docx';
+      a.href = 'assets/请假条模板.docx';
       a.download = '安徽农业大学_规范学生请假条模版(一式两联手写版).docx';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       if (window.AnauAgent.showToast) {
-        window.AnauAgent.showToast('官方规范学生请假条模版 (.docx) 已下载，请打印后手写信息并找辅导员面签签字！');
+        window.AnauAgent.showToast('已发起请假条模板下载，请打印后手写信息并找辅导员面签签字！');
       }
     },
 
@@ -5415,18 +5068,11 @@ ${examSummary}
       const btn = document.getElementById('btnSubmitXiaojia');
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span>核验无误 · 提交学工处办结销假</span>`;
+        btn.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span>生成返校销假演示凭单</span>`;
       }
 
       // 填充当前学生身份信息
-      let studentName = '洪一豪 (学号 24114059)';
-      try {
-        const stored = localStorage.getItem('anau_auth_session');
-        if (stored) {
-          const p = JSON.parse(stored);
-          if (p && p.studentId) studentName = (p.studentName || '学生') + ' (学号 ' + p.studentId + ')';
-        }
-      } catch(e) {}
+      const studentName = '学生（待填写）';
       const stEl = document.getElementById('xjStudentName');
       if (stEl) stEl.textContent = studentName;
       const rcptSt = document.getElementById('rcptStudent');
@@ -5481,12 +5127,12 @@ ${examSummary}
         if (step3) {
           step3.className = 'step-item step-done';
           const st = step3.querySelector('.step-state');
-          if (st) st.textContent = '✓ 已办结销假 · 归档办结';
+          if (st) st.textContent = '已生成演示凭单';
         }
         if (slipBtn) {
           slipBtn.disabled = false;
           slipBtn.style.background = '#059669';
-          slipBtn.innerHTML = '✓ 返校销假已办结归档 (查看凭单)';
+          slipBtn.innerHTML = '查看返校销假演示凭单';
           slipBtn.onclick = function() {
             window.AnauAgent.openXiaojiaModal(slipId);
             const fs = document.getElementById('xiaojiaFormSection');
@@ -5497,19 +5143,20 @@ ${examSummary}
         }
 
         // 并在主对话中发一条助手确认通知
-        const confirmMsg = `**【数智安农 · 返校销假手续办结归档通知】**\n\n` +
+        const confirmMsg = `**【返校销假流程演示】**\n\n` +
           `尊敬的同学，您的请假条（档案编号：\`AHAU-QJ-20261117-0892\`）已顺利通过 **辅导员第二联面签核验** 与 **AHAU-Student 校园网在校在席定位认证**。\n\n` +
           `📋 **销假办结凭单编号**：\`AHAU-XJ-20261120-0892\`\n` +
           `⏱️ **归档办结时间**：${new Date().toLocaleString('zh-CN')}\n` +
           `🏛️ **全校考勤联动**：已由信息与计算机学院学工系统办结注销，全校教务出勤系统已恢复在校正常打卡状态。\n\n` +
-          `（纸质请假条第一联已留存学院备查，第二联凭单已电子化归档至您的学生个人数字档案。）`;
+          `此凭单仅供演示，请通过学校渠道正式销假。`;
         
-        appendBotMessage(confirmMsg);
-        AgentState.messages.push({ role: 'assistant', content: confirmMsg });
-        appendMessageToCurrentSession({ role: 'assistant', content: confirmMsg });
+        const message = { role: 'assistant', content: confirmMsg };
+        const session = getActiveSession();
+        appendMessageToCurrentSession(message, session);
+        appendBotMessage(message, session);
 
         if (window.AnauAgent.showToast) {
-          window.AnauAgent.showToast('🎉 销假核验通过！销假电子凭单已生成并自动归档至学工系统。');
+          window.AnauAgent.showToast('已生成返校销假演示凭单。');
         }
       }, 700);
     },
@@ -5523,18 +5170,20 @@ ${examSummary}
       const text = (inputEl.value || '').trim();
       const hasImage = !!pendingImageBase64;
       const imgData = pendingImageBase64;
-      const imgName = pendingImageName;
 
-      if (!text && !hasImage) return;
+      if (chatRequestPending || (!text && !hasImage)) return;
+      const session = getActiveSession();
+      const wasInWorkflow = !!AgentState.workflow;
+      const retryTopic = AgentState.lastTopic;
+      const retryLocation = AgentState.lastLocation;
+      setChatRequestPending(true);
+      document.querySelectorAll('#nativeChatMessages [data-chat-action="retry"]').forEach(button => {
+        button.dataset.retryAvailable = 'false';
+      });
 
       // 1. 发送用户消息并持久化到当前真实会话
       appendUserMessage(text || '【发送了一张校园照片】', imgData);
-      AgentState.messages.push({ role: 'user', content: text || '【发送了一张校园照片】' });
       appendMessageToCurrentSession({ role: 'user', content: text || '【发送了一张校园照片】', image: imgData });
-
-      if (AgentState.messages.length > 20) {
-        AgentState.messages = AgentState.messages.slice(-20);
-      }
       inputEl.value = '';
       this.autoResizeTextarea(inputEl);
       this.clearPendingImage();
@@ -5544,23 +5193,14 @@ ${examSummary}
 
       // 3. 混合引擎决策路由：
       // - 纯数学计算与算术：优先毫秒级即时计算（保证离线与非内网环境下 100% 秒出结果与详细步骤）
-      const mathQuick = solveMath(text);
-      if (mathQuick) {
-        setTimeout(() => {
-          removeTypingIndicator();
-          appendBotMessage(mathQuick.text, null);
-          appendMessageToCurrentSession({ role: 'assistant', content: mathQuick.text });
-        }, 320);
-        return;
-      }
-
+      const mathQuick = !hasImage && !AgentState.workflow && solveMath(text);
       // - 业务审批工作流、安农大 63 只校宠名录、食堂就餐、楼宇防跑空及多轮追问：走本地 100% 权威防幻觉知识大脑
       // - 开放性通用闲聊、深层代码、论文创作：连接安农官方大模型，断网不可达时无缝降级
       const t = text.toLowerCase();
       const catKeywords = ['猫', '校宠', '花名册', '猫坡', '东门', '来福', '花姐', '英国佬', '大吉', '馆长', '毛毛', '小黑', '小漂亮', '嘴上有屎', '对眼', '屁姐', '屁哥', '鸟哥', '花卷', '足球八嘎', '黑头', '小罐', '小美', '四瓜'];
       const canteenKeywords = ['食堂', '餐厅', '吃饭', '吃什么', '西苑', '欣苑', '东苑', '北苑', '丰泽', '思源'];
       const buildingKeywords = ['勤政楼', '勤学楼', '博学楼', '图书馆', '第二报告厅', '报告厅', '化学楼'];
-      const workflowKeywords = ['借教室', '开班会', '请假', '假条', '离校', '一卡通', '报修', '茶树', '国重', '名木', '银杏', '香樟', '调课', '排课', '换课', '停课', '教室冲突', '学分', '培养方案', '成绩复核', '协同工作流', '教务协同', 'agentweber', 'weber', '成绩', '查成绩', '绩点', 'gpa', '查分', '电脑自动化', 'os agent', '本地控制', '自动化做事情', '工作区', '同步日历', '本地主机'];
+      const workflowKeywords = ['课表', '借用', '借教室', '开班会', '请假', '假条', '离校', '一卡通', '报修', '茶树', '国重', '名木', '银杏', '香樟', '调课', '排课', '换课', '停课', '教室冲突', '学分', '培养方案', '成绩复核', '协同工作流', '教务协同', 'agentweber', 'weber', '成绩', '查成绩', '绩点', 'gpa', '查分', '电脑自动化', 'os agent', '本地控制', '自动化做事情', '工作区', '同步日历', '本地主机'];
       const zongceKeywords = ['综测', '测评', '算综测', '奖学金', '国家奖学金', '励志奖学金', '志愿汇', '德育'];
       const kaoyanKeywords = ['考研', '择校', '专硕', '学硕', '读博', '408', '414', '314', '315', '考研时间线', '考研科目', '复习进度', '择校方案'];
       const facultyKeywords = ['师资', '导师', '教授', '课题组', '研究课题', '研究方向', '老师', '教师', '博导', '硕导', '农学院', '茶业学院', '茶学院', '计算机学院', '人工智能学院', '信息与计算机学院', '信智学院', '生命科学学院', '生科院', '生物制造', '植物保护学院', '植保学院', '经济管理学院', '经管学院', '动物科技学院', '动科院', '动物医学院', '动医院', '有哪些老师', '找老师', '找导师', '宛晓春', '夏恩华', '张友华', '姜东', '武立权', '程备久', '薛挺', '操海群', '辜丽川'];
@@ -5568,7 +5208,7 @@ ${examSummary}
       const plazaKeywords = ['科研广场', '互助广场', '科研互助', '找队友', '跨学科', '组队', '科研合作', '借仪器', '借设备', '数据共享', '互帮互助', '找搭档', '芯片量化', '多光谱', '病斑数据', 'p2p撮合', '智能体撮合', '找搭子', '合作组队'];
       
       const isShortFollowUp = (AgentState.lastTopic !== null) && (text.length <= 10 || text.endsWith('呢') || text.endsWith('吗') || text.startsWith('那'));
-      const isCampusSpecific = AgentState.workflow || hasImage || isShortFollowUp ||
+      const isCampusSpecific = AgentState.workflow || hasImage || isShortFollowUp || /借.{0,10}教室/.test(t) ||
         catKeywords.some(k => t.includes(k.toLowerCase())) ||
         canteenKeywords.some(k => t.includes(k.toLowerCase())) ||
         buildingKeywords.some(k => t.includes(k.toLowerCase())) ||
@@ -5579,29 +5219,36 @@ ${examSummary}
         plazaKeywords.some(k => t.includes(k.toLowerCase())) ||
         facultyKeywords.some(k => t.includes(k.toLowerCase())) || AHAU_KB.faculty.some(g => g.teachers.some(teacher => text.includes(teacher.name)));
 
-      if (AgentState.workflow) {
-        // 正在进行的交互式分步表单状态机（如假条审批步骤 1、2、3）
-        setTimeout(() => {
-          removeTypingIndicator();
-          const res = processUserInput(text, hasImage, { name: imgName });
-          appendBotMessage(res.text, res.approval, res.widgetHtml || '');
-          AgentState.messages.push({ role: 'assistant', content: res.text });
-          appendMessageToCurrentSession({ role: 'assistant', content: res.text, approval: res.approval, widgetHtml: res.widgetHtml });
-        }, 400);
-      } else {
-        // 开放性问答、学术研讨、错题解析、校园生活与业务指引：全量交由校级 DeepSeek 大模型实时推理
-        const res = await callAhauOfficialLlm(text);
-        removeTypingIndicator();
-        let extraWidget = res.widgetHtml || '';
-        let extraApproval = res.approval || null;
-        if (!extraWidget && (workflowKeywords.some(k => t.includes(k.toLowerCase())) || hasImage)) {
-          const helper = processUserInput(text, hasImage, { name: imgName });
-          if (helper.widgetHtml) extraWidget = helper.widgetHtml;
-          if (helper.approval) extraApproval = helper.approval;
+      const retryMode = mathQuick ? 'math' : isCampusSpecific ? 'campus' : 'model';
+      let res;
+      try {
+        if (mathQuick) {
+          await new Promise(resolve => setTimeout(resolve, 320));
+          res = mathQuick;
+        } else {
+          res = hasImage ? await handleMultimodalInput(text, imgData)
+            : isCampusSpecific ? processUserInput(text)
+              : await callAhauOfficialLlm(text, session.messages.slice(0, -1), input =>
+                getActiveSession() === session ? processUserInput(input) : retryCampusReply(input, { retryTopic, retryLocation }));
         }
-        appendBotMessage(res.text, extraApproval, extraWidget);
-        AgentState.messages.push({ role: 'assistant', content: res.text });
-        appendMessageToCurrentSession({ role: 'assistant', content: res.text, approval: extraApproval, widgetHtml: extraWidget });
+      } catch (error) {
+        console.error('处理消息失败:', error);
+        res = { text: '这次请求没有完成，请稍后重试。' };
+      } finally {
+        removeTypingIndicator();
+      }
+
+      const message = { role: 'assistant', content: res.text, approval: res.approval, widgetHtml: res.widgetHtml };
+      if (!hasImage && !wasInWorkflow && !AgentState.workflow && !res.approval && !res.widgetHtml) {
+        Object.assign(message, { retryMode, retryTopic, retryLocation });
+      }
+      try {
+        appendMessageToCurrentSession(message, session);
+        if (getActiveSession() === session && session.messages.at(-1) === message) {
+          appendBotMessage(message, session);
+        }
+      } finally {
+        setChatRequestPending(false);
       }
     },
 
@@ -5624,7 +5271,6 @@ ${examSummary}
       const reader = new FileReader();
       reader.onload = function (evt) {
         pendingImageBase64 = evt.target.result;
-        pendingImageName = file.name;
         const tray = document.getElementById('askbFilesTray');
         const nameEl = document.getElementById('askbFileName');
         if (tray) tray.style.display = 'flex';
@@ -5637,11 +5283,10 @@ ${examSummary}
 
     clearPendingImage: function () {
       pendingImageBase64 = null;
-      pendingImageName = '';
       const previewBar = document.getElementById('chatPreviewBar');
       if (previewBar) previewBar.style.display = 'none';
       const inputEl = document.getElementById('agentInputText');
-      if (inputEl) inputEl.placeholder = '提问办事、借教室、请假或上传照片...';
+      if (inputEl) inputEl.placeholder = '输入校园问题或办事需求';
       const fileInput = document.getElementById('agentImageInput');
       if (fileInput) fileInput.value = '';
     },
@@ -5737,12 +5382,12 @@ ${examSummary}
         actions.innerHTML = `
           <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:#15803d; background:#dcfce7; padding:8px 14px; border-radius:8px; border:1px solid #86efac; width:100%;">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
-            <span>【0次越权门禁授权】${title} 协同流转已完成 · 单号 ${docNo} 已存证</span>
+            <span>模拟确认完成 · ${escapeHtml(title)} · 演示单号 ${escapeHtml(docNo)}</span>
           </div>
         `;
       }
       if (window.AnauAgent.showToast) {
-        window.AnauAgent.showToast('AgentWeber 门禁核验通过：教务协同流转已成功归档！');
+        window.AnauAgent.showToast('已完成本页模拟确认。');
       }
     },
 
@@ -5756,7 +5401,7 @@ ${examSummary}
         `;
       }
       if (window.AnauAgent.showToast) {
-        window.AnauAgent.showToast('已取消写操作，系统未向教务系统写入任何修改。');
+        window.AnauAgent.showToast('已暂存演示草案。');
       }
     },
 
@@ -5902,8 +5547,6 @@ ${examSummary}
     },
 
     // 兼容接口 (静音模式安全无缝响应)
-    submitGatewayAuth: submitGatewayAuth,
-    runGradeFetchPipeline: runGradeFetchPipeline,
     openZongceFromBoard: openZongceFromBoard,
     openDiagnosisFromBoard: openDiagnosisFromBoard,
     handleGradeQueryWorkflow: handleGradeQueryWorkflow,

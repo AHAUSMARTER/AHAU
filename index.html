@@ -2,51 +2,15 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <title>安徽农业大学 · 数智安农综合服务大厅</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" href="anau_ai_logo.png">
   <link rel="apple-touch-icon" href="anau_ai_logo.png">
-  <link rel="stylesheet" href="anau_agent.css?v=39.0">
+  <link rel="stylesheet" href="anau_agent.css?v=particle-title2">
   <script>
-    (function checkAuthGuard() {
-      const saved = localStorage.getItem('anau_auth_session');
-      if (!saved) {
-        window.location.replace('login.html');
-        return;
-      }
-      try {
-        const parsed = JSON.parse(saved);
-        if (!parsed || !parsed.studentId || !parsed.password) {
-          window.location.replace('login.html');
-        }
-      } catch(e) {
-        window.location.replace('login.html');
-      }
-    })();
-
-    function logoutAndReauth() {
-      localStorage.removeItem('anau_auth_session');
-      window.location.replace('login.html');
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const saved = localStorage.getItem('anau_auth_session');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed && parsed.studentId) {
-            const badge = document.getElementById('userAuthBadge');
-            const sidText = document.getElementById('userStudentIdText');
-            if (badge && sidText) {
-              sidText.textContent = '学号: ' + parsed.studentId;
-              badge.style.display = 'inline-flex';
-            }
-          }
-        } catch(e) {}
-      }
-    });
+    try { localStorage.removeItem('anau_auth_session'); } catch {}
   </script>
   <style>
     :root {
@@ -1928,51 +1892,6 @@
     }
 
   
-    #cardResearchPlaza:hover {
-      border-color: rgba(37, 99, 235, 0.3) !important;
-      background: #ffffff !important;
-    }
-    #cardResearchPlaza:hover #arrowPlaza {
-      background: #2563eb !important;
-      color: #ffffff !important;
-    }
-
-    #cardMathLab:hover {
-      border-color: rgba(16, 185, 129, 0.3) !important;
-      background: #ffffff !important;
-    }
-    #cardMathLab:hover #arrowMathLab {
-      background: #059669 !important;
-      color: #ffffff !important;
-    }
-
-    #cardCourseRepo:hover {
-      border-color: rgba(217, 119, 6, 0.3) !important;
-      background: #ffffff !important;
-    }
-    #cardCourseRepo:hover #arrowCourseRepo {
-      background: #d97706 !important;
-      color: #ffffff !important;
-    }
-
-    #cardDiagnosis:hover {
-      border-color: rgba(13, 148, 136, 0.3) !important;
-      background: #ffffff !important;
-    }
-    #cardDiagnosis:hover #arrowDiagnosis {
-      background: #0d9488 !important;
-      color: #ffffff !important;
-    }
-
-    #cardAgentWeber:hover {
-      border-color: rgba(99, 102, 241, 0.3) !important;
-      background: #ffffff !important;
-    }
-    #cardAgentWeber:hover #arrowAgentWeber {
-      background: #6366f1 !important;
-      color: #ffffff !important;
-    }
-
   /* Uniform Sidebar Spacing Fix */
 
     .sidebar-new-chat-wrap {
@@ -1991,9 +1910,289 @@
       gap: 0 !important;
     }
 
+
+    /* Lobby surface and typography. Inspired by Unslop by @heydamir (CC BY 4.0). */
+    html { background: #f7f7f4; }
+    .anau-lobby {
+      --lobby-paper: var(--site-paper);
+      --lobby-panel: var(--site-panel);
+      --lobby-line: var(--site-line);
+      --lobby-ink: var(--site-ink);
+      --lobby-secondary: var(--site-secondary);
+      --lobby-muted: var(--site-muted);
+      --lobby-green: var(--site-green);
+      --lobby-selected: var(--site-selected);
+      --lobby-ease: cubic-bezier(.2,.7,.3,1);
+      --lobby-side: 256px;
+      --text-primary: var(--lobby-ink);
+      --text-secondary: var(--lobby-secondary);
+      --text-tertiary: var(--lobby-muted);
+      background: var(--lobby-paper);
+      color: var(--lobby-ink);
+      height: 100dvh;
+    }
+
+    .anau-lobby > header {
+      height: 64px;
+      padding: 0 32px;
+      background: var(--lobby-paper);
+      color: var(--lobby-ink);
+      border-bottom: 1px solid var(--lobby-line);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+    .anau-lobby .logo-area { gap: 12px; }
+    .anau-lobby .logo-emblem-wrap {
+      width: 32px; height: 32px; border: 0; box-shadow: none; background: transparent;
+    }
+    .anau-lobby .logo-text h1 { font-size: 16px; font-weight: 600; letter-spacing: 0; }
+    .anau-lobby .header-school-name-badge {
+      display: block; height: 28px; padding: 0; border-radius: 0; box-shadow: none; background: transparent;
+    }
+    .anau-lobby .sidebar-toggle-btn,
+    .anau-lobby .sidebar-inner-close-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      box-shadow: none;
+      background: transparent;
+      color: var(--lobby-muted);
+      transform: none;
+      transition: background-color 140ms var(--lobby-ease), color 140ms var(--lobby-ease);
+    }
+    .anau-lobby .sidebar-toggle-btn:hover,
+    .anau-lobby .sidebar-inner-close-btn:hover {
+      background: var(--lobby-panel);
+      color: var(--lobby-ink);
+    }
+
+    .anau-lobby .workspace-wrapper {
+      height: calc(100dvh - 64px);
+      min-height: 0;
+      max-width: none;
+      padding: 0;
+    }
+    .anau-lobby .workspace-container {
+      border: 0;
+      border-radius: 0;
+      background: var(--lobby-paper);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+    .anau-lobby .sidebar-panel {
+      width: var(--lobby-side);
+      min-width: var(--lobby-side);
+      background: var(--lobby-panel);
+      border-color: var(--lobby-line);
+    }
+    .anau-lobby .sidebar-panel.desktop-collapsed { margin-left: calc(0px - var(--lobby-side)) !important; }
+    .anau-lobby .sidebar-brand-header {
+      min-height: 56px;
+      padding: 8px 16px;
+      justify-content: space-between;
+      background: transparent;
+      border: 0;
+    }
+    .anau-lobby .brand-title { font-size: 14px; font-weight: 600; color: var(--lobby-ink); }
+    .anau-lobby .sidebar-new-chat-wrap { padding: 0 16px 12px !important; margin: 0 !important; }
+    .anau-lobby .btn-antigravity-new {
+      height: 40px; padding: 0 12px; gap: 8px; border-radius: 8px;
+      background: var(--lobby-paper); border-color: var(--lobby-line);
+      box-shadow: none; color: var(--lobby-ink); font-size: 13px; font-weight: 500; transform: none;
+      transition: background-color 140ms var(--lobby-ease), border-color 140ms var(--lobby-ease);
+    }
+    .anau-lobby .btn-antigravity-new:hover { border-color: #aeb9af; }
+    .anau-lobby .sidebar-scroll-container { padding: 4px 16px 16px !important; gap: 4px !important; }
+    .anau-lobby .lobby-nav-label {
+      margin: 16px 0 4px; padding: 0 12px;
+      color: var(--lobby-muted); font-size: 12px; font-weight: 500;
+    }
+    .anau-lobby .accordion-trigger-card {
+      height: 40px !important; padding: 0 12px !important;
+      border: 1px solid transparent !important; border-radius: 8px !important;
+      background: transparent !important; color: var(--lobby-ink) !important;
+      transform: none !important;
+      transition: background-color 140ms var(--lobby-ease);
+    }
+    .anau-lobby .accordion-trigger-card:hover {
+      background: #edeee9 !important; border-color: transparent !important;
+    }
+    .anau-lobby .accordion-trigger-left { gap: 8px; }
+    .anau-lobby .accordion-icon-wrap {
+      width: 16px; height: 16px; padding: 0; background: transparent;
+      border-radius: 0; box-shadow: none; color: var(--lobby-muted);
+    }
+    .anau-lobby .accordion-trigger-left svg,
+    .anau-lobby .btn-antigravity-new svg {
+      width: 16px; height: 16px; stroke-width: 1.6;
+    }
+    .anau-lobby .accordion-label { color: inherit; font-size: 13px; font-weight: 500; }
+    .anau-lobby .accordion-arrow {
+      color: var(--lobby-muted) !important; background: transparent !important;
+      border: 0 !important; padding: 0 !important; font-size: 11px; box-shadow: none !important;
+    }
+    .anau-lobby .lobby-nav-chevron { flex: 0 0 14px; width: 14px; height: 14px; color: var(--lobby-muted); }
+    .anau-lobby .history-vertical-list { gap: 4px; padding: 0; }
+    .anau-lobby .history-session-item {
+      display: flex; flex-direction: row; align-items: center; gap: 4px !important;
+      padding: 0 4px 0 0 !important; min-height: 40px; margin: 0;
+      border: 1px solid transparent !important; border-radius: 8px !important;
+      background: transparent !important; transform: none;
+      transition: background-color 140ms var(--lobby-ease);
+    }
+    .anau-lobby .history-session-item:hover { background: #edeee9 !important; }
+    .anau-lobby .history-session-item.active {
+      background: var(--lobby-selected) !important; border-color: #dbe3db !important;
+    }
+    .anau-lobby .history-session-item::before { content: none; }
+    .anau-lobby .history-session-open {
+      flex: 1; min-width: 0; min-height: 38px; display: flex; align-items: center;
+      justify-content: space-between; gap: 8px; padding: 0 8px 0 12px; border: 0;
+      border-radius: 6px; background: transparent; color: var(--lobby-ink); cursor: pointer;
+    }
+    .anau-lobby .history-session-title,
+    .anau-lobby .history-session-item.active .history-session-title {
+      font-size: 12px !important; color: inherit !important; font-weight: 500 !important;
+    }
+    .anau-lobby .history-session-time { color: var(--lobby-muted); font-variant-numeric: tabular-nums; }
+    .anau-lobby .history-session-del-btn {
+      display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px;
+      padding: 0; opacity: 1; color: var(--lobby-muted);
+      transition: background-color 140ms var(--lobby-ease), color 140ms var(--lobby-ease);
+    }
+    .anau-lobby .history-session-del-btn:hover { background: var(--lobby-line); color: var(--lobby-ink); }
+    .anau-lobby .sidebar-copyright-note {
+      background: transparent; border-color: var(--lobby-line); padding: 12px 16px;
+      color: var(--lobby-muted); text-align: left; font-size: 11px; line-height: 1.6;
+    }
+    .anau-lobby .sidebar-copyright-note p { color: inherit; }
+
+    .anau-lobby .native-chat-window.embedded-mode,
+    .anau-lobby .chat-stage-body {
+      background: var(--lobby-paper) !important;
+      background-image: none !important;
+      backdrop-filter: none !important; box-shadow: none !important; border: 0;
+    }
+    .anau-lobby .native-chat-header {
+      height: 56px !important; padding: 0 32px !important;
+      background: var(--lobby-paper) !important; border-color: var(--lobby-line);
+      box-shadow: none; backdrop-filter: none;
+    }
+    .anau-lobby .native-chat-header-title {
+      font-size: 13px !important; color: var(--lobby-secondary) !important; font-weight: 500 !important;
+    }
+    .anau-lobby .native-chat-header-avatar { display: none; }
+    .anau-lobby .askb-hero-center {
+      inset: 0 0 84px !important; padding: 24px 32px !important;
+      justify-content: flex-start; overflow: auto; animation: none;
+    }
+    .anau-lobby .chat-stage-body::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 48px 22%;
+      background: url('ahau_library.jpg') center 48% / cover no-repeat;
+      filter: saturate(.48);
+      opacity: .24;
+      mask-image: linear-gradient(to right, transparent, #000 62%),
+                  linear-gradient(to bottom, transparent, #000 24%, #000 60%, transparent);
+      mask-composite: intersect;
+      pointer-events: none;
+    }
+    .anau-lobby .chat-stage-body:has(.chat-msg)::before { opacity: .08; }
+    .lobby-intro { width: min(100%, 800px); margin: auto; }
+    .anau-lobby .askb__hello {
+      font-family: var(--site-serif);
+      font-size: clamp(40px, 4.3vw, 64px) !important; font-weight: 600;
+      line-height: 1.12; letter-spacing: -.035em; text-align: left;
+      color: var(--lobby-ink); text-shadow: none; margin: 0 !important;
+    }
+    .anau-lobby #nativeChatMessages {
+      padding: 24px max(24px, calc((100% - 800px) / 2)) 24px !important;
+      scroll-padding-bottom: 24px !important; scrollbar-color: #c9cdc6 transparent !important;
+    }
+    .anau-lobby .askb__dock {
+      position: relative; flex: 0 0 auto; padding: 12px 24px 24px !important;
+      background: var(--lobby-paper) !important; backdrop-filter: none;
+    }
+    .anau-lobby .askb__bar {
+      min-height: 56px !important; width: 100%; max-width: 800px !important;
+      padding: 4px 8px !important; border: 1px solid #d8dcd5; border-radius: 12px !important;
+      background: var(--lobby-paper); box-shadow: 0 2px 8px #2328220a; backdrop-filter: none;
+    }
+    .anau-lobby .askb__bar:focus-within { border-color: var(--lobby-green); box-shadow: none; }
+    .anau-lobby .askb__field textarea { font-size: 16px !important; color: var(--lobby-ink); }
+    .anau-lobby .askb__field textarea::placeholder { color: var(--lobby-muted); }
+    .anau-lobby .askb__icon,
+    .anau-lobby .askb__action--send {
+      width: 44px; height: 44px; border-radius: 8px; box-shadow: none;
+      transition: background-color 140ms var(--lobby-ease);
+    }
+    .anau-lobby .askb__action--send { background: var(--lobby-green); color: #fff; }
+    .anau-lobby .askb__action--send:hover { background: #19432e; transform: none; }
+    .anau-lobby .askb__menu {
+      border-radius: 10px; border-color: var(--lobby-line); background: var(--lobby-paper);
+      backdrop-filter: none; box-shadow: 0 8px 24px #23282216;
+    }
+    .anau-lobby .askb__menu svg { color: var(--lobby-muted) !important; }
+    .anau-lobby .modal-backdrop { backdrop-filter: none; background: #23282255; }
+    .anau-lobby .modal-box { background: var(--lobby-paper); backdrop-filter: none; box-shadow: 0 12px 40px #2328221f; }
+    .anau-lobby .modal-url-card,
+    .anau-lobby .modal-url-card .modal-url-tag { background: var(--lobby-panel); color: var(--lobby-secondary); border-color: var(--lobby-line); }
+    .anau-lobby .modal-actions .btn-modal-direct { background: var(--lobby-green); box-shadow: none; }
+    .anau-lobby .modal-actions .btn-modal-ai { color: var(--lobby-ink); background: var(--lobby-panel); border-color: var(--lobby-line); }
+
+    .anau-lobby :is(button, a, textarea):focus-visible {
+      outline: 2px solid var(--lobby-green);
+      outline-offset: 2px;
+    }
+    @media (max-width: 768px) {
+      .anau-lobby > header { height: 56px !important; padding: 0 12px !important; }
+      .anau-lobby .logo-area { gap: 8px !important; }
+      .anau-lobby .logo-text h1 { font-size: 13px !important; font-weight: 600 !important; letter-spacing: 0 !important; }
+      .anau-lobby .header-school-name-badge { height: 20px !important; }
+      .anau-lobby .sidebar-toggle-btn,
+      .anau-lobby .sidebar-inner-close-btn { width: 44px !important; height: 44px !important; }
+      .anau-lobby .workspace-wrapper {
+        margin-top: 56px !important; padding: 0 !important; height: calc(100dvh - 56px) !important;
+      }
+      .anau-lobby .workspace-container { border-radius: 0 !important; }
+      .anau-lobby .sidebar-panel {
+        min-width: min(288px, 82vw);
+        background: var(--lobby-panel) !important; border-radius: 0 !important;
+        backdrop-filter: none !important;
+      }
+      .anau-lobby .sidebar-panel.mobile-open { box-shadow: 8px 0 24px #2328221c !important; }
+      .anau-lobby .sidebar-mobile-backdrop { backdrop-filter: none; }
+      .anau-lobby .accordion-trigger-card, .anau-lobby .btn-antigravity-new { height: 44px !important; }
+      .anau-lobby .native-chat-header { height: 44px !important; padding: 0 20px !important; }
+      .anau-lobby .askb-hero-center { padding: 20px !important; inset: 0 0 76px !important; }
+      .lobby-intro { max-width: 480px; margin: clamp(36px, 10vh, 80px) auto auto; }
+      .anau-lobby .chat-stage-body::before {
+        inset: 20% 0 32px;
+        background-position: center 56%;
+        opacity: .20;
+        mask-image: linear-gradient(to bottom, transparent, #000 46%, #000 72%, transparent);
+      }
+      .anau-lobby .askb__hello { font-size: 40px !important; }
+      .anau-lobby #nativeChatMessages { padding: 16px 16px 20px !important; }
+      .anau-lobby .askb__dock { padding: 8px 12px max(12px, env(safe-area-inset-bottom)) !important; }
+    }
+    @media (max-width: 360px) {
+      .anau-lobby .header-school-name-wrap { display: none !important; }
+      .anau-lobby .askb__hello { font-size: 36px !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .anau-lobby *, .anau-lobby *::before, .anau-lobby *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
+  <link rel="stylesheet" href="assets/site-theme.css?v=1">
 </head>
-<body>
+<body class="anau-lobby">
   <!-- 手机端侧边栏抽屉遮罩层 -->
   <div class="sidebar-mobile-backdrop" id="sidebarBackdrop" onclick="toggleSidebarView()"></div>
 
@@ -2002,8 +2201,8 @@
   <header>
     <div class="logo-area">
       <!-- 侧边栏折叠/展开主切换按钮 (用户指定专属图标) -->
-      <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarView()" title="展开/收起侧边栏" aria-label="切换侧边栏">
-        <img src="sidebar_toggle_icon.png" alt="Toggle Sidebar" class="toggle-icon-img">
+      <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-controls="lobbySidebar" aria-expanded="true" onclick="toggleSidebarView()" title="展开/收起侧边栏" aria-label="切换侧边栏">
+        <svg class="toggle-icon-img" aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M10 5v14"/></svg>
       </button>
       <div class="logo-emblem-wrap" title="安徽农业大学校徽 · 徽农智">
         <img class="logo-emblem" 
@@ -2020,19 +2219,12 @@
         </svg>
       </div>
       <div class="logo-text">
-        <h1>数智安农 · 综合服务大厅 <span class="eco-badge">徽农智生态</span></h1>
-        <p>ANHUI AGRICULTURAL UNIVERSITY DIGITAL PORTAL</p>
+        <h1>数智安农 · 综合服务大厅</h1>
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div id="userAuthBadge" style="display:none; align-items:center; gap:8px; background:rgba(255,255,255,0.16); padding:4px 12px; border-radius:20px; font-size:12px; border:1px solid rgba(255,255,255,0.25); color:#ffffff; backdrop-filter:blur(10px);">
-        <span style="width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block; box-shadow:0 0 6px #10b981;"></span>
-        <span id="userStudentIdText" style="font-weight:600; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">学号在席</span>
-        <button onclick="logoutAndReauth()" style="background:none; border:none; color:rgba(255,255,255,0.85); cursor:pointer; font-size:11px; margin-left:4px; text-decoration:underline; padding:0;" title="点击切换绑定的学号">切换</button>
-      </div>
       <!-- 顶部右侧：安徽农业大学校名 (书法标识) -->
       <div class="header-school-name-wrap" title="安徽农业大学 Anhui Agricultural University">
-        <img class="header-school-name-white" src="ahau_name_white.png" alt="安徽农业大学校名">
         <img class="header-school-name-badge" src="ahau_name_green.png" alt="安徽农业大学校名">
       </div>
     </div>
@@ -2043,22 +2235,12 @@
     <div class="workspace-container">
       
       <!-- 左半边: 390px 宽度，数智应用与历史对话面板 -->
-      <aside class="sidebar-panel">
+      <aside class="sidebar-panel" id="lobbySidebar" aria-label="工作台导航">
         
         <!-- 侧边栏顶部品牌信息区 (Antigravity 风格) -->
         <div class="sidebar-brand-header">
-          <div class="brand-badge-icon">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#ffffff;"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
-          </div>
-          <div class="brand-text-col">
-            <div class="brand-title">安农智办 · 工作台</div>
-            <div class="brand-subtitle">AHAU Intelligent Agent</div>
-          </div>
-          <div class="brand-status-tag">
-            <span class="online-dot"></span>
-            <span>在线</span>
-          </div>
-          <button class="sidebar-inner-close-btn" onclick="toggleSidebarView()" title="收起侧边栏">
+          <div class="brand-title">工作台</div>
+          <button type="button" class="sidebar-inner-close-btn" onclick="toggleSidebarView()" aria-label="收起侧边栏">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
@@ -2067,7 +2249,7 @@
         <div class="sidebar-new-chat-wrap">
           <button class="btn-antigravity-new" onclick="window.AnauAgent.createNewSession()" title="开启新的办事任务对话">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            <span>新办事任务</span>
+            <span>新对话</span>
           </button>
         </div>
 
@@ -2076,15 +2258,15 @@
 
           <!-- 模块 1: 任务 (办事对话记录) - 默认展开展示本地真实对话记录 -->
           <div class="sidebar-accordion-group" id="groupTasks">
-            <div class="accordion-trigger-card active" id="triggerTasks" onclick="toggleSidebarAccordion('tasks')">
+            <button type="button" class="accordion-trigger-card active" id="triggerTasks" aria-controls="panelTasks" aria-expanded="true" onclick="toggleSidebarAccordion('tasks')">
               <div class="accordion-trigger-left">
                 <div class="accordion-icon-wrap">
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ahau-green);"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
                 </div>
-                <span class="accordion-label">历史对话记录</span>
+                <span class="accordion-label">历史对话</span>
               </div>
-              <span class="accordion-arrow" id="arrowTasks">▾ 收起</span>
-            </div>
+              <span class="accordion-arrow" id="arrowTasks">收起</span>
+            </button>
 
             <!-- 展开后展示：真实动态对话记录 (100% 本地持久化) -->
             <div class="accordion-collapse-panel" id="panelTasks">
@@ -2095,10 +2277,11 @@
           </div>
 
       <!-- 模块 2: 科研与学业互助广场 (多智能体 P2P 需求撮合网络) - 侧边栏独立入口 -->
+      <div class="lobby-nav-label">校园工具</div>
       <div class="sidebar-accordion-group" id="groupPlaza">
-        <div class="accordion-trigger-card" id="cardResearchPlaza" onclick="openResearchPlazaPage()" title="点击直达科研与学业互助广场">
+        <a class="accordion-trigger-card" id="cardResearchPlaza" href="plaza.html?v=aligned1" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="点击直达科研与学业互助广场">
           <div class="accordion-trigger-left">
-            <div class="accordion-icon-wrap" style="background: rgba(37, 99, 235, 0.08); color: #2563eb;">
+            <div class="accordion-icon-wrap">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                 <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
@@ -2106,30 +2289,30 @@
             </div>
             <span class="accordion-label">科研互助广场</span>
           </div>
-          <span class="accordion-arrow" id="arrowPlaza" style="background: rgba(37, 99, 235, 0.08); color: #2563eb;">直达 ›</span>
-        </div>
+          <svg class="lobby-nav-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
       </div>
 
       <!-- 模块 4: 数智函数工坊 (数理动态函数可视化系统) - 侧边栏独立入口 -->
       <div class="sidebar-accordion-group" id="groupMathLab">
-        <div class="accordion-trigger-card" id="cardMathLab" onclick="openMathLabPage()" title="点击直达数智函数探究工坊 (数理动态函数与参数可视化探索平台)">
+        <a class="accordion-trigger-card" id="cardMathLab" href="math_lab.html?v=aligned1" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="点击直达数智函数探究工坊 (数理动态函数与参数可视化探索平台)">
           <div class="accordion-trigger-left">
-            <div class="accordion-icon-wrap" style="background: rgba(16, 185, 129, 0.08); color: #059669;">
+            <div class="accordion-icon-wrap">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 12h4l3 8 4-16 3 8h4"/>
               </svg>
             </div>
             <span class="accordion-label">数智函数工坊</span>
           </div>
-          <span class="accordion-arrow" id="arrowMathLab" style="background: rgba(16, 185, 129, 0.08); color: #059669;">探究 ›</span>
-        </div>
+          <svg class="lobby-nav-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
       </div>
 
       <!-- 模块 5: 安农课程资料库 (历年期末真题与复习共享库) - 侧边栏独立入口 -->
       <div class="sidebar-accordion-group" id="groupCourseRepo">
-        <div class="accordion-trigger-card" id="cardCourseRepo" onclick="openCourseRepoPage()" title="点击直达安徽农业大学课程资料共享计划 (历年期末真题与复习库)">
+        <a class="accordion-trigger-card" id="cardCourseRepo" href="https://ahau-course.pages.dev/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="点击直达安徽农业大学课程资料共享计划 (历年期末真题与复习库)">
           <div class="accordion-trigger-left">
-            <div class="accordion-icon-wrap" style="background: rgba(217, 119, 6, 0.08); color: #d97706;">
+            <div class="accordion-icon-wrap">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                 <path d="M6 6h10"/><path d="M6 10h10"/>
@@ -2137,15 +2320,15 @@
             </div>
             <span class="accordion-label">安农课程资料库</span>
           </div>
-          <span class="accordion-arrow" id="arrowCourseRepo" style="background: rgba(217, 119, 6, 0.08); color: #d97706;">直达 ›</span>
-        </div>
+          <svg class="lobby-nav-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
       </div>
 
       <!-- 模块 6: AI错题认知诊断工坊 (考点拓扑与双轨探针靶场) - 侧边栏独立入口 -->
       <div class="sidebar-accordion-group" id="groupDiagnosis">
-        <div class="accordion-trigger-card" id="cardDiagnosis" onclick="openDiagnosisPage()" title="点击直达AI错题认知诊断与考点拓扑工坊 (DeepSeek错因剖析与艾宾浩斯复习闭环)">
+        <a class="accordion-trigger-card" id="cardDiagnosis" href="diagnosis.html?v=aligned1" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="点击直达AI错题认知诊断与考点拓扑工坊 (DeepSeek错因剖析与艾宾浩斯复习闭环)">
           <div class="accordion-trigger-left">
-            <div class="accordion-icon-wrap" style="background: rgba(13, 148, 136, 0.08); color: #0d9488;">
+            <div class="accordion-icon-wrap">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -2154,11 +2337,17 @@
             </div>
             <span class="accordion-label">错题认知诊断工坊</span>
           </div>
-          <span class="accordion-arrow" id="arrowDiagnosis" style="background: rgba(13, 148, 136, 0.08); color: #0d9488;">诊断 ›</span>
-        </div>
+          <svg class="lobby-nav-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
       </div>
 
 
+      <div class="sidebar-accordion-group">
+        <button type="button" class="accordion-trigger-card" id="cardJwxt" onclick="openJwxtModal()" style="width:100%;font:inherit;text-align:left;color:inherit">
+          <span class="accordion-trigger-left"><span class="accordion-icon-wrap"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linejoin="round"><path d="m2 9 10-5 10 5-10 5-10-5Zm4 2v6c3 3 9 3 12 0v-6"/></svg></span><span class="accordion-label">本科教务系统</span></span>
+          <svg class="lobby-nav-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+      </div>
     </div>
 
     <!-- 侧边栏底部版权与参赛说明 (小字) -->
@@ -2171,7 +2360,7 @@
 
       <!-- 中间偏右主舞台: 占据屏幕绝大部分宽度的 AI 对话框 -->
       <main class="chat-main-stage">
-        <div id="chatMountPoint" class="chat-mount-container"></div>
+        <div id="chatMountPoint" data-particle-lobby class="chat-mount-container"></div>
       </main>
 
     </div>
@@ -2179,10 +2368,10 @@
 
   <!-- Apple 风格模态弹窗：新本科教务系统直达 -->
   <div class="modal-backdrop" id="jwxtModal" onclick="if(event.target===this) closeJwxtModal()">
-    <div class="modal-box">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="jwxtTitle">
       <div class="modal-header">
-        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>安徽农业大学 · 新本科教务系统</h3>
-        <button class="modal-close-btn" onclick="closeJwxtModal()">✕</button>
+        <h3 id="jwxtTitle"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>安徽农业大学 · 新本科教务系统</h3>
+        <button type="button" class="modal-close-btn" onclick="closeJwxtModal()" aria-label="关闭教务入口">✕</button>
       </div>
       <div class="modal-body">
         <p style="margin: 0 0 10px 0; color: var(--text-primary); font-weight: 500;">您正在通过「数智安农 · 综合服务大厅」访问学校核心教务系统：</p>
@@ -2211,7 +2400,7 @@
         <button class="btn-modal-ai" onclick="closeJwxtModal(); sendQuickPrompt('请告诉我新本科教务系统的登录入口，以及如何查看本学期课表和考试成绩？')">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>咨询 AI 指引
         </button>
-        <button class="btn-modal-direct" style="background: #1d4ed8;" onclick="closeJwxtModal(); window.open('https://bkjw-ahau-edu-cn.myvpn.ahau.edu.cn/home/#/home', '_blank');">
+        <button class="btn-modal-direct" onclick="closeJwxtModal(); window.open('https://bkjw-ahau-edu-cn.myvpn.ahau.edu.cn/home/#/home', '_blank');">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>WebVPN 通道
         </button>
         <button class="btn-modal-direct" onclick="closeJwxtModal(); window.open('https://bkjw.ahau.edu.cn/home/#/home', '_blank');">
@@ -2244,7 +2433,8 @@
   <!-- 离线 Markdown 渲染器 -->
   <script src="lib/marked.min.js"></script>
   <!-- 徽农智 · 安农智办 原创全栈智能体引擎 -->
-  <script src="anau_agent.js?v=47.0"></script>
+  <script src="anau_agent.js?v=idle-title-only1"></script>
+  <script src="assets/particle-title.js?v=2" defer></script>
 
   <script>
     function switchSidebarTab(tabName) {
@@ -2273,14 +2463,16 @@
 
       if (type === 'tasks' && panelTasks && triggerTasks) {
         const isClosed = panelTasks.classList.contains('collapsed');
+        triggerTasks.setAttribute('aria-expanded', String(isClosed));
+        panelTasks.inert = !isClosed;
         if (isClosed) {
           panelTasks.classList.remove('collapsed');
           triggerTasks.classList.add('active');
-          if (arrowTasks) arrowTasks.textContent = '▾ 收起';
+          if (arrowTasks) arrowTasks.textContent = '收起';
         } else {
           panelTasks.classList.add('collapsed');
           triggerTasks.classList.remove('active');
-          if (arrowTasks) arrowTasks.textContent = '▸ 展开';
+          if (arrowTasks) arrowTasks.textContent = '展开';
         }
       }
     }
@@ -2299,13 +2491,20 @@ function filterServices(query) {
     }
 
     function openJwxtModal() {
+      autoCloseSidebarOnMobile();
       const modal = document.getElementById('jwxtModal');
-      if (modal) modal.classList.add('show');
+      if (modal) {
+        modal.classList.add('show');
+        modal.querySelector('.modal-close-btn').focus();
+      }
     }
 
     function closeJwxtModal() {
       const modal = document.getElementById('jwxtModal');
-      if (modal) modal.classList.remove('show');
+      if (modal?.classList.contains('show')) {
+        modal.classList.remove('show');
+        document.getElementById(window.innerWidth <= 768 ? 'sidebarToggleBtn' : 'cardJwxt')?.focus();
+      }
     }
 
     function sendQuickPrompt(promptText) {
@@ -2394,6 +2593,15 @@ function filterServices(query) {
       }
     }
 
+    function syncLobbySidebar() {
+      const sidebar = document.getElementById('lobbySidebar');
+      const toggle = document.getElementById('sidebarToggleBtn');
+      const mobile = window.innerWidth <= 768;
+      const open = mobile ? sidebar.classList.contains('mobile-open') : !sidebar.classList.contains('desktop-collapsed');
+      toggle.setAttribute('aria-expanded', String(open));
+      sidebar.inert = !open;
+    }
+
     function toggleSidebarView() {
       checkDrawerPlacement();
       const sidebar = document.querySelector('.sidebar-panel');
@@ -2423,6 +2631,7 @@ function filterServices(query) {
           }
         }
       }
+      syncLobbySidebar();
     }
 
     function autoCloseSidebarOnMobile() {
@@ -2433,16 +2642,18 @@ function filterServices(query) {
         if (sidebar) sidebar.classList.remove('mobile-open');
         if (backdrop) backdrop.classList.remove('show');
         if (toggleBtn) toggleBtn.classList.remove('is-open');
+        syncLobbySidebar();
       }
     }
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
+        closeJwxtModal();
         autoCloseSidebarOnMobile();
       }
     });
 
-    window.addEventListener('DOMContentLoaded', checkDrawerPlacement);
+    window.addEventListener('DOMContentLoaded', () => { checkDrawerPlacement(); syncLobbySidebar(); });
     window.addEventListener('resize', function() {
       checkDrawerPlacement();
       const sidebar = document.querySelector('.sidebar-panel');
@@ -2453,6 +2664,7 @@ function filterServices(query) {
         if (backdrop) backdrop.classList.remove('show');
         if (toggleBtn) toggleBtn.classList.remove('is-open');
       }
+      syncLobbySidebar();
     });
   </script>
 
