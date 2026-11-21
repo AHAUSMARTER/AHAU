@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let active = false;
   let timer = 0;
   let animation = 0;
+  let fontsReady = !document.fonts;
+
+  function titleFont(style) {
+    return `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  }
 
   function sampleShape(element, budget) {
     maskContext.clearRect(0, 0, width, height);
@@ -54,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       maskContext.fill(logoShape);
       maskContext.restore();
     } else {
-      maskContext.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      maskContext.font = titleFont(style);
       if ('letterSpacing' in maskContext) maskContext.letterSpacing = style.letterSpacing;
       maskContext.textAlign = 'center';
       const text = maskContext.measureText(element.textContent);
@@ -98,8 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
     context.setTransform(scale, 0, 0, scale, 0, 0);
     maskContext.setTransform(scale, 0, 0, scale, 0, 0);
     const budget = width < 380 ? 390 : 560;
-    shapes = frames.map(element => sampleShape(element, budget));
-    return shapes.every(points => points.length);
+    const sampled = frames.map(element => sampleShape(element, budget));
+    if (sampled.some(points => !points.length)) return false;
+    shapes = sampled;
+    return true;
   }
 
   function showFrame(index) {
@@ -181,6 +188,20 @@ document.addEventListener('DOMContentLoaded', () => {
     showFrame(current);
   }
 
+  function scheduleFirstMorph() {
+    if (fontsReady && prepare()) timer = setTimeout(morph, timing.firstHold);
+  }
+
+  if (document.fonts) {
+    const fontLoads = frames.filter(element => element !== logo).map(element =>
+      document.fonts.load(titleFont(getComputedStyle(element)), element.textContent)
+    );
+    Promise.allSettled(fontLoads).then(() => {
+      fontsReady = true;
+      if (active) scheduleFirstMorph();
+    });
+  }
+
   function sync() {
     const shouldAnimate = visible && !document.hidden && !motion.matches;
     if (shouldAnimate === active) return;
@@ -188,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(timer);
     current = 0;
     finishTransition();
-    if (active && prepare()) timer = setTimeout(morph, timing.firstHold);
+    if (active) scheduleFirstMorph();
   }
 
   let previousWidth = root.clientWidth;
@@ -202,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!active || !clientWidth || !clientHeight) return;
     clearTimeout(timer);
     finishTransition();
-    if (prepare()) timer = setTimeout(morph, timing.firstHold);
+    scheduleFirstMorph();
   }).observe(root);
   new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting && entry.intersectionRatio > 0;

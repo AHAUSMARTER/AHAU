@@ -4328,6 +4328,22 @@ body.embedded-active .ai-callout-bubble {
   .anau-lobby .chat-msg { animation: none; }
 }
 
+/* The two title-only font subsets are bundled for offline use. */
+@font-face {
+  font-family: 'Noto Sans SC Title';
+  src: url('assets/fonts/noto-sans-sc-title.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Manrope Title';
+  src: url('assets/fonts/manrope-title.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
 /* Idle title shared by the main lobby and the offline portal. */
 .lobby-particle-title {
   position: relative;
@@ -4348,14 +4364,14 @@ body.embedded-active .ai-callout-bubble {
   transform: none;
 }
 .lobby-particle-title .particle-title-zh {
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
-  font-weight: 600;
-  letter-spacing: .065em;
+  font-family: 'Noto Sans SC Title', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-weight: 500;
+  letter-spacing: .105em;
 }
 .lobby-particle-title .particle-title-en {
-  font-family: 'Avenir Next', Inter, system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -.045em;
+  font-family: 'Manrope Title', 'Avenir Next', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: .012em;
 }
 .lobby-particle-title .particle-title-logo {
   display: inline-block;
