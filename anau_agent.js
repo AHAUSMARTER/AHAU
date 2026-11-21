@@ -4016,8 +4016,8 @@ ${examSummary}
     const mountEl = document.getElementById('chatMountPoint');
     const lobbyHeading = mountEl?.hasAttribute('data-particle-lobby') ? `
       <div class="lobby-particle-title" data-particle-title>
-        <h2 class="askb__hello" aria-label="安农智办 AgriCore">
-          <span class="particle-title-zh" data-particle-frame aria-hidden="true">安农智办</span>
+        <h2 class="askb__hello" aria-label="农芯 AgriCore">
+          <span class="particle-title-zh" data-particle-frame aria-hidden="true">农芯</span>
           <span class="particle-title-en" data-particle-frame lang="en" aria-hidden="true" hidden>AgriCore</span>
           <svg class="particle-title-logo" data-particle-frame aria-hidden="true" viewBox="36 32 184 192" hidden>
             <path d="M 120 32 C 72 48, 36 96, 36 156 C 36 196, 68 224, 116 224 C 120 224, 120 216, 120 208 C 84 204, 60 178, 60 148 C 60 108, 88 68, 120 32 Z"/>

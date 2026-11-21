@@ -4331,7 +4331,7 @@ body.embedded-active .ai-callout-bubble {
 /* The two title-only font subsets are bundled for offline use. */
 @font-face {
   font-family: 'Noto Sans SC Title';
-  src: url('assets/fonts/noto-sans-sc-title.woff2') format('woff2');
+  src: url('assets/fonts/noto-sans-sc-title.woff2?v=2') format('woff2');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
