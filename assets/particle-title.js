@@ -5,24 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const heading = root.querySelector('h2');
   const frames = Array.from(heading.querySelectorAll('[data-particle-frame]'));
   const logo = heading.querySelector('.particle-title-logo');
-  const logoShape = new Path2D();
-  logo.querySelectorAll('path').forEach(path => logoShape.addPath(new Path2D(path.getAttribute('d'))));
-  const circle = logo.querySelector('circle');
-  const { cx, cy, r } = circle;
-  logoShape.moveTo(cx.baseVal.value + r.baseVal.value, cy.baseVal.value);
-  logoShape.arc(cx.baseVal.value, cy.baseVal.value, r.baseVal.value, 0, 2 * Math.PI);
   const canvas = root.querySelector('canvas');
   const context = canvas.getContext('2d');
   const mask = document.createElement('canvas');
   const maskContext = mask.getContext('2d', { willReadFrequently: true });
-  if (!context || !maskContext) return;
+  if (!context || !maskContext || !window.Path2D) return;
 
-  const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const modes = ['smoke', 'vortex', 'sand', 'burst', 'sweep', 'absorb'];
-  const timing = { firstHold: 1400, hold: 2400, dissolve: 1300, field: 160, gather: 1300 };
-  const clamp = value => Math.max(0, Math.min(1, value));
+  const logoShape = new Path2D();
+  logo.querySelectorAll('path').forEach(path => logoShape.addPath(new Path2D(path.getAttribute('d'))));
+  const { cx, cy, r } = logo.querySelector('circle');
+  logoShape.moveTo(cx.baseVal.value + r.baseVal.value, cy.baseVal.value);
+  logoShape.arc(cx.baseVal.value, cy.baseVal.value, r.baseVal.value, 0, 2 * Math.PI);
+
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const timing = { firstHold: 1100, hold: 1900, morph: 1700 };
+  const palette = ['#20543a', '#507963', '#829b8a'];
+  const sways = [-.28, .17, -.09, .29, -.18, .07];
+  const turn = 2 * Math.PI;
   const smooth = value => {
-    const t = clamp(value);
+    const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);
   };
 
@@ -30,261 +31,183 @@ document.addEventListener('DOMContentLoaded', () => {
   let height = 0;
   let scale = 1;
   let fontSize = 0;
-  let centered = false;
-  let greens = [];
-  let parts = [];
-  let field = [];
+  let shapes = [];
+  let movement = 0;
+  let current = 0;
   let visible = false;
   let active = false;
-  let currentFrame = 0;
-  let phase = 'hold';
-  let started = 0;
-  let frame = 0;
   let timer = 0;
-  let bag = [];
-  let mode;
+  let animation = 0;
 
-  function nextMode() {
-    if (!bag.length) {
-      bag = [...modes];
-      for (let index = bag.length - 1; index > 0; index--) {
-        const swap = Math.floor(Math.random() * (index + 1));
-        [bag[index], bag[swap]] = [bag[swap], bag[index]];
-      }
-      if (bag.at(-1) === mode) [bag[0], bag[bag.length - 1]] = [bag.at(-1), bag[0]];
-    }
-    return bag.pop();
-  }
-
-  function resizeCanvas() {
-    const bounds = canvas.getBoundingClientRect();
-    if (!bounds.width || !bounds.height) return false;
-    width = bounds.width;
-    height = bounds.height;
-    scale = Math.min(2, window.devicePixelRatio || 1);
-    canvas.width = mask.width = Math.round(width * scale);
-    canvas.height = mask.height = Math.round(height * scale);
-
-    const style = getComputedStyle(heading);
-    fontSize = parseFloat(style.fontSize);
-    centered = style.textAlign === 'center';
-    const green = style.getPropertyValue('--lobby-green').trim() || '#20543a';
-    greens = [green, '#507963', '#708b7a'];
-    maskContext.setTransform(scale, 0, 0, scale, 0, 0);
-    return true;
-  }
-
-  function makeField() {
-    const radiusX = Math.min(width * .5, fontSize * 3.9);
-    const radiusY = height * .43;
-    const centerX = centered ? width / 2 : radiusX;
-    return Array.from({ length: 1550 }, () => {
-      const angle = Math.random() * 2 * Math.PI;
-      const radius = Math.sqrt(Math.random());
-      return {
-        x: centerX + Math.cos(angle) * radiusX * radius,
-        y: height / 2 + Math.sin(angle) * radiusY * radius
-      };
-    });
-  }
-
-  function motionAt(particle, random, left) {
-    const x = (particle.x - left) * 1.5 / Math.min(width, 5 * fontSize);
-    const y = (particle.y - height / 2) / fontSize + .5;
-    const spread = Math.min(1, width / 450);
-    switch (mode) {
-      case 'smoke': return [(1 - clamp(y)) * .3 + random * .2, (random - .5) * 62 * spread];
-      case 'vortex': return [clamp(x) * .25 + random * .12, (random > .5 ? 1 : -1) * (35 + 24 * random) * spread];
-      case 'sand': return [clamp(x) * .48 + random * .12, (random - .5) * 32 * spread];
-      case 'burst': return [random * .15, (random - .5) * 16 * spread];
-      case 'sweep': return [(1 - clamp(x)) * .45 + random * .14, -(18 + 23 * random) * spread];
-      default: return [random * .44, (random - .5) * 48 * spread];
-    }
-  }
-
-  function alignLeft(spanWidth) {
-    return centered ? (width - spanWidth) / 2 : 0;
-  }
-
-  function drawMask(element) {
+  function sampleShape(element, budget) {
+    maskContext.clearRect(0, 0, width, height);
     const style = getComputedStyle(element);
+    maskContext.fillStyle = style.color;
     if (element === logo) {
       const view = logo.viewBox.baseVal;
       const iconHeight = fontSize * .84;
       const ratio = iconHeight / view.height;
-      const iconWidth = view.width * ratio;
-      const left = alignLeft(iconWidth);
       maskContext.save();
-      maskContext.translate(left, (height - iconHeight) / 2);
+      maskContext.translate((width - view.width * ratio) / 2, (height - iconHeight) / 2);
       maskContext.scale(ratio, ratio);
       maskContext.translate(-view.x, -view.y);
-      maskContext.fillStyle = style.fill;
       maskContext.fill(logoShape);
       maskContext.restore();
-      return { left, span: iconWidth };
+    } else {
+      maskContext.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      if ('letterSpacing' in maskContext) maskContext.letterSpacing = style.letterSpacing;
+      maskContext.textAlign = 'center';
+      const text = maskContext.measureText(element.textContent);
+      const ascent = text.fontBoundingBoxAscent ?? fontSize * .85;
+      const descent = text.fontBoundingBoxDescent ?? fontSize * .15;
+      maskContext.fillText(element.textContent, width / 2, (height + ascent - descent) / 2);
     }
 
-    maskContext.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-    if ('letterSpacing' in maskContext) maskContext.letterSpacing = style.letterSpacing;
-    const text = maskContext.measureText(element.textContent);
-    const ascent = text.fontBoundingBoxAscent ?? fontSize * .85;
-    const descent = text.fontBoundingBoxDescent ?? fontSize * .15;
-    const baseline = (height + ascent - descent) / 2;
-    const left = alignLeft(text.width);
-    maskContext.fillStyle = style.color;
-    maskContext.fillText(element.textContent, left, baseline);
-    return { left, span: text.width };
-  }
-
-  function sampleFrame(element) {
-    maskContext.clearRect(0, 0, width, height);
-    const { left, span } = drawMask(element);
     const { data } = maskContext.getImageData(0, 0, mask.width, mask.height);
-    const step = Math.ceil((width < 390 ? 3 : 2.6) * scale);
-    const startX = Math.max(0, Math.floor((left - 4) * scale));
-    const limitX = Math.min(mask.width, Math.ceil((left + span + 4) * scale));
-    const cells = [];
+    const step = Math.max(1, Math.round(scale));
+    const candidates = [];
     for (let y = 0; y < mask.height; y += step) {
-      const h = Math.min(step, mask.height - y);
-      for (let x = startX; x < limitX; x += step) {
-        const w = Math.min(step, mask.width - x);
-        let hasInk = false;
-        for (let dy = 0; dy < h && !hasInk; dy++) {
-          for (let dx = 0; dx < w; dx++) {
-            if (data[((y + dy) * mask.width + x + dx) * 4 + 3] > 35) {
-              hasInk = true;
-              break;
-            }
-          }
+      for (let x = 0; x < mask.width; x += step) {
+        if (data[(y * mask.width + x) * 4 + 3] > 120) {
+          candidates.push({ x: x / scale, y: y / scale });
         }
-        if (!hasInk) continue;
-        const particle = { left: x, top: y, w, h, x: (x + w / 2) / scale, y: (y + h / 2) / scale };
-        const random = Math.random();
-        const [delay, bend] = motionAt(particle, random, left);
-        cells.push({
-          ...particle, delay, bend,
-          target: field[cells.length % field.length],
-          radius: .65 + random * .85,
-          color: greens[Math.floor(Math.random() * greens.length)]
-        });
       }
     }
-    return cells;
+    if (!candidates.length) return [];
+
+    // Sample the same number of points from each silhouette, including the smaller mark.
+    const points = Array.from({ length: budget }, (_, index) => {
+      const start = index * candidates.length / budget;
+      const span = candidates.length / budget;
+      return candidates[Math.floor(start + Math.random() * span)];
+    });
+    return points.sort((a, b) => a.x - b.x || a.y - b.y);
   }
 
-  function draw(now) {
-    if (!active) return;
-    const outgoing = phase === 'dissolve';
-    const progress = clamp((now - started) / timing[phase]);
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    for (const particle of parts) {
-      const t = clamp((progress - particle.delay) / (1 - particle.delay));
-      particle.travel = outgoing ? t : 1 - t;
-      context.globalAlpha = 1 - smooth(particle.travel / .2);
-      if (context.globalAlpha < .01) continue;
-      const { left, top, w, h } = particle;
-      context.drawImage(mask, left, top, w, h, left, top, w, h);
-    }
+  function prepare() {
+    const bounds = canvas.getBoundingClientRect();
+    const nextScale = Math.min(1.75, window.devicePixelRatio || 1);
+    if (!bounds.width || !bounds.height) return false;
+    if (shapes.length && width === bounds.width && height === bounds.height && scale === nextScale) return true;
 
+    ({ width, height } = bounds);
+    scale = nextScale;
+    fontSize = parseFloat(getComputedStyle(heading).fontSize);
+    canvas.width = mask.width = Math.round(width * scale);
+    canvas.height = mask.height = Math.round(height * scale);
     context.setTransform(scale, 0, 0, scale, 0, 0);
-    for (const particle of parts) {
-      const t = particle.travel;
-      const distance = smooth(t);
-      const opacity = smooth(t / .18) * (1 - smooth((t - .62) / .38));
-      if (opacity < .01) continue;
-      const dx = particle.target.x - particle.x;
-      const dy = particle.target.y - particle.y;
-      const length = Math.hypot(dx, dy) || 1;
-      const bend = Math.sin(distance * Math.PI) * particle.bend;
-      context.globalAlpha = opacity * .92;
-      context.fillStyle = particle.color;
-      context.beginPath();
-      context.arc(
-        particle.x + dx * distance - dy / length * bend,
-        particle.y + dy * distance + dx / length * bend,
-        particle.radius * (1 + distance * .35), 0, 2 * Math.PI
-      );
-      context.fill();
-    }
-    context.globalAlpha = 1;
-    if (progress < 1) {
-      frame = requestAnimationFrame(draw);
-    } else if (outgoing) {
-      phase = 'field';
-      timer = setTimeout(() => {
-        currentFrame = (currentFrame + 1) % frames.length;
-        animate('gather');
-      }, timing.field);
-    } else {
-      holdTitle();
-    }
+    maskContext.setTransform(scale, 0, 0, scale, 0, 0);
+    const budget = width < 380 ? 390 : 560;
+    shapes = frames.map(element => sampleShape(element, budget));
+    return shapes.every(points => points.length);
   }
 
-  function animate(next) {
-    if (!active) return;
-    if (next === 'dissolve') {
-      if (!resizeCanvas()) return;
-      mode = nextMode();
-      field = makeField();
-    }
-    parts = sampleFrame(frames[currentFrame]);
-    root.classList.add('is-particle-transition');
-    phase = next;
-    started = performance.now();
-    draw(started);
-  }
-
-  function showFrame() {
-    frames.forEach((element, index) => {
-      element.toggleAttribute('hidden', index !== currentFrame);
+  function showFrame(index) {
+    frames.forEach((element, frameIndex) => {
+      element.toggleAttribute('hidden', index !== frameIndex);
     });
   }
 
-  function holdTitle(delay = timing.hold) {
-    showFrame();
-    root.classList.remove('is-particle-transition');
-    phase = 'hold';
-    timer = setTimeout(() => animate('dissolve'), delay);
+  function makeTrajectories(target) {
+    const sway = sways[movement++ % sways.length];
+    const groups = palette.map(() => []);
+    const cloudWidth = Math.min(width * .66, fontSize * 5.6);
+    const cloudHeight = Math.min(height * .72, fontSize * 1.8);
+    shapes[current].forEach((from, index) => {
+      const to = shapes[target][index];
+      const angle = Math.random() * turn;
+      const radius = Math.sqrt(Math.random());
+      const controlX = width / 2 + (Math.cos(angle) * radius + sway) * cloudWidth;
+      const controlY = height / 2 + Math.sin(angle) * radius * cloudHeight;
+      groups[index % groups.length].push({
+        x: from.x, y: from.y,
+        vx: 2 * (controlX - from.x), vy: 2 * (controlY - from.y),
+        ax: from.x - 2 * controlX + to.x, ay: from.y - 2 * controlY + to.y,
+        lag: Math.random() * .16, size: .6 + Math.random() * .72
+      });
+    });
+    return groups;
   }
 
-  function clearWork() {
-    clearTimeout(timer);
-    cancelAnimationFrame(frame);
+  function morph() {
+    if (!active || !prepare()) return;
+    const target = (current + 1) % frames.length;
+    const groups = makeTrajectories(target);
+    let started;
+    let incoming = false;
+    root.classList.add('is-particle-transition');
+
+    function draw(now) {
+      started ??= now;
+      const progress = Math.min(1, (now - started) / timing.morph);
+      if (progress >= .5 && !incoming) {
+        showFrame(target);
+        incoming = true;
+      }
+      const textOpacity = progress < .5 ? 1 - smooth(progress / .28) : smooth((progress - .7) / .3);
+      heading.style.opacity = textOpacity;
+      context.clearRect(0, 0, width, height);
+      context.globalAlpha = .92 * smooth(progress / .24) * (1 - smooth((progress - .74) / .26));
+      groups.forEach((group, index) => {
+        context.fillStyle = palette[index];
+        context.beginPath();
+        for (const point of group) {
+          const t = smooth((progress - point.lag) / .84);
+          const x = point.x + t * (point.vx + t * point.ax);
+          const y = point.y + t * (point.vy + t * point.ay);
+          context.moveTo(x + point.size, y);
+          context.arc(x, y, point.size, 0, turn);
+        }
+        context.fill();
+      });
+
+      if (progress < 1) {
+        animation = requestAnimationFrame(draw);
+      } else {
+        current = target;
+        finishTransition();
+        timer = setTimeout(morph, timing.hold);
+      }
+    }
+
+    animation = requestAnimationFrame(draw);
+  }
+
+  function finishTransition() {
+    cancelAnimationFrame(animation);
+    context.clearRect(0, 0, width, height);
+    heading.style.removeProperty('opacity');
     root.classList.remove('is-particle-transition');
-    parts = [];
-    field = [];
+    showFrame(current);
   }
 
   function sync() {
-    const shouldAnimate = visible && !document.hidden && !motionPreference.matches;
+    const shouldAnimate = visible && !document.hidden && !motion.matches;
     if (shouldAnimate === active) return;
     active = shouldAnimate;
-    clearWork();
-    if (active) {
-      holdTitle(timing.firstHold);
-    } else {
-      currentFrame = 0;
-      showFrame();
-    }
+    clearTimeout(timer);
+    current = 0;
+    finishTransition();
+    if (active && prepare()) timer = setTimeout(morph, timing.firstHold);
   }
 
-  let observedWidth = root.clientWidth;
-  let observedHeight = root.clientHeight;
+  let previousWidth = root.clientWidth;
+  let previousHeight = root.clientHeight;
   new ResizeObserver(() => {
     const { clientWidth, clientHeight } = root;
-    if (clientWidth === observedWidth && clientHeight === observedHeight) return;
-    observedWidth = clientWidth;
-    observedHeight = clientHeight;
-    if (active && clientWidth && clientHeight && phase !== 'hold') {
-      clearWork();
-      holdTitle();
-    }
+    if (clientWidth === previousWidth && clientHeight === previousHeight) return;
+    previousWidth = clientWidth;
+    previousHeight = clientHeight;
+    shapes = [];
+    if (!active || !clientWidth || !clientHeight) return;
+    clearTimeout(timer);
+    finishTransition();
+    if (prepare()) timer = setTimeout(morph, timing.firstHold);
   }).observe(root);
   new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting && entry.intersectionRatio > 0;
     sync();
   }).observe(root);
   document.addEventListener('visibilitychange', sync);
-  motionPreference.addEventListener('change', sync);
+  motion.addEventListener('change', sync);
 }, { once: true });

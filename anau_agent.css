@@ -4334,7 +4334,6 @@ body.embedded-active .ai-callout-bubble {
   width: min(100%, 500px);
   margin-inline: auto;
 }
-.anau-lobby .lobby-particle-title { margin-inline: 0; }
 .lobby-particle-title .askb__hello {
   display: grid;
   place-items: center;
@@ -4343,7 +4342,6 @@ body.embedded-active .ai-callout-bubble {
   line-height: 1.12;
   white-space: nowrap;
 }
-.anau-lobby .lobby-particle-title .askb__hello { justify-items: start; }
 .lobby-particle-title .askb__hello [data-particle-frame] {
   animation: none;
   opacity: 1;
@@ -4375,4 +4373,3 @@ body.embedded-active .ai-callout-bubble {
   pointer-events: none;
 }
 .lobby-particle-title.is-particle-transition canvas { visibility: visible; }
-.lobby-particle-title.is-particle-transition [data-particle-frame] { visibility: hidden; }
