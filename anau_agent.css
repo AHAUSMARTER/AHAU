@@ -4330,15 +4330,15 @@ body.embedded-active .ai-callout-bubble {
 
 /* The two title-only font subsets are bundled for offline use. */
 @font-face {
-  font-family: 'Noto Sans SC Title';
-  src: url('assets/fonts/noto-sans-sc-title.woff2?v=2') format('woff2');
+  font-family: 'WenKai Title';
+  src: url('assets/fonts/wenkai-title.woff2') format('woff2');
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Manrope Title';
-  src: url('assets/fonts/manrope-title.woff2') format('woff2');
+  font-family: 'Fraunces Title';
+  src: url('assets/fonts/fraunces-title.woff2') format('woff2');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -4364,14 +4364,14 @@ body.embedded-active .ai-callout-bubble {
   transform: none;
 }
 .lobby-particle-title .particle-title-zh {
-  font-family: 'Noto Sans SC Title', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-weight: 500;
-  letter-spacing: .105em;
+  font-family: 'WenKai Title', 'Kaiti SC', KaiTi, serif;
+  font-weight: 400;
+  letter-spacing: .08em;
 }
 .lobby-particle-title .particle-title-en {
-  font-family: 'Manrope Title', 'Avenir Next', system-ui, sans-serif;
+  font-family: 'Fraunces Title', Georgia, serif;
   font-weight: 500;
-  letter-spacing: .012em;
+  letter-spacing: -.017em;
 }
 .lobby-particle-title .particle-title-logo {
   display: inline-block;
