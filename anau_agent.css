@@ -4335,12 +4335,37 @@ body.embedded-active .ai-callout-bubble {
   margin-inline: auto;
 }
 .anau-lobby .lobby-particle-title { margin-inline: 0; }
-.lobby-particle-title .askb__hello { font-size: clamp(30px, 4.3vw, 50px) !important; }
-.lobby-particle-title .askb__hello [data-particle-label] {
+.lobby-particle-title .askb__hello {
+  display: grid;
+  place-items: center;
+  height: 1.12em;
+  font-size: clamp(30px, 4.3vw, 50px) !important;
+  line-height: 1.12;
+  white-space: nowrap;
+}
+.anau-lobby .lobby-particle-title .askb__hello { justify-items: start; }
+.lobby-particle-title .askb__hello [data-particle-frame] {
   animation: none;
   opacity: 1;
   transform: none;
 }
+.lobby-particle-title .particle-title-zh {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  font-weight: 600;
+  letter-spacing: .065em;
+}
+.lobby-particle-title .particle-title-en {
+  font-family: 'Avenir Next', Inter, system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -.045em;
+}
+.lobby-particle-title .particle-title-logo {
+  display: inline-block;
+  width: .805em;
+  height: .84em;
+  fill: #1f5e39;
+}
+.lobby-particle-title [data-particle-frame][hidden] { display: none; }
 .lobby-particle-title canvas {
   visibility: hidden;
   position: absolute;
@@ -4350,4 +4375,4 @@ body.embedded-active .ai-callout-bubble {
   pointer-events: none;
 }
 .lobby-particle-title.is-particle-transition canvas { visibility: visible; }
-.lobby-particle-title.is-particle-transition [data-particle-label] { visibility: hidden; }
+.lobby-particle-title.is-particle-transition [data-particle-frame] { visibility: hidden; }

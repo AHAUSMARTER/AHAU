@@ -4017,7 +4017,14 @@ ${examSummary}
     const lobbyHeading = mountEl?.hasAttribute('data-particle-lobby') ? `
       <div class="lobby-particle-title" data-particle-title>
         <h2 class="askb__hello" aria-label="安农智办 AgriCore">
-          <span aria-hidden="true" data-particle-label="AgriCore">安农智办</span>
+          <span class="particle-title-zh" data-particle-frame aria-hidden="true">安农智办</span>
+          <span class="particle-title-en" data-particle-frame lang="en" aria-hidden="true" hidden>AgriCore</span>
+          <svg class="particle-title-logo" data-particle-frame aria-hidden="true" viewBox="36 32 184 192" hidden>
+            <path d="M 120 32 C 72 48, 36 96, 36 156 C 36 196, 68 224, 116 224 C 120 224, 120 216, 120 208 C 84 204, 60 178, 60 148 C 60 108, 88 68, 120 32 Z"/>
+            <path d="M 136 32 C 184 48, 220 96, 220 156 C 220 196, 188 224, 140 224 C 136 224, 136 216, 136 208 C 172 204, 196 178, 196 148 C 196 108, 168 68, 136 32 Z"/>
+            <path d="M 128 76 C 128 102, 138 120, 164 120 C 138 120, 128 138, 128 164 C 128 138, 118 120, 92 120 C 118 120, 128 102, 128 76 Z"/>
+            <circle cx="128" cy="216" r="6"/>
+          </svg>
         </h2>
         <canvas aria-hidden="true"></canvas>
       </div>

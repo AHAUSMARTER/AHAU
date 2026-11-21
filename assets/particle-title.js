@@ -2,17 +2,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const root = document.querySelector('[data-particle-title]');
   if (!root) return;
 
-  const label = root.querySelector('[data-particle-label]');
+  const heading = root.querySelector('h2');
+  const frames = Array.from(heading.querySelectorAll('[data-particle-frame]'));
+  const logo = heading.querySelector('.particle-title-logo');
+  const logoShape = new Path2D();
+  logo.querySelectorAll('path').forEach(path => logoShape.addPath(new Path2D(path.getAttribute('d'))));
+  const circle = logo.querySelector('circle');
+  const { cx, cy, r } = circle;
+  logoShape.moveTo(cx.baseVal.value + r.baseVal.value, cy.baseVal.value);
+  logoShape.arc(cx.baseVal.value, cy.baseVal.value, r.baseVal.value, 0, 2 * Math.PI);
   const canvas = root.querySelector('canvas');
   const context = canvas.getContext('2d');
   const mask = document.createElement('canvas');
   const maskContext = mask.getContext('2d', { willReadFrequently: true });
   if (!context || !maskContext) return;
 
-  const titles = [label.textContent, label.dataset.particleLabel];
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const modes = ['smoke', 'vortex', 'sand', 'burst', 'sweep', 'absorb'];
-  const timing = { firstHold: 1400, hold: 5200, dissolve: 1650, field: 280, gather: 1650 };
+  const timing = { firstHold: 1400, hold: 2400, dissolve: 1300, field: 160, gather: 1300 };
   const clamp = value => Math.max(0, Math.min(1, value));
   const smooth = value => {
     const t = clamp(value);
@@ -23,14 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let height = 0;
   let scale = 1;
   let fontSize = 0;
-  let ink = '';
   let centered = false;
   let greens = [];
   let parts = [];
   let field = [];
   let visible = false;
   let active = false;
-  let currentTitle = 0;
+  let currentFrame = 0;
   let phase = 'hold';
   let started = 0;
   let frame = 0;
@@ -59,15 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.width = mask.width = Math.round(width * scale);
     canvas.height = mask.height = Math.round(height * scale);
 
-    const style = getComputedStyle(label);
+    const style = getComputedStyle(heading);
     fontSize = parseFloat(style.fontSize);
-    centered = getComputedStyle(label.parentElement).textAlign === 'center';
-    ink = style.color;
+    centered = style.textAlign === 'center';
     const green = style.getPropertyValue('--lobby-green').trim() || '#20543a';
     greens = [green, '#507963', '#708b7a'];
     maskContext.setTransform(scale, 0, 0, scale, 0, 0);
-    maskContext.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-    if ('letterSpacing' in maskContext) maskContext.letterSpacing = style.letterSpacing;
     return true;
   }
 
@@ -99,19 +102,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function sampleTitle(title) {
-    maskContext.clearRect(0, 0, width, height);
-    const text = maskContext.measureText(title);
+  function alignLeft(spanWidth) {
+    return centered ? (width - spanWidth) / 2 : 0;
+  }
+
+  function drawMask(element) {
+    const style = getComputedStyle(element);
+    if (element === logo) {
+      const view = logo.viewBox.baseVal;
+      const iconHeight = fontSize * .84;
+      const ratio = iconHeight / view.height;
+      const iconWidth = view.width * ratio;
+      const left = alignLeft(iconWidth);
+      maskContext.save();
+      maskContext.translate(left, (height - iconHeight) / 2);
+      maskContext.scale(ratio, ratio);
+      maskContext.translate(-view.x, -view.y);
+      maskContext.fillStyle = style.fill;
+      maskContext.fill(logoShape);
+      maskContext.restore();
+      return { left, span: iconWidth };
+    }
+
+    maskContext.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    if ('letterSpacing' in maskContext) maskContext.letterSpacing = style.letterSpacing;
+    const text = maskContext.measureText(element.textContent);
     const ascent = text.fontBoundingBoxAscent ?? fontSize * .85;
     const descent = text.fontBoundingBoxDescent ?? fontSize * .15;
     const baseline = (height + ascent - descent) / 2;
-    maskContext.fillStyle = ink;
-    const textLeft = centered ? (width - text.width) / 2 : 0;
-    maskContext.fillText(title, textLeft, baseline);
+    const left = alignLeft(text.width);
+    maskContext.fillStyle = style.color;
+    maskContext.fillText(element.textContent, left, baseline);
+    return { left, span: text.width };
+  }
+
+  function sampleFrame(element) {
+    maskContext.clearRect(0, 0, width, height);
+    const { left, span } = drawMask(element);
     const { data } = maskContext.getImageData(0, 0, mask.width, mask.height);
     const step = Math.ceil((width < 390 ? 3 : 2.6) * scale);
-    const startX = Math.max(0, Math.floor((textLeft - 4) * scale));
-    const limitX = Math.min(mask.width, Math.ceil((textLeft + text.width + 4) * scale));
+    const startX = Math.max(0, Math.floor((left - 4) * scale));
+    const limitX = Math.min(mask.width, Math.ceil((left + span + 4) * scale));
     const cells = [];
     for (let y = 0; y < mask.height; y += step) {
       const h = Math.min(step, mask.height - y);
@@ -129,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hasInk) continue;
         const particle = { left: x, top: y, w, h, x: (x + w / 2) / scale, y: (y + h / 2) / scale };
         const random = Math.random();
-        const [delay, bend] = motionAt(particle, random, textLeft);
+        const [delay, bend] = motionAt(particle, random, left);
         cells.push({
           ...particle, delay, bend,
           target: field[cells.length % field.length],
@@ -182,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (outgoing) {
       phase = 'field';
       timer = setTimeout(() => {
-        currentTitle = (currentTitle + 1) % titles.length;
+        currentFrame = (currentFrame + 1) % frames.length;
         animate('gather');
       }, timing.field);
     } else {
@@ -197,15 +228,21 @@ document.addEventListener('DOMContentLoaded', () => {
       mode = nextMode();
       field = makeField();
     }
-    parts = sampleTitle(titles[currentTitle]);
+    parts = sampleFrame(frames[currentFrame]);
     root.classList.add('is-particle-transition');
     phase = next;
     started = performance.now();
     draw(started);
   }
 
+  function showFrame() {
+    frames.forEach((element, index) => {
+      element.toggleAttribute('hidden', index !== currentFrame);
+    });
+  }
+
   function holdTitle(delay = timing.hold) {
-    label.textContent = titles[currentTitle];
+    showFrame();
     root.classList.remove('is-particle-transition');
     phase = 'hold';
     timer = setTimeout(() => animate('dissolve'), delay);
@@ -227,8 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (active) {
       holdTitle(timing.firstHold);
     } else {
-      currentTitle = 0;
-      label.textContent = titles[0];
+      currentFrame = 0;
+      showFrame();
     }
   }
 
