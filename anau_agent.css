@@ -4328,22 +4328,6 @@ body.embedded-active .ai-callout-bubble {
   .anau-lobby .chat-msg { animation: none; }
 }
 
-/* The two title-only font subsets are bundled for offline use. */
-@font-face {
-  font-family: 'WenKai Title';
-  src: url('assets/fonts/wenkai-title.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Fraunces Title';
-  src: url('assets/fonts/fraunces-title.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
 /* Idle title shared by the main lobby and the offline portal. */
 .lobby-particle-title {
   position: relative;
@@ -4364,14 +4348,14 @@ body.embedded-active .ai-callout-bubble {
   transform: none;
 }
 .lobby-particle-title .particle-title-zh {
-  font-family: 'WenKai Title', 'Kaiti SC', KaiTi, serif;
-  font-weight: 400;
-  letter-spacing: .08em;
+  font-family: 'SF Pro SC', 'PingFang SC', 'Microsoft YaHei UI', 'Noto Sans CJK SC', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: .015em;
 }
 .lobby-particle-title .particle-title-en {
-  font-family: 'Fraunces Title', Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -.017em;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Display', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -.012em;
 }
 .lobby-particle-title .particle-title-logo {
   display: inline-block;
