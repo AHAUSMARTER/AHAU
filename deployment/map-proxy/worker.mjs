@@ -1,5 +1,5 @@
 const ORIGINS = new Set(['https://ahausmarter.github.io', 'http://localhost:8088', 'http://127.0.0.1:8088', 'http://127.0.0.1:8093']);
-const ROUTES = new Set(['/v3/log/init','/v3/place/text','/v3/place/detail','/v3/direction/walking','/v5/direction/walking','/v3/geocode/regeo','/v3/geocode/geo','/v3/config/district']);
+const ROUTES = new Set(['/v3/log/init','/v3/place/text','/v3/place/detail','/v3/direction/walking','/v5/direction/walking','/v3/geocode/regeo','/v3/geocode/geo','/v3/config/district','/v3/assistant/coordinate/convert']);
 const buckets = new Map();
 function allowed(request, url) {
   const origin = request.headers.get('Origin');

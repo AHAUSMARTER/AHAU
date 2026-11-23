@@ -1,9 +1,67 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>校园地图与步行导航 · 安农智办</title><link rel="stylesheet" href="campus_map.css"><script src="campus_map.js?v=4" defer></script></head>
-<body><header><a href="index.html" class="brand">徽农智 <span>安农智办</span></a><a href="index.html">返回工作台</a></header>
-<main><section class="intro"><div><p class="eyebrow">安徽农业大学 · 长江西路校区</p><h1>找到目的地，走对每一步。</h1><p>搜索校园地点，查看高德地图与步行路线，也可以对照校园方位图。</p></div><span class="tag">地图数据来自高德</span></section>
-<div class="workspace"><aside><form id="search-form"><label for="keyword">你想去哪里？</label><div class="search-row"><input id="keyword" name="q" placeholder="例如：图书馆、勤学楼" maxlength="60" required><button type="submit">搜索</button></div></form><div class="quick" aria-label="常用地点"><button type="button" data-query="安徽农业大学图书馆">图书馆</button><button type="button" data-query="安徽农业大学勤学楼">勤学楼</button><button type="button" data-query="安徽农业大学勤政楼">勤政楼</button><button type="button" data-query="安徽农业大学学生宿舍北区">北区宿舍</button></div>
-<p id="search-status" role="status" class="muted">选择常用地点，或输入名称开始搜索。</p><div id="results" aria-label="地点查询结果"></div>
-<section class="route-box"><h2>步行路线</h2><label for="origin">起点</label><input id="origin" placeholder="从结果设为起点，或使用我的位置" readonly><button id="locate" type="button" class="secondary">使用我的位置</button><label for="destination">终点</label><input id="destination" placeholder="从搜索结果选择目的地" readonly><button id="plan" type="button" disabled>规划步行路线</button><a id="navigate" class="button secondary" target="_blank" rel="noopener" hidden>打开高德导航</a><p id="route-status" role="status" class="muted">路线与时间由高德返回，实际通行以校园现场为准。</p><div id="route-panel"></div></section></aside>
-<section class="map-column" aria-label="地图展示"><div class="view-tabs" role="group" aria-label="地图类型"><button data-view="live" aria-pressed="true">高德地图</button><button data-view="main" aria-pressed="false">主校区方位图</button><button data-view="north" aria-pressed="false">北区宿舍方位图</button></div><p id="map-status" role="status" class="map-message">正在连接地图服务…</p><div id="live-view"><div id="map" aria-label="可交互高德地图"></div></div><div id="image-view" hidden><div class="image-toolbar"><button id="zoom-out" aria-label="缩小地图">缩小</button><button id="zoom-reset">还原</button><button id="zoom-in" aria-label="放大地图">放大</button><a id="original" target="_blank" rel="noopener">查看原图</a></div><div id="image-scroll" tabindex="0" aria-label="校园原图，可滚动查看"><img id="campus-image" alt="安徽农业大学校园方位图"></div><p class="muted">来自项目现有校园方位图；图片未标注更新日期，建筑用途与名称以校方最新信息为准。方位图不用于计算步行路线。</p></div></section></div>
-<footer>地点坐标与路线均由地图服务查询，不由大模型生成。搜索结果请核对校区和地址；校园小路、围墙及校门开放情况可能与地图不同。定位仅在点击后请求，不上传到本项目数据库。</footer></main></body></html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>校园地图 · 安农智办</title>
+  <link rel="stylesheet" href="campus_map.css?v=9">
+  <script src="campus_map.js?v=9" type="module"></script>
+</head>
+<body>
+  <header class="page-header">
+    <a href="index.html" class="brand">安农智办 <span>/ 校园地图</span></a>
+    <a href="index.html" class="back-link">返回工作台</a>
+  </header>
+  <main>
+    <section class="map-column" aria-label="校园地图">
+      <div class="map-topbar">
+        <span class="campus-name">安徽农业大学 <small>长江西路校区</small></span>
+        <label class="view-control"><span class="sr-only">地图类型</span>
+          <select id="map-view"><option value="live">在线地图</option><option value="main">主校区原图</option><option value="north">北区宿舍原图</option></select>
+        </label>
+      </div>
+      <div class="map-stage">
+        <div id="live-view"><div id="map" aria-label="仅展示校园范围的高德地图"></div>
+          <div class="map-zoom" aria-label="地图缩放"><button id="map-zoom-in" aria-label="放大在线地图">＋</button><button id="map-zoom-out" aria-label="缩小在线地图">−</button></div>
+        </div>
+        <div id="image-view" hidden>
+          <div class="image-toolbar"><button id="zoom-out" aria-label="缩小原图">−</button><button id="zoom-reset">还原</button><button id="zoom-in" aria-label="放大原图">＋</button><a id="original" target="_blank" rel="noopener">查看原图</a></div>
+          <div id="image-scroll" tabindex="0" aria-label="校园原图，可滚动查看"><img id="campus-image" alt="安徽农业大学校园方位图"></div>
+        </div>
+        <button id="locate" class="locate-button" type="button" disabled>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+          我的位置
+        </button>
+      </div>
+      <p id="location-status" class="location-status" role="status">点击“我的位置”，允许浏览器获取位置后显示蓝点。</p>
+      <p id="map-status" class="map-status" role="status">正在加载校园地图…</p>
+    </section>
+
+    <aside class="search-panel" aria-label="地点与路线">
+      <h1>校园导航</h1>
+      <form id="search-form">
+        <label class="sr-only" for="keyword">搜索校园地点</label>
+        <div class="search-row"><input id="keyword" name="q" placeholder="搜索楼宇、食堂、宿舍" maxlength="60" required><button type="submit">搜索</button></div>
+      </form>
+      <div class="quick" aria-label="常用地点">
+        <button type="button" data-query="图书馆">图书馆</button><button type="button" data-query="勤学楼">勤学楼</button><button type="button" data-query="勤政楼">勤政楼</button><button type="button" data-query="学生公寓">宿舍</button>
+      </div>
+      <p id="search-status" class="hint" role="status">选择常用地点，或输入名称。</p>
+      <div id="results" class="results" aria-label="校内地点查询结果"></div>
+      <section class="route-box" aria-labelledby="route-title">
+        <h2 id="route-title">步行路线</h2>
+        <div class="route-field"><label for="origin">起点</label><input id="origin" placeholder="定位，或选择校内起点" readonly></div>
+        <div class="route-field"><label for="destination">终点</label><input id="destination" placeholder="选择要去的地点" readonly></div>
+        <button id="plan" type="button" disabled>查看步行路线</button>
+        <a id="navigate" class="button secondary" target="_blank" rel="noopener" hidden>打开高德导航</a>
+        <p id="route-status" class="hint" role="status">仅提供校内地点之间的步行路线。</p>
+        <details id="route-details" hidden><summary>分步指引</summary><div id="route-panel"></div></details>
+      </section>
+    </aside>
+  </main>
+  <footer>仅展示校园范围。地图及路线由高德提供，实际通行以现场为准。
+    <details><summary>数据来源与定位说明</summary><p>校园范围参考 <a href="https://www.openstreetmap.org/way/498810020" target="_blank" rel="noopener">OpenStreetMap 公开边界</a>（© OpenStreetMap contributors，ODbL），不是学校测绘边界。校园原图来自项目已有素材，更新时间未标注。定位仅在主动点击后请求，坐标经高德转换；项目不保存用户位置。定位精度不足或靠近边界时不判断校内外。</p></details>
+  </footer>
+</body>
+</html>
