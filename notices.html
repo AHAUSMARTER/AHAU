@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#254d38">
+  <title>校园通知检索 · 安农智办</title>
+  <style>
+    :root{color-scheme:light;--green:#254d38;--green-soft:#eaf1eb;--ink:#202923;--muted:#637068;--line:#dce4de;--surface:#fff;--canvas:#f4f6f3;--focus:#2d6b45}
+    *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+    a{color:var(--green)}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #80b790;outline-offset:2px}
+    .shell{max-width:1040px;margin:0 auto;padding:28px 22px 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:34px}.brand{color:var(--green);font-weight:700;text-decoration:none}.back{font-size:14px}
+    .intro{margin-bottom:24px}.eyebrow{color:var(--green);font-size:13px;font-weight:700;letter-spacing:.04em}.intro h1{font-size:clamp(28px,5vw,42px);line-height:1.16;letter-spacing:-.035em;margin:8px 0 10px}.intro p{max-width:680px;color:var(--muted);margin:0}
+    .filters{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 20px #1c342009}.filter-grid{display:grid;grid-template-columns:minmax(220px,2fr) repeat(2,minmax(130px,1fr));gap:12px}.field{display:grid;gap:6px}.field label{font-size:13px;font-weight:650;color:#39463d}.field input,.field select{width:100%;height:44px;border:1px solid #cbd6ce;border-radius:9px;background:#fff;padding:0 11px;font:inherit;color:var(--ink)}.dates{display:flex;align-items:end;gap:12px;margin-top:12px}.dates .field{flex:1}.date-sep{padding-bottom:10px;color:var(--muted)}.actions{display:flex;gap:9px}.button{min-height:44px;border:1px solid var(--green);border-radius:9px;padding:0 16px;background:var(--green);color:white;font:inherit;font-weight:650;cursor:pointer}.button.secondary{background:white;color:var(--green)}.button:disabled{opacity:.55;cursor:wait}
+    .results-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:26px 0 12px}.results-head h2{font-size:18px;margin:0}.status{color:var(--muted);font-size:13px}.cards{display:grid;gap:10px}.card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 18px}.card h3{font-size:17px;line-height:1.4;margin:0 0 8px}.meta{display:flex;flex-wrap:wrap;gap:7px 14px;color:var(--muted);font-size:13px;margin-bottom:12px}.pill{padding:2px 8px;background:var(--green-soft);border-radius:999px;color:var(--green);font-size:12px}.open-link{display:inline-flex;min-height:40px;align-items:center;font-weight:650;text-decoration:none}.notice{padding:15px;border-radius:10px;background:#fff;border:1px solid var(--line);color:var(--muted)}.notice.error{color:#923e32;border-color:#e7c6c0;background:#fff9f7}.sources{margin-top:26px;border-top:1px solid var(--line);padding-top:15px;color:var(--muted);font-size:13px}.sources a{margin-right:14px;white-space:nowrap}
+    @media(max-width:700px){.shell{padding:20px 15px 40px}.top{margin-bottom:27px}.filter-grid{grid-template-columns:1fr 1fr}.filter-grid .field:first-child{grid-column:1/-1}.dates{flex-wrap:wrap}.dates .field{min-width:calc(50% - 24px)}.actions{width:100%}.actions .button{flex:1}.results-head{align-items:flex-start;flex-direction:column}.card{padding:14px}.card h3{font-size:16px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <nav class="top" aria-label="主导航"><a class="brand" href="index.html">徽农智 · 安农智办</a><a class="back" href="index.html">返回工作台</a></nav>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow">OFFICIAL CAMPUS NOTICES</div>
+      <h1 id="page-title">校园通知检索</h1>
+      <p>检索学校官网、教务处、农学院、机械与车辆工程学院（工学院）和人工智能学院公开通知。结果保留原始链接；通知内容不由大模型生成。</p>
+    </section>
+    <form class="filters" id="filters">
+      <div class="filter-grid">
+        <div class="field"><label for="keyword">关键词</label><input id="keyword" name="keyword" type="search" placeholder="例如：奖学金、考试、竞赛" autocomplete="off"></div>
+        <div class="field"><label for="department">发布部门</label><select id="department" name="department"><option value="">全部部门</option></select></div>
+        <div class="field"><label for="category">通知类别</label><select id="category" name="category"><option value="">全部类别</option></select></div>
+      </div>
+      <div class="dates">
+        <div class="field"><label for="date-from">发布日期起</label><input id="date-from" name="date_from" type="date"></div><span class="date-sep" aria-hidden="true">至</span>
+        <div class="field"><label for="date-to">发布日期止</label><input id="date-to" name="date_to" type="date"></div>
+        <div class="actions"><button class="button" type="submit">搜索通知</button><button class="button secondary" id="refresh" type="button">刷新官网数据</button></div>
+      </div>
+    </form>
+    <section aria-labelledby="results-title">
+      <div class="results-head"><h2 id="results-title">检索结果</h2><div class="status" id="status" role="status" aria-live="polite">正在读取官方栏目…</div></div>
+      <div class="cards" id="results"></div>
+    </section>
+    <footer class="sources" id="sources">正在读取官方栏目与快照信息…</footer>
+  </main>
+  <script>
+    const form=document.getElementById('filters'), results=document.getElementById('results'), statusEl=document.getElementById('status'), refreshBtn=document.getElementById('refresh'), sourcesEl=document.getElementById('sources');
+    let sourceList=[], noticeItems=[], sourceMode='';
+    function setOptions(id,values,placeholder){const select=document.getElementById(id),old=select.value;select.replaceChildren(new Option(placeholder,''));values.forEach(value=>select.add(new Option(value,value)));if(values.includes(old))select.value=old;}
+    function render(data){results.replaceChildren();if(!data.items.length){const empty=document.createElement('div');empty.className='notice';empty.textContent='没有找到符合条件的通知。试试更短的关键词、放宽日期范围，或切换发布部门。';results.append(empty);return;}
+      data.items.forEach(item=>{const article=document.createElement('article');article.className='card';const h=document.createElement('h3');h.textContent=item.title;const meta=document.createElement('div');meta.className='meta';[item.department,item.date||'发布日期未识别'].forEach(value=>{const span=document.createElement('span');span.textContent=value;meta.append(span)});const pill=document.createElement('span');pill.className='pill';pill.textContent=item.category;meta.append(pill);const link=document.createElement('a');link.className='open-link';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看官方原文';article.append(h,meta,link);results.append(article);});}
+    function renderSources(snapshotAt='',coverageNote=''){
+      const label=document.createElement('span');label.textContent='官方栏目：';sourcesEl.replaceChildren(label);
+      sourceList.forEach(source=>{const a=document.createElement('a');a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=source.department;sourcesEl.append(a);});
+      const note=document.createElement('span');note.textContent=sourceMode==='live'?'实时读取栏目，缓存 5 分钟；类别按标题关键词归类，截止日期不自动推断。':`GitHub Pages 官方数据快照，采集时间：${formatSnapshotTime(snapshotAt)}。${coverageNote} 页面不生成通知；刷新官网需在本地服务版运行。`;
+      sourcesEl.append(document.createElement('br'),note);
+    }
+    function formatSnapshotTime(value){const date=new Date(value);return Number.isNaN(date.valueOf())?'时间未知':new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',dateStyle:'medium',timeStyle:'short'}).format(date);}
+    function applyFilters(){
+      const values=Object.fromEntries(new FormData(form));const keyword=(values.keyword||'').trim().toLocaleLowerCase();
+      const filtered=noticeItems.filter(item=>{
+        const text=(item.title+' '+item.department).toLocaleLowerCase();
+        return (!keyword||text.includes(keyword))&&(!values.department||item.department===values.department)&&(!values.category||item.category===values.category)&&(!values.date_from||item.date&&item.date>=values.date_from)&&(!values.date_to||item.date&&item.date<=values.date_to);
+      });
+      render({items:filtered});
+      statusEl.textContent=`找到 ${filtered.length} 条通知${sourceMode==='snapshot'?' · 官方数据快照':''}`;
+    }
+    function useLiveData(data){
+      noticeItems=(data.items||[]).filter(item=>item.date);sourceList=data.sources||[];sourceMode='live';
+      setOptions('department',data.departments||[...new Set(noticeItems.map(item=>item.department))],'全部部门');
+      setOptions('category',data.categories||[...new Set(noticeItems.map(item=>item.category))],'全部类别');
+      renderSources();applyFilters();
+    }
+    async function useSnapshot(){
+      const response=await fetch('notices.json',{cache:'no-store'});if(!response.ok)throw new Error('本地快照读取失败（'+response.status+'）');
+      const data=await response.json();noticeItems=data.items||[];sourceList=data.sources||[];sourceMode='snapshot';
+      setOptions('department',[...new Set(noticeItems.map(item=>item.department))],'全部部门');
+      setOptions('category',[...new Set(noticeItems.map(item=>item.category))],'全部类别');
+      renderSources(data.snapshot_at,data.coverage_note||'');applyFilters();
+    }
+    async function search(force=false){
+      statusEl.textContent=force?'正在尝试刷新官方栏目…':'正在读取官方栏目…';results.replaceChildren();refreshBtn.disabled=true;form.querySelector('button[type=submit]').disabled=true;
+      try{
+        const response=await fetch('api/anau/notices'+(force?'?refresh=1':''),{headers:{Accept:'application/json'},cache:'no-store',signal:AbortSignal.timeout(15000)});
+        if(!response.ok)throw new Error('通知 API 不可用');const data=await response.json();if(!data.success)throw new Error('通知 API 暂不可用');useLiveData(data);
+        if(data.errors?.length){const warning=document.createElement('div');warning.className='notice';warning.textContent='部分来源暂时无法读取：'+data.errors.map(item=>item.department).join('、')+'。结果仅包含成功来源。';results.prepend(warning);}
+      }catch(error){
+        try{await useSnapshot();if(force)statusEl.textContent=`官网刷新不可用，显示 ${noticeItems.length} 条官方快照`;}
+        catch(snapshotError){statusEl.textContent='检索失败';results.replaceChildren();const box=document.createElement('div');box.className='notice error';box.textContent=snapshotError.message||error.message||'暂时无法读取通知。';results.append(box);}
+      }finally{refreshBtn.disabled=false;form.querySelector('button[type=submit]').disabled=false;}
+    }
+    form.addEventListener('submit',event=>{event.preventDefault();applyFilters()});refreshBtn.addEventListener('click',()=>search(true));search(false);
+  </script>
+</body>
+</html>

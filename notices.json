@@ -1,0 +1,505 @@
+{
+  "snapshot_at": "2026-11-24T01:25:17+08:00",
+  "coverage_note": "五个官方通知栏目当前列表页中可识别发布日期的 53 条记录；非全站全部部门或历史分页。类别按标题关键词归类。",
+  "sources": [
+    {
+      "department": "安徽农业大学",
+      "url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "department": "教务处",
+      "url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "department": "农学院",
+      "url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "department": "机械与车辆工程学院（工学院）",
+      "url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "department": "人工智能学院",
+      "url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    }
+  ],
+  "items": [
+    {
+      "title": "机械与车辆工程学院2026年大学生职业规划大赛获奖名单",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-11-23",
+      "category": "竞赛活动",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44871.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "安徽农业大学农学院2026年下半年研究生学位论文答辩安排汇总表",
+      "department": "农学院",
+      "date": "2026-11-20",
+      "category": "其他通知",
+      "url": "https://agri.ahau.edu.cn/info/1922/91452.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院关于开展2026年度“优秀研究生”“优秀研究生干部”暨“安科生物奖学金”评选工作的通知",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-11-19",
+      "category": "奖助学金",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44801.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院2026-2027学年第一学期第十二周考试安排",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-11-19",
+      "category": "教学考试",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44791.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "农学院关于开展2026年度“优秀研究生”“优秀研究生干部”暨“安科生物奖学金”评选工作的通知",
+      "department": "农学院",
+      "date": "2026-11-19",
+      "category": "奖助学金",
+      "url": "https://agri.ahau.edu.cn/info/1922/91492.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "安徽农业大学原实业公司大楼105号等4处房产出租专场公告",
+      "department": "安徽农业大学",
+      "date": "2026-11-16",
+      "category": "其他通知",
+      "url": "https://zcjy.ahau.edu.cn/info/1016/5682.htm",
+      "summary": "",
+      "source_url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "title": "关于“AI大模型驱动的砀山酥梨智能育种关键技术研究与应用示范”项目合作单位经费外拨情况的公示",
+      "department": "人工智能学院",
+      "date": "2026-11-16",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/58437.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "安徽省2026年“1+5”农业科技创新联盟发展项目外拨经费公示",
+      "department": "农学院",
+      "date": "2026-11-14",
+      "category": "其他通知",
+      "url": "https://agri.ahau.edu.cn/info/1922/91392.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院2026-2027学年第一学期第十一周考试安排",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-11-12",
+      "category": "教学考试",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44331.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "关于2026年度农学院大学生暑期“三下乡”社会实践活动结项的公示",
+      "department": "农学院",
+      "date": "2026-11-12",
+      "category": "竞赛活动",
+      "url": "https://agri.ahau.edu.cn/info/1922/91332.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "关于开展植物保护学院、农学院2027届毕业生专场招聘会的通知",
+      "department": "农学院",
+      "date": "2026-11-10",
+      "category": "招聘就业",
+      "url": "https://agri.ahau.edu.cn/info/1922/90602.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院“精匠讲堂”系列学术报告",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-11-09",
+      "category": "其他通知",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44271.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "安徽农业大学霍山路东门16号、原实业公司酒楼103号房产出租公告",
+      "department": "安徽农业大学",
+      "date": "2026-11-06",
+      "category": "其他通知",
+      "url": "https://zcjy.ahau.edu.cn/info/1016/5662.htm",
+      "summary": "",
+      "source_url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "title": "2026年“希望工程·国之栋梁”助学金获得者拟推荐人选名单公示",
+      "department": "农学院",
+      "date": "2026-11-06",
+      "category": "奖助学金",
+      "url": "https://agri.ahau.edu.cn/info/1922/91262.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院2026-2027学年第一学期第十周考试安排",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-11-03",
+      "category": "教学考试",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44171.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院“精匠讲堂”系列学术报告",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-10-30",
+      "category": "其他通知",
+      "url": "https://gxy.ahau.edu.cn/info/1143/44041.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "安徽农业大学霍山路A102等19处房产出租专场延期公告",
+      "department": "安徽农业大学",
+      "date": "2026-10-29",
+      "category": "其他通知",
+      "url": "https://zcjy.ahau.edu.cn/info/1016/5652.htm",
+      "summary": "",
+      "source_url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "title": "安徽农业大学原实业公司酒楼104号房产出租延期公告",
+      "department": "安徽农业大学",
+      "date": "2026-10-29",
+      "category": "其他通知",
+      "url": "https://zcjy.ahau.edu.cn/info/1016/5642.htm",
+      "summary": "",
+      "source_url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "title": "农学院2026-2027学年“种时光助学金”评选通知",
+      "department": "农学院",
+      "date": "2026-10-23",
+      "category": "奖助学金",
+      "url": "https://agri.ahau.edu.cn/info/1922/90762.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院2026-2027学年第一学期第八周专业课考试安排",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-10-21",
+      "category": "教学考试",
+      "url": "https://gxy.ahau.edu.cn/info/1143/43821.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "关于科研项目经费外拨事项的公示",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-10-21",
+      "category": "其他通知",
+      "url": "https://gxy.ahau.edu.cn/info/1143/43831.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "关于开展2026年秋季学期“匠心铸魂·党员先行”携手成长学生寝室优秀微事迹评选活动的通知",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-10-21",
+      "category": "竞赛活动",
+      "url": "https://gxy.ahau.edu.cn/info/1143/43801.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "农学院“朝阳奖助学金”评选细则及 实施办法",
+      "department": "农学院",
+      "date": "2026-10-14",
+      "category": "奖助学金",
+      "url": "https://agri.ahau.edu.cn/info/1922/90712.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "农学院2026年下半年拟发展团员名单公示",
+      "department": "农学院",
+      "date": "2026-10-13",
+      "category": "其他通知",
+      "url": "https://agri.ahau.edu.cn/info/1922/90612.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院2026年下半年发展对象情况公示",
+      "department": "人工智能学院",
+      "date": "2026-10-13",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57927.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "国家自然科学基金联合基金课题外拨经费公示",
+      "department": "农学院",
+      "date": "2026-10-12",
+      "category": "其他通知",
+      "url": "https://agri.ahau.edu.cn/info/1922/90582.htm",
+      "summary": "",
+      "source_url": "https://agri.ahau.edu.cn/tzgg.htm"
+    },
+    {
+      "title": "关于公开招募机械与车辆工程学院办公室学生助理通知",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-10-09",
+      "category": "其他通知",
+      "url": "https://gxy.ahau.edu.cn/info/1143/43721.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "机械与车辆工程学院2026年度安徽省自然科学基金项目评审推荐公示",
+      "department": "机械与车辆工程学院（工学院）",
+      "date": "2026-10-08",
+      "category": "其他通知",
+      "url": "https://gxy.ahau.edu.cn/info/1143/43681.htm",
+      "summary": "",
+      "source_url": "https://gxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院2026年国庆节假期值班安排表",
+      "department": "人工智能学院",
+      "date": "2026-09-30",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57687.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "安徽农业大学原实业公司酒楼104号等2处房产出租延期公告",
+      "department": "安徽农业大学",
+      "date": "2026-09-28",
+      "category": "其他通知",
+      "url": "https://zcjy.ahau.edu.cn/info/1016/5622.htm",
+      "summary": "",
+      "source_url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "title": "人工智能学院拟推荐2026年研究生国家奖学金、学业奖学金名单公示",
+      "department": "人工智能学院",
+      "date": "2026-09-20",
+      "category": "奖助学金",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57497.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "关于人工智能学院2026-2027学年家庭经济困难学生名单公示",
+      "department": "人工智能学院",
+      "date": "2026-09-18",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57507.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "安徽农业大学霍山路A102等19处房产出租专场延期公告",
+      "department": "安徽农业大学",
+      "date": "2026-09-14",
+      "category": "其他通知",
+      "url": "https://zcjy.ahau.edu.cn/info/1016/5552.htm",
+      "summary": "",
+      "source_url": "https://www.ahau.edu.cn/"
+    },
+    {
+      "title": "人工智能学院关于开展2026年研究生国家奖学金、 学业奖学金评审工作的通知",
+      "department": "人工智能学院",
+      "date": "2026-09-08",
+      "category": "奖助学金",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57387.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "关于做好人工智能学院2027年推荐优秀应届本科毕业生免试攻读硕士研究生的通知",
+      "department": "人工智能学院",
+      "date": "2026-09-02",
+      "category": "教学考试",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57297.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院关于马来西亚拉曼大学学期交流项目推荐结果公示",
+      "department": "人工智能学院",
+      "date": "2026-08-10",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57187.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院关于2026年香港理工大学IEEERAS无人机暑期项目推荐结果公示",
+      "department": "人工智能学院",
+      "date": "2026-08-04",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/57027.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "教务处2026年暑假值班安排表",
+      "department": "教务处",
+      "date": "2026-07-17",
+      "category": "其他通知",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36231.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "人工智能学院2026年暑假值班安排",
+      "department": "人工智能学院",
+      "date": "2026-07-17",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/56907.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "2026年全校教师数字素养提升实践活动结果公示",
+      "department": "教务处",
+      "date": "2026-07-08",
+      "category": "竞赛活动",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36211.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "关于成绩排名证明及教学事务提醒功能上线的通知",
+      "department": "教务处",
+      "date": "2026-07-03",
+      "category": "教学考试",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36191.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "关于本科生在读证明上线的通知",
+      "department": "教务处",
+      "date": "2026-06-25",
+      "category": "其他通知",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36141.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "2025-2026学年第二学期《高等数学I（A）》、《高等数学I（B）》、《高等数学II（A）》期末考试安排",
+      "department": "教务处",
+      "date": "2026-06-23",
+      "category": "教学考试",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36051.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "2025-2026学年第二学期第18周、19周公共课期末考试安排",
+      "department": "教务处",
+      "date": "2026-06-22",
+      "category": "教学考试",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36041.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "2026年教务处端午假期值班表",
+      "department": "教务处",
+      "date": "2026-06-18",
+      "category": "其他通知",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36031.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "2025-2026学年第二学期第17周公共课期末考试安排",
+      "department": "教务处",
+      "date": "2026-06-17",
+      "category": "教学考试",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36021.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "2026年上半年全国大学英语四、六级考试巡考组人员安排",
+      "department": "教务处",
+      "date": "2026-06-12",
+      "category": "教学考试",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36011.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "关于2026年6月英语四六级考试监考、考务人员培训的通知",
+      "department": "教务处",
+      "date": "2026-06-10",
+      "category": "教学考试",
+      "url": "https://jwc.ahau.edu.cn/info/1881/36001.htm",
+      "summary": "",
+      "source_url": "https://jwc.ahau.edu.cn/xz/wzsy/tzgg/102.htm"
+    },
+    {
+      "title": "第十届御网杯网络安全大赛线上赛团队成绩公示",
+      "department": "人工智能学院",
+      "date": "2026-06-08",
+      "category": "竞赛活动",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/54837.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院2026年博士研究生招生“硕博连读”和“申请-考核”考生拟录取名单公示",
+      "department": "人工智能学院",
+      "date": "2026-05-29",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/54257.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院2026年博士研究生招生综合考核方案",
+      "department": "人工智能学院",
+      "date": "2026-05-22",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/54117.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "人工智能学院2026年博士研究生招生“硕博连读”和“申请－考核”资格审查通过考生名单公示",
+      "department": "人工智能学院",
+      "date": "2026-05-22",
+      "category": "其他通知",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/54127.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    },
+    {
+      "title": "学院2026年度人才（团队）招聘公告",
+      "department": "人工智能学院",
+      "date": "2026-02-28",
+      "category": "招聘就业",
+      "url": "https://xzxy.ahau.edu.cn/info/2351/53517.htm",
+      "summary": "",
+      "source_url": "https://xzxy.ahau.edu.cn/index/tzgg.htm"
+    }
+  ]
+}
