@@ -129,3 +129,9 @@ GitHub页面 → Netlify `/model/browser-config`（只取配置）→ 校园网�
 模型原始Markdown → `DiagnosisRender.protectMath`（保留TeX占位）→ marked → DOM标签白名单 → 将占位符替换为同源KaTeX数学DOM → 以模型标题组织 `solution-section`。公式不会先经过Markdown反斜杠转义，输出不信任TeX扩展；无效公式保留源码，代码块不强行转数学。
 
 `diagnosis_results.css` 仅覆盖错题页阅读布局；本地KaTeX资源包含字体及自动排版扩展，供原有样题继续使用。题目详情用textContent展示，修改题目保留原输入及OCR状态，另起一题才清空。模型接口、共享Key与地图无变更。
+
+## OCR资源托管与生命周期
+
+GitHub客户端从 `https://ahau-hfnk.netlify.app/ocr/v1/` 获取同版本静态SDK、WASM及中英文数据，必要时回到同源 `lib/ocr/`；这不是图片识别服务器，图片仍在本机Worker内处理。Netlify静态目录只复制原OCR公开依赖，CORS允许跨源读取，版本化资源采用长期缓存。SDK版本、识别模型和模型API路径不变。
+
+初始化与识别分别设置期限，logger呈现实际阶段；显式重试刷新语言缓存。每次初始化尝试具有自己的废弃标志，取消或超时后返回的worker会被终止，避免旧任务在后台继续占用内存或CPU。前端脚本以新版本参数发布，避免浏览器继续执行旧的统一90秒逻辑。

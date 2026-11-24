@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const base = new URL('lib/ocr/', document.currentScript.src);
-  let libraryPromise;
+  const libraryPromises = new Map();
   let current = null;
   let previewURL = null;
   let blocksSubmit = false;
@@ -10,24 +10,29 @@
   const notify = () => window.handleInputChange(el('promptInput').value);
   const status = text => { el('ocrStatus').textContent = text; };
 
-  function loadLibrary() {
+  function loadLibrary(source) {
     if (window.Tesseract) return Promise.resolve(window.Tesseract);
-    if (!libraryPromise) libraryPromise = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = new URL('tesseract.min.js', base).href;
-      const fail = () => { clearTimeout(timer); script.remove(); libraryPromise = null; reject(new Error('识别组件加载失败，请检查网络后重试。')); };
-      const timer = setTimeout(fail, 30000);
-      script.onload = () => { clearTimeout(timer); resolve(window.Tesseract); };
-      script.onerror = fail;
-      document.head.append(script);
-    });
-    return libraryPromise;
+    const address = source.href;
+    if (!libraryPromises.has(address)) {
+      const promise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = new URL('tesseract.min.js', source).href;
+        const fail = () => { clearTimeout(timer); script.remove(); libraryPromises.delete(address); reject(new Error('识别组件下载失败，请检查网络后重试。')); };
+        const timer = setTimeout(fail, 20000);
+        script.onload = () => { clearTimeout(timer); resolve(window.Tesseract); };
+        script.onerror = fail;
+        document.head.append(script);
+      });
+      libraryPromises.set(address,promise);
+    }
+    return libraryPromises.get(address);
   }
 
   function stop() {
     if (!current) return;
     const task = current;
     current = null;
+    task.closed = true;
     clearTimeout(task.timer);
     task.cancel?.(new Error('已取消识别'));
     task.worker?.terminate().catch(() => {});
@@ -46,7 +51,66 @@
     notify();
   }
 
-  async function recognize(file) {
+  const sources = location.hostname.endsWith('.github.io')
+    ? [new URL('https://ahau-hfnk.netlify.app/ocr/v1/'), base]
+    : [base, new URL('https://ahau-hfnk.netlify.app/ocr/v1/')];
+  const cancelled = () => Object.assign(new Error('已取消识别'), { cancelled: true });
+  const visibleTask = task => current === task && !task.closed;
+
+  async function initializeWorker(task, source, freshCache) {
+    let abandoned = false;
+    let rejectInit;
+    let lastActivity = Date.now();
+    let lastStatus = '';
+    let lastProgress = -1;
+    const interrupted = new Promise((_, reject) => { rejectInit = reject; });
+    task.cancel = () => { abandoned = true; rejectInit(cancelled()); };
+    const absoluteTimer = setTimeout(() => rejectInit(new Error('识别资源初始化超时，请检查网络后重新下载。')), 180000);
+    const stalledTimer = setInterval(() => {
+      if (Date.now() - lastActivity > 45000) rejectInit(new Error('识别资源下载长时间没有进展，请检查网络后重新下载。'));
+    }, 3000);
+    const creation = (async () => {
+      const library = await loadLibrary(source);
+      if (!visibleTask(task) || abandoned) throw cancelled();
+      const worker = await library.createWorker('chi_sim+eng', 1, {
+        workerPath: new URL('worker.min.js', source).href,
+        corePath: new URL('core/', source).href,
+        langPath: new URL('lang', source).href,
+        cachePath: 'anau-ocr-v1',
+        cacheMethod: freshCache ? 'refresh' : 'write',
+        logger(message) {
+          if (!visibleTask(task) || abandoned) return;
+          if (message.status !== lastStatus || message.progress !== lastProgress) {
+            lastActivity = Date.now(); lastStatus = message.status; lastProgress = message.progress;
+          }
+          const labels = {
+            'loading tesseract core': '正在下载识别引擎',
+            'initializing tesseract': '正在启动识别引擎',
+            'loading language traineddata': '正在加载中英文识别包（首次使用需要下载）',
+            'initializing api': '识别包已就绪，正在初始化'
+          };
+          if (message.status === 'recognizing text') {
+            el('ocrProgress').value = message.progress;
+            status(`正在识别题目文字 ${Math.round(message.progress * 100)}%`);
+          } else if (labels[message.status]) {
+            const percent = Number.isFinite(message.progress) ? ` ${Math.round(message.progress * 100)}%` : '';
+            el('ocrProgress').value = Number.isFinite(message.progress) ? message.progress : 0;
+            status(labels[message.status] + percent);
+          }
+        },
+        errorHandler: () => rejectInit(new Error('识别引擎或语言包加载失败，请重新下载后重试。'))
+      });
+      // createWorker only resolves after initialization. A cancelled/expired attempt
+      // must never start image recognition or leave a late worker running.
+      if (abandoned || !visibleTask(task)) { await worker.terminate(); throw cancelled(); }
+      return worker;
+    })();
+    try { return await Promise.race([creation, interrupted]); }
+    catch (error) { abandoned = true; throw error; }
+    finally { clearTimeout(absoluteTimer); clearInterval(stalledTimer); }
+  }
+
+  async function recognize(file, freshCache = false) {
     stop();
     blocksSubmit = true;
     el('ocrPanel').hidden = false;
@@ -56,36 +120,33 @@
     el('ocrProgress').hidden = false;
     el('ocrProgress').removeAttribute('value');
     notify();
-    status('正在加载识别组件，首次使用需要下载中文识别包…');
-    const task = { worker: null, file };
+    const task = { worker: null, file, closed: false };
     current = task;
-    const deadline = new Promise((_, reject) => {
-      task.cancel = reject;
-      task.timer = setTimeout(() => reject(new Error('识别超时。请裁剪成一道题后重试，或手动输入。')), 90000);
-    });
     try {
-      const result = await Promise.race([deadline, (async () => {
-        const library = await loadLibrary();
-        if (current !== task) throw new Error('已取消识别');
-        const worker = await library.createWorker('chi_sim+eng', 1, {
-          workerPath: new URL('worker.min.js', base).href,
-          corePath: new URL('core/', base).href,
-          langPath: new URL('lang', base).href,
-          logger(message) {
-            if (current !== task) return;
-            if (message.status === 'recognizing text') {
-              el('ocrProgress').value = message.progress;
-              status(`正在识别题目文字 ${Math.round(message.progress * 100)}%`);
-            }
-          },
-          errorHandler: error => task.cancel(new Error('识别失败，请换一张清晰照片后重试。'))
-        });
-        if (current !== task) { await worker.terminate(); throw new Error('已取消识别'); }
-        task.worker = worker;
-        // Keep memory bounded on mobile while preserving printed text detail.
+      let error;
+      for (let index = 0; index < sources.length; index++) {
+        status(index === 0 ? '正在连接识别资源，准备加载引擎…' : '主资源连接未完成，正在切换备用来源…');
+        el('ocrProgress').removeAttribute('value');
+        try {
+          task.worker = await initializeWorker(task, sources[index], freshCache || index > 0);
+          error = null; break;
+        } catch (cause) {
+          if (!visibleTask(task) || cause.cancelled) throw cause;
+          error = cause;
+        }
+      }
+      if (error) throw error;
+      if (!visibleTask(task)) return;
+      status('识别资源已就绪，正在读取题目图片…');
+      let rejectRecognition;
+      const interrupted = new Promise((_, reject) => { rejectRecognition = reject; });
+      task.cancel = () => rejectRecognition(cancelled());
+      task.timer = setTimeout(() => rejectRecognition(new Error('图片识别超时。识别包已加载，请裁剪成一道题后重试。')), 90000);
+      const recognition = (async () => {
         const bitmap = await createImageBitmap(file);
         try {
           if (bitmap.width * bitmap.height > 48000000) throw new Error('图片像素过大，请裁剪成一道题后重试。');
+          if (!visibleTask(task)) throw cancelled();
           const scale = Math.min(1, 2400 / Math.max(bitmap.width, bitmap.height));
           const canvas = document.createElement('canvas');
           canvas.width = Math.max(1, Math.round(bitmap.width * scale));
@@ -93,10 +154,11 @@
           const ctx = canvas.getContext('2d');
           ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
           ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-          return await worker.recognize(canvas);
+          return await task.worker.recognize(canvas);
         } finally { bitmap.close(); }
-      })()]);
-      if (current !== task) return;
+      })();
+      const result = await Promise.race([recognition, interrupted]);
+      if (!visibleTask(task)) return;
       const text = result.data.text.trim();
       if (!text) throw new Error('没有识别到文字。请拍清楚题干，避免反光，或手动输入。');
       el('ocrText').value = text;
@@ -104,16 +166,18 @@
       el('ocrApply').disabled = false;
       status('识别完成，请对照原图校对文字、数字和符号，再填入题目。');
     } catch (error) {
-      if (current !== task) return;
-      status(error.message?.includes('像素') || error.message?.includes('超时') || error.message?.includes('没有识别') || error.message?.includes('组件')
+      if (!visibleTask(task)) return;
+      status(/像素|超时|没有识别|资源|下载|语言包|引擎|组件/.test(error.message)
         ? error.message : '图片无法识别。请使用清晰的 JPG、PNG 或 WebP 图片，或手动输入。');
     } finally {
       if (current === task) {
+        task.closed = true;
         clearTimeout(task.timer);
         task.worker?.terminate().catch(() => {});
         task.worker = null;
         el('ocrProgress').hidden = true;
         el('ocrRetry').hidden = false;
+        el('ocrRetry').textContent = '重新下载识别包并重试';
         notify();
       }
     }
@@ -149,7 +213,7 @@
   window.DiagnosisOCR = { select, reset, get blocksSubmit() { return blocksSubmit; } };
   window.addEventListener('DOMContentLoaded', () => {
     el('ocrRemove').addEventListener('click', reset);
-    el('ocrRetry').addEventListener('click', () => { if (current?.file) recognize(current.file); });
+    el('ocrRetry').addEventListener('click', () => { if (current?.file) recognize(current.file, true); });
     el('ocrApply').addEventListener('click', () => {
       const text = el('ocrText').value.trim();
       if (!text) { status('识别文字为空，请补充或重新识别。'); return; }

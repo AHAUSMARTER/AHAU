@@ -24,3 +24,10 @@
 [[edge_functions]]
   function = "school-model"
   path = "/model/browser-config"
+
+[[headers]]
+  for = "/ocr/v1/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
