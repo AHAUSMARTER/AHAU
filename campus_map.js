@@ -1,6 +1,6 @@
 import { inCampus, classifyLocation, campusRoute } from './campus_map_geometry.mjs';
 
-const PROXY = 'https://anau-campus-map-proxy.jaderook8.chatgpt.site';
+let PROXY;
 const CENTER = [117.256799, 31.862445];
 const $ = id => document.getElementById(id);
 let map, walker, campusBounds, rings;
@@ -257,14 +257,30 @@ $('plan').onclick = async () => {
 };
 
 async function boot() {
+  $('retry-map').hidden = true;
   try {
-    const [configResponse, boundaryResponse] = await Promise.all([
-      fetch(PROXY + '/config', { signal: AbortSignal.timeout(12000) }),
-      fetch('campus_map/campus_boundary.json', { signal: AbortSignal.timeout(12000) })
-    ]);
-    if (!configResponse.ok || !boundaryResponse.ok) throw new Error('校园地图暂时不可用');
-    const config = await configResponse.json();
-    const boundary = await boundaryResponse.json();
+    let settings;
+    try {
+      const response = await fetch('campus_map_config.json', {signal: AbortSignal.timeout(12000), cache: 'no-store'});
+      if (!response.ok) throw new Error();
+      settings = await response.json();
+      const proxy = new URL(settings.proxy_base_url);
+      if (proxy.protocol !== 'https:' || proxy.username || proxy.password || proxy.search || proxy.hash) throw new Error();
+      PROXY = proxy.href.replace(/\/$/, '');
+    } catch { throw new Error('地图服务地址配置加载失败，请刷新重试'); }
+    let boundary;
+    try {
+      const response = await fetch('campus_map/campus_boundary.json', {signal: AbortSignal.timeout(12000)});
+      if (!response.ok) throw new Error();
+      boundary = await response.json();
+    } catch { throw new Error('校园范围数据加载失败，请刷新重试'); }
+    let config;
+    try {
+      const response = await fetch(PROXY + '/config', {signal: AbortSignal.timeout(12000)});
+      if (!response.ok) throw new Error();
+      config = await response.json();
+      if (!config.key || !config.serviceHost) throw new Error();
+    } catch { throw new Error('在线地图服务连接失败，当前网络可能无法访问地图代理'); }
     rings = boundary.rings;
     if (!Array.isArray(rings) || !rings.length) throw new Error('校园范围加载失败');
     window._AMapSecurityConfig = { serviceHost: config.serviceHost };
@@ -296,9 +312,11 @@ async function boot() {
     const initialQuery = new URLSearchParams(location.search).get('q');
     if (initialQuery) runSearch(initialQuery);
   } catch (error) {
-    status('map-status', `${error.message}，可先查看校园原图。`);
+    status('map-status', `${error.message}。可先查看校园原图。`);
+    $('retry-map').hidden = false;
     status('location-status', '在线地图未就绪，暂不能定位。');
     view('main');
   }
 }
+$('retry-map').onclick = () => location.reload();
 boot();
