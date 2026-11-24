@@ -12,3 +12,11 @@
 [[edge_functions]]
   function = "map-proxy"
   path = "/_AMapService/*"
+
+[[edge_functions]]
+  function = "school-model"
+  path = "/model/health"
+
+[[edge_functions]]
+  function = "school-model"
+  path = "/model/chat"
