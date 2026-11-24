@@ -13,7 +13,7 @@
     state = { ...state, configured: configured(), ...patch };
     window.dispatchEvent(new CustomEvent('campus-model-status', { detail: { ...state } }));
   };
-  function failure(message) { const error = new Error(message); error.modelConnection = true; return error; }
+  function failure(message, httpStatus) { const error = new Error(message); error.modelConnection = true; error.httpStatus = httpStatus; return error; }
 
   async function loadSharedKey() {
     try {
@@ -82,9 +82,12 @@
     return settingsPromise;
   }
 
-  async function direct(payload, timeoutMs) {
+  async function direct(payload, timeoutMs, externalSignal) {
     if (!configured()) await loadSharedKey();
+    if (externalSignal?.aborted) throw Object.assign(new Error('已取消图片识别'), { cancelled:true });
     const controller = new AbortController();
+    const abort = () => controller.abort();
+    externalSignal?.addEventListener('abort',abort,{once:true});
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const response = await fetch(endpoint, {
@@ -98,7 +101,7 @@
           403: '学校网关拒绝访问（403），请确认校园网及账号权限。',
           429: '学校模型请求过多（429），请稍后重试。'
         };
-        throw failure(descriptions[response.status] || `学校网关返回 HTTP ${response.status}，请稍后重试。`);
+        throw failure(descriptions[response.status] || `学校网关返回 HTTP ${response.status}，请稍后重试。`, response.status);
       }
       let data;
       try { data = await response.json(); } catch { throw failure('学校网关未返回有效 JSON，请稍后重试。'); }
@@ -107,12 +110,13 @@
       publish({ connected: true, message: '校级 DeepSeek 直连成功' });
       return content.trim();
     } catch (error) {
+      if (externalSignal?.aborted) throw Object.assign(new Error('已取消图片识别'), { cancelled:true });
       const safe = error.modelConnection ? error : failure(error.name === 'AbortError'
         ? '学校模型响应超时，请稍后重试。'
         : '浏览器无法连接学校网关。请检查校园网、证书及跨域许可；这不一定表示未连校园网。');
       publish({ connected: false, message: safe.message });
       throw safe;
-    } finally { clearTimeout(timer); }
+    } finally { clearTimeout(timer); externalSignal?.removeEventListener('abort',abort); }
   }
 
   async function request(messages, { purpose = 'chat', temperature = 0.7, maxTokens = 1500, timeoutMs = 45000 } = {}) {
@@ -136,7 +140,23 @@
     }
     return direct({ messages, temperature, max_tokens: maxTokens }, timeoutMs);
   }
-  window.CampusModel = { request, configure, get status() { return { ...state, configured: configured() }; } };
+  async function recognizeImage(imageURL, { signal } = {}) {
+    if (typeof imageURL !== 'string' || !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(imageURL) || imageURL.length > 8 * 1024 * 1024) {
+      throw failure('图片格式或体积不符合要求，请换清晰的单题截图。');
+    }
+    try {
+      return await direct({
+        messages:[
+          { role:'system',content:'你是图片题目转写助手。仅根据本次图片逐字提取题干与选项，不解答，不根据相似例题或记忆补全。准确保留函数名、指数、上下标、分式、根号、极限方向与图形条件。数学内容用LaTeX行内定界符\\( \\)表示。看不清处写[无法辨认]，不要猜测。只返回转写后的题目。' },
+          { role:'user',content:[{type:'text',text:'请读取这张原图中的题干和全部选项，特别核对指数与上下标。'}, {type:'image_url',image_url:{url:imageURL,detail:'high'}}] }
+        ],temperature:0,max_tokens:2500
+      },60000,signal);
+    } catch (error) {
+      if ([400,415,422].includes(error.httpStatus)) throw failure('学校网关未接受图片输入（HTTP '+error.httpStatus+'）。本校模型的图片能力尚未验证，请保留原图并使用校对后的文字；不会用内置样题替代。',error.httpStatus);
+      throw error;
+    }
+  }
+  window.CampusModel = { request, recognizeImage, configure, get status() { return { ...state, configured: configured() }; } };
   window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-model-config]').forEach(button => {
       button.hidden = new URLSearchParams(location.search).get('model_settings') !== '1';

@@ -135,3 +135,9 @@ GitHub页面 → Netlify `/model/browser-config`（只取配置）→ 校园网�
 GitHub客户端从 `https://ahau-hfnk.netlify.app/ocr/v1/` 获取同版本静态SDK、WASM及中英文数据，必要时回到同源 `lib/ocr/`；这不是图片识别服务器，图片仍在本机Worker内处理。Netlify静态目录只复制原OCR公开依赖，CORS允许跨源读取，版本化资源采用长期缓存。SDK版本、识别模型和模型API路径不变。
 
 初始化与识别分别设置期限，logger呈现实际阶段；显式重试刷新语言缓存。每次初始化尝试具有自己的废弃标志，取消或超时后返回的worker会被终止，避免旧任务在后台继续占用内存或CPU。前端脚本以新版本参数发布，避免浏览器继续执行旧的统一90秒逻辑。
+
+## 学校图片转写入口（能力待实测）
+
+`DiagnosisOCR` 原图预览 → 用户点击“发送图片到学校识题” → 本机Canvas缩放与编码（最长边2200px，8MiB base64限制）→ `CampusModel.recognizeImage` → 固定学校Chat Completions接口的 `user.content` 文本与image_url数组 → 转写结果进入校对框 → 用户确认后作为文字提交解题。普通文字聊天保持原路径；图片入口不调用不支持图片的本地文字代理。
+
+按DeepSeek官方图片输入文档实现：https://api-docs.deepseek.com/guides/vision/ 。学校自定义模型名与部署能力不能由官方公有API文档推断，需校园网携有效Key实测。图片不会自动上传；本机OCR与学校图片请求的说明已分别展示。禁止把已知例题识别失败后用样题答案兜底。

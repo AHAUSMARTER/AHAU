@@ -10,9 +10,9 @@
   <script defer src="lib/katex/auto-render.min.js"></script>
   <script src="lib/marked.min.js"></script>
   <script defer src="diagnosis_render.js?v=1"></script>
-  <script src="campus_model.js?v=shared2" defer></script>
+  <script src="campus_model.js?v=vision3" defer></script>
   <link rel="stylesheet" href="campus_model.css?v=shared2">
-  <script src="diagnosis_ocr.js?v=downloads3" defer></script>
+  <script src="diagnosis_ocr.js?v=vision4" defer></script>
   <style>
     :root {
       --bg-base: #f5f5f7;
@@ -928,6 +928,7 @@
     .ocr-panel p { margin:10px 0; line-height:1.6; overflow-wrap:anywhere; }
     .ocr-hint { color:var(--muted); font-size:13px; }
     .ocr-panel progress { width:100%; }
+    .ocr-panel #ocrVision { display:block; width:100%; margin:12px 0; background:var(--green); color:#fff; border-color:var(--green); }
     .ocr-panel textarea { min-height:140px; width:100%; box-sizing:border-box; }
   </style>
   <link rel="stylesheet" href="assets/site-theme.css?v=1">
@@ -983,13 +984,14 @@
             <img id="ocrPreview" alt="待识别的题目图片" class="ocr-preview">
             <p id="ocrStatus" role="status" aria-live="polite"></p>
             <progress id="ocrProgress" max="1" aria-label="文字识别进度" hidden></progress>
+            <button id="ocrVision" type="button" hidden>发送图片到学校识题（含公式）</button>
             <div id="ocrReview" hidden>
               <label for="ocrText" class="lesson-field-label">识别文字（可修改）</label>
               <textarea id="ocrText" class="mo-field" rows="6" spellcheck="false"></textarea>
               <button id="ocrApply" class="ocr-apply" type="button" disabled>用校对后的文字替换题目</button>
             </div>
-            <button id="ocrRetry" type="button" hidden>重新识别</button>
-            <p class="ocr-hint">图片仅在本机识别，不上传。适合清晰的中英文印刷文字；复杂公式、手写及图形可能漏识别，请补充完整条件。填入题目后，文字会交给现有模型接口解析。</p>
+            <button id="ocrRetry" type="button" hidden>重新识别文字草稿</button>
+            <p class="ocr-hint">本机OCR仅提供文字草稿，不能保证公式正确。点击“发送图片到学校识题”才会把当前原图直接发送给学校AI网关；该接口图片能力仍需校园网实测。识别后请校对，再提交解答。</p>
           </section>
           <p class="upload-preview-tag" id="uploadTag" style="display:none"><span id="uploadFileName"></span></p>
           <p class="upload-preview-tag" id="campusNetBanner"><span id="campusNetBannerText">本地样题可直接查看</span></p>

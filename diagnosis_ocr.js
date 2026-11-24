@@ -45,6 +45,7 @@
     el('ocrPreview').removeAttribute('src');
     el('ocrFilename').textContent = '';
     el('ocrPanel').hidden = true;
+    el('ocrVision').hidden = true;
     el('ocrText').value = '';
     el('fileUpload').value = '';
     blocksSubmit = false;
@@ -164,7 +165,8 @@
       el('ocrText').value = text;
       el('ocrReview').hidden = false;
       el('ocrApply').disabled = false;
-      status('识别完成，请对照原图校对文字、数字和符号，再填入题目。');
+      const mathematical = /函数|无穷小|方程|极限|积分|导数|矩阵|sin|cos|[=^]/.test(text);
+      status(mathematical ? '这是本机OCR的文字草稿：数学指数、上下标和图形可能丢失。请用下方学校图片识题，或逐项对照原图校正后再使用。' : '已提取文字草稿，请对照原图校对后再填入题目。');
     } catch (error) {
       if (!visibleTask(task)) return;
       status(/像素|超时|没有识别|资源|下载|语言包|引擎|组件/.test(error.message)
@@ -180,6 +182,43 @@
         el('ocrRetry').textContent = '重新下载识别包并重试';
         notify();
       }
+    }
+  }
+
+  async function recognizeVision() {
+    const file = current?.file;
+    if (!file) return;
+    stop();
+    const task = {file,closed:false,worker:null}; current = task;
+    const controller = new AbortController(); task.cancel = () => controller.abort();
+    blocksSubmit = true; notify();
+    el('ocrReview').hidden = true; el('ocrApply').disabled = true;
+    el('ocrProgress').hidden = false; el('ocrProgress').removeAttribute('value');
+    el('ocrVision').disabled = true; el('ocrRetry').hidden = true;
+    status('正在读取原图。此次图片将直接发送到学校AI网关识别公式…');
+    try {
+      const bitmap = await createImageBitmap(file);
+      let dataURL;
+      try {
+        if (bitmap.width * bitmap.height > 48000000) throw new Error('图片像素过大，请裁剪成一道题。');
+        const scale = Math.min(1,2200 / Math.max(bitmap.width,bitmap.height));
+        const canvas = document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+        const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+        dataURL=canvas.toDataURL(file.type==='image/png'?'image/png':'image/jpeg',.94);
+        if(dataURL.length>8*1024*1024)dataURL=canvas.toDataURL('image/jpeg',.9);
+      } finally {bitmap.close();}
+      if(!visibleTask(task))return;
+      status('正在请求学校网关读取原图中的题干和公式…');
+      const text = await window.CampusModel.recognizeImage(dataURL,{signal:controller.signal});
+      if(!visibleTask(task))return;
+      el('ocrText').value=text;el('ocrReview').hidden=false;
+      el('ocrApply').disabled=/\[无法辨认\]/.test(text);
+      status(/\[无法辨认\]/.test(text) ? '学校图片识题返回了无法辨认的内容，请对照原图补全后再使用。' : '学校图片识题已返回，请重点核对指数、函数名和选项，再填入题目。');
+    } catch(error) {
+      if(!visibleTask(task))return;
+      status(error.modelConnection ? error.message : '图片未能完成学校识别，请检查校园网并重试；不会替换为样题。');
+    } finally {
+      if(current===task){task.closed=true;el('ocrProgress').hidden=true;el('ocrVision').disabled=false;el('ocrRetry').hidden=false;notify();}
     }
   }
 
@@ -203,6 +242,8 @@
       el('ocrProgress').hidden = true;
       return;
     }
+    el('ocrVision').hidden = false;
+    el('ocrVision').disabled = false;
     previewURL = URL.createObjectURL(file);
     el('ocrPreview').src = previewURL;
     el('ocrPreview').hidden = false;
@@ -213,10 +254,12 @@
   window.DiagnosisOCR = { select, reset, get blocksSubmit() { return blocksSubmit; } };
   window.addEventListener('DOMContentLoaded', () => {
     el('ocrRemove').addEventListener('click', reset);
+    el('ocrVision').addEventListener('click', recognizeVision);
     el('ocrRetry').addEventListener('click', () => { if (current?.file) recognize(current.file, true); });
     el('ocrApply').addEventListener('click', () => {
       const text = el('ocrText').value.trim();
       if (!text) { status('识别文字为空，请补充或重新识别。'); return; }
+      if (/\[无法辨认\]/.test(text)) { status('请先补全无法辨认的内容，再填入题目。'); return; }
       el('promptInput').value = text;
       blocksSubmit = false;
       status('已将校对后的文字填入题目。可以补充条件，再查看解析。');
@@ -225,7 +268,7 @@
     });
     el('ocrText').addEventListener('input', () => {
       blocksSubmit = true;
-      el('ocrApply').disabled = !el('ocrText').value.trim();
+      el('ocrApply').disabled = !el('ocrText').value.trim() || /\[无法辨认\]/.test(el('ocrText').value);
       notify();
     });
   });

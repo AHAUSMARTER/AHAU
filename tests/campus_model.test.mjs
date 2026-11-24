@@ -93,3 +93,31 @@ test('shared config failure never asks every user for a key', async () => {
   const { client: api } = client('ahausmarter.github.io', async () => ({ ok: false }), '');
   await assert.rejects(api.request([]), /无需自行填写Key/);
 });
+
+test('image transcription sends the original image content, not a sample prompt', async () => {
+  const image='data:image/png;base64,iVBORw0KGgo=';
+  const {client:api}=client('ahausmarter.github.io',async(url,options)=>{
+    assert.equal(url,'https://llmv1.ahau.edu.cn/v1/chat/completions');
+    const body=JSON.parse(options.body);const content=body.messages.at(-1).content;
+    assert.equal(Array.isArray(content),true);assert.equal(content[1].type,'image_url');assert.equal(content[1].image_url.url,image);
+    assert.equal(body.temperature,0);assert.ok(body.messages[0].content.includes('不根据相似例题或记忆补全'));
+    return answer('题目：计算8乘9。');
+  });
+  assert.equal(await api.recognizeImage(image),'题目：计算8乘9。');
+});
+test('school rejection of image schema is explicit and never substitutes a built-in question', async()=>{
+  const {client:api}=client('ahausmarter.github.io',async()=>({ok:false,status:400}));
+  await assert.rejects(api.recognizeImage('data:image/png;base64,iVBORw0KGgo='),/图片能力尚未验证/);
+});
+test('invalid image URLs cannot redirect the school request to arbitrary image sites',async()=>{
+  const {client:api}=client('ahausmarter.github.io',()=>assert.fail('invalid image sent'));
+  await assert.rejects(api.recognizeImage('https://unrelated.example/private.png'),/图片格式/);
+});
+test('cancelled image request aborts school fetch',async()=>{
+  const controller=new AbortController();
+  const {client:api}=client('ahausmarter.github.io',(_,options)=>new Promise((resolve,reject)=>{
+    options.signal.addEventListener('abort',()=>{const e=new Error('aborted');e.name='AbortError';reject(e);});
+  }));
+  const pending=api.recognizeImage('data:image/png;base64,iVBORw0KGgo=',{signal:controller.signal});
+  controller.abort();await assert.rejects(pending,error=>error.cancelled===true);
+});
