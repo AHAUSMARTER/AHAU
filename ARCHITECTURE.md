@@ -86,11 +86,11 @@ GitHub Pages 只提供静态文件，不运行 Python。线上通知页读取带
 - 客户端设备坐标通过固定代理白名单 `/v3/assistant/coordinate/convert` 转换；不使用服务端 IP、VPN 出口或校园默认中心冒充用户位置。
 - 界面保留地图、搜索、路线三部分；定位按钮固定在地图内，地图类型用单个选择器，详细路线与数据说明折叠。
 
-### 手机网络故障与可迁移代理
+### 手机网络故障与代理迁移
 
-2026-11-24 用户手机访问原 Sites 代理域名被拦截，当前部署未通过该手机普通网络可用性验收。代理服务器正常不等同用户可达。前端从同源 `campus_map_config.json` 加载 `proxy_base_url`，为迁移保留配置入口；配置、校园边界、代理连接、地图脚本各阶段提供独立错误提示。`deployment/map-proxy/server.mjs` 把固定只读 Worker 逻辑适配至 Node.js HTTP 服务，可用于后续云函数 / 公网服务部署。现有 `chatgpt.site` 地址仍未被替换，国内部署依赖用户开通云账号或老师提供公开 HTTPS 服务。
+2026-11-24 用户手机访问旧 Sites 代理域名被拦截。前端通过同源 `campus_map_config.json` 选择代理，现已切换为 Netlify；旧域名不再是当前依赖。配置、校园边界、代理连接、地图脚本各阶段提供独立错误提示。`deployment/map-proxy/server.mjs` 保留无依赖 Node.js HTTP 适配，供以后其他平台使用。
 
-Netlify Free 作为后续候选：适配文件位于 `deployment/map-proxy/netlify/edge-functions/`，代理复用原 Worker，只匹配三类查询路径，环境变量由 `Netlify.env.get` 读取；发布目录独立为 `public/`，不发布服务端源码与凭据。用户手机已通过官方演示页网络初筛；实际部署、密钥配置与线上切换尚未进行。操作步骤及计费边界见 `deployment/map-proxy/NETLIFY.md`。
+当前 Netlify 适配位于 `deployment/map-proxy/netlify/edge-functions/`，复用原 Worker，只匹配三类查询路径，环境变量由 `Netlify.env.get` 读取；发布目录独立为 `public/`，不发布服务端源码与凭据。操作步骤及计费边界见 `deployment/map-proxy/NETLIFY.md`。
 
 ### 当前代理入口：Netlify Free（2026-11-24）
 
@@ -99,3 +99,5 @@ Netlify Free 作为后续候选：适配文件位于 `deployment/map-proxy/netli
 - 用户手机普通网络关闭VPN后确认 `https://ahau-hfnk.netlify.app/health` 返回 `configured:true`。公开配置、真实地点、坐标转换、步行查询及 GitHub 来源 CORS 检查通过。
 - 当前配置文件已切换至 Netlify；这是对旧 Sites 域名手机被拦截问题的迁移。旧地址仅作历史记录与暂时回滚，不作为当前前端依赖。完整手机地图、系统定位权限与校园实地导航仍需终端核实。
 - Free 控制台确认300 credits/月；无升级、绑卡、充值操作。额度是托管用量，不是高德配额；用尽会暂停服务。
+
+- 切换后原 GitHub Pages 地图页面已通过浏览器实测：底图、图书馆搜索、勤学楼南门至图书馆704米步行路线及导航入口均正常。手机健康检查通过不替代完整手机地图和GPS验收。
