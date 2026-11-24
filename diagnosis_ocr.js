@@ -67,7 +67,7 @@
     task.cancel = () => { abandoned = true; rejectInit(cancelled()); };
     const absoluteTimer = setTimeout(() => rejectInit(new Error('识别资源初始化超时，请检查网络后重新下载。')), 180000);
     const stalledTimer = setInterval(() => {
-      if (Date.now() - lastActivity > 45000) rejectInit(new Error('识别资源下载长时间没有进展，请检查网络后重新下载。'));
+      if (Date.now() - lastActivity > 90000) rejectInit(new Error('识别资源下载长时间没有进展，请检查网络后重新下载。'));
     }, 3000);
     const creation = (async () => {
       const library = await loadLibrary(source);
