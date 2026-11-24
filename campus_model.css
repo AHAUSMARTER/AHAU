@@ -1,0 +1,15 @@
+.model-connect-button { min-height:44px; padding:8px 12px; border:1px solid #d8dcd5; border-radius:8px; color:#20543a; background:#fff; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap; }
+.campus-model-dialog { margin:auto; box-sizing:border-box; width:min(460px,calc(100vw - 32px)); max-height:calc(100dvh - 40px); overflow:auto; padding:24px; border:1px solid #d8dcd5; border-radius:14px; color:#243329; background:#fff; font:16px/1.6 -apple-system,BlinkMacSystemFont,sans-serif; }
+.campus-model-dialog::backdrop { background:#15231b66; }
+.campus-model-dialog h2 { margin:0 0 12px; font-size:22px; }
+.campus-model-dialog p { margin:12px 0; }
+.campus-model-dialog input[type=password] { width:100%; box-sizing:border-box; min-height:44px; padding:10px; border:1px solid #9ca89e; border-radius:7px; font:inherit; }
+.campus-model-dialog label { display:block; }
+.campus-model-dialog .campus-model-remember { display:flex; align-items:center; gap:8px; margin-top:14px; font-size:14px; }
+.campus-model-dialog input[type=checkbox] { width:20px; height:20px; flex-shrink:0; }
+.campus-model-note { color:#5b675f; font-size:13px; }
+.campus-model-error { color:#953323; }
+.campus-model-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+.campus-model-actions button { min-height:44px; padding:8px 12px; border:1px solid #d8dcd5; border-radius:7px; background:#f6f8f5; font:inherit; color:#20543a; cursor:pointer; }
+.campus-model-actions button[type=submit] { background:#20543a; color:white; margin-left:auto; }
+.model-connect-button:focus-visible,.campus-model-dialog :focus-visible { outline:2px solid #20543a; outline-offset:3px; }

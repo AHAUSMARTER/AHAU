@@ -1555,9 +1555,6 @@ ${examSummary}
 5. 语气与排版要求：严谨、专业、沉稳、清晰、求真务实；在回答涉及时间线规划、多维度分值核算、多校对比或师资列表等结构化信息时，充分利用 GFM Markdown 表格（| 列1 | 列2 |）与分级列表进行排版，保持清晰工业级质感！
 【排版与语气禁忌】：严禁在回答中使用任何 Emoji 表情符号（严禁出现各类小图标、装饰符号或表情，彻底杜绝轻浮的 AI 味）。保持高校官方、严谨、沉稳、专业的学术与公文答复风格！`;
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
-
       // 提取前序历史 (排除刚刚追加的当前用户消息，避免结尾重复)
       const previousHistory = history
         .slice(-8)
@@ -1572,31 +1569,9 @@ ${examSummary}
         { role: 'user', content: userPrompt }
       ];
 
-      // 1. 优先通过本地服务代理发起校内请求，完美解决浏览器同源跨域 (CORS) 与内网证书受信任限制
-      let deepseekResText = null;
-      try {
-        const proxyResp = await fetch('api/anau/chat_completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: AgentState.modelName,
-            messages: payloadMessages,
-            temperature: 0.7,
-            max_tokens: 1500
-          }),
-          signal: controller.signal
-        });
-        if (proxyResp.ok) {
-          const proxyData = await proxyResp.json();
-          if (proxyData.success && proxyData.data && proxyData.data.choices && proxyData.data.choices[0] && proxyData.data.choices[0].message) {
-            deepseekResText = proxyData.data.choices[0].message.content;
-          }
-        }
-      } catch (proxyErr) {
-        console.warn('模型服务未响应:', proxyErr);
-      }
-
-      clearTimeout(timeoutId);
+      const deepseekResText = await window.CampusModel.request(payloadMessages, {
+        temperature: 0.7, maxTokens: 1500
+      });
 
       if (deepseekResText) {
         return {
@@ -1609,7 +1584,7 @@ ${examSummary}
       console.warn('调用大模型接口降级为内置智能知识引擎:', err);
       const fallback = fallbackReply(userPrompt);
       return {
-        text: fallback.text + '\n\n*(本回答由 安徽农业大学「徽农智 · 安农智办」数智大脑驱动)*',
+        text: fallback.text + '\n\n*本次模型调用未成功，以上为内置规则回复。*\n' + escapeHtml(err.modelConnection ? err.message : '模型连接发生异常，请检查“模型连接”设置后重试。'),
         approval: fallback.approval,
         widgetHtml: fallback.widgetHtml || ''
       };
@@ -5646,11 +5621,6 @@ ${examSummary}
       try { window.speechSynthesis.cancel(); } catch(e) {}
     }
     if (document.getElementById('nativeAgentRoot')) return; // 避免重复注入
-    try {
-      localStorage.removeItem('anau_custom_api_key');
-      localStorage.removeItem('anau_custom_api_url');
-      localStorage.removeItem('anau_custom_model');
-    } catch(e) {}
     injectNativeChatUI();
 
     // 初始化时从 localStorage 载入并渲染所有真实历史会话与当前活跃会话消息

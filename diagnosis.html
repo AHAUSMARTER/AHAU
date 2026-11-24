@@ -9,6 +9,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <script src="lib/marked.min.js"></script>
+  <script src="campus_model.js?v=1" defer></script>
+  <link rel="stylesheet" href="campus_model.css?v=1">
   <script src="diagnosis_ocr.js?v=1" defer></script>
   <style>
     :root {
@@ -914,6 +916,7 @@
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
     .sample-chip[aria-pressed="true"] { background: var(--green-tint); }
+    @media (max-width:600px) { .header-right { gap:6px !important; } #networkChip { display:none; } }
     .ocr-panel { margin-top:16px; padding:16px; border:1px solid var(--line); border-radius:12px; }
     .ocr-panel[hidden], .ocr-panel [hidden] { display:none !important; }
     .ocr-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -944,6 +947,7 @@
       </div>
     </div>
     <div class="header-right">
+      <button type="button" class="model-connect-button" data-model-config>模型连接</button>
       <div class="model-chip" id="networkChip">
         <span class="pulse-dot" id="networkPulseDot"></span>
         <span id="networkChipText">正在检查实时服务</span>
@@ -1428,34 +1432,21 @@
     /* ─────────────────────────────────────────────────────────────
        4. Real-time Dynamic Math & Cognitive Diagnosis Engine
        ───────────────────────────────────────────────────────────── */
-    const isGitHubStaticPage = location.hostname.endsWith('.github.io');
-    const missingDiagnosisBackend = '当前 GitHub 网页仅提供图片识别和预置样题，尚未连接解题后端。即使手机已连校园网，也不能在这里调用校级 DeepSeek。实时解析需使用校园网内运行后端的演示地址。';
     let campusNetworkConnected = false;
-
     async function probeCampusNetwork() {
-      if (isGitHubStaticPage) { campusNetworkConnected = false; return; }
-      try {
-        const resp = await fetch('api/anau/campus_network_status', {
-          signal: AbortSignal.timeout(5000), cache: 'no-store'
-        });
-        const data = resp.ok ? await resp.json() : {};
-        campusNetworkConnected = data.connected === true;
-      } catch {
-        campusNetworkConnected = false;
-      }
+      campusNetworkConnected = window.CampusModel.status.connected;
     }
-
     function updateCampusNetworkUI() {
-      const ready = campusNetworkConnected;
-      document.getElementById('networkChipText').textContent = ready
-        ? '校级 DeepSeek 可用 · 样题可离线阅读'
-        : (isGitHubStaticPage ? '图片识别可用 · 解题后端未连接' : '样题可用 · 实时服务暂不可用');
-      document.getElementById('networkPulseDot').style.background = ready ? '#20543a' : '#81887f';
-      document.getElementById('campusNetBanner').style.display = ready ? 'none' : '';
-      document.getElementById('campusNetBannerText').textContent = isGitHubStaticPage
-        ? missingDiagnosisBackend
-        : '预置样题可以直接查看。自定义题目需要可用的实时模型服务。';
+      const state = window.CampusModel.status;
+      campusNetworkConnected = state.connected;
+      document.getElementById('networkChipText').textContent = state.connected
+        ? '校级 DeepSeek 可用' : (state.configured ? '学校直连已配置' : '模型连接待配置');
+      document.getElementById('networkPulseDot').style.background = state.connected ? '#20543a' : '#81887f';
+      document.getElementById('campusNetBanner').style.display = state.connected ? 'none' : '';
+      document.getElementById('campusNetBannerText').textContent = state.configured
+        ? state.message : 'GitHub 页面支持校园网直连学校模型。点击“模型连接”填写学校 Key；本地后端可用时也可直接解析。图片识别和预置样题无需 Key。';
     }
+    window.addEventListener('campus-model-status', updateCampusNetworkUI);
 
     let originalReportHtml = null;
     let diagnosisPending = false;
@@ -1529,31 +1520,15 @@
           wrap.replaceChildren();
           title = '实时诊断暂不可用';
           message = '实时模型服务未返回解析。可稍后重试，或选择一题预置样题。';
-          if (isGitHubStaticPage) {
-            title = '当前网页未连接解题后端';
-            message = missingDiagnosisBackend;
-          } else if (!inputVal) {
-            title = '请补充题目文字';
-            message = '请先校对识别文字，并补充完整题干、条件和选项。';
-          } else {
-            label.textContent = '正在生成实时解析';
-            const resp = await fetch('api/anau/deepseek_diagnose', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ prompt: inputVal }),
-              signal: AbortSignal.timeout(23000)
-            });
-            const data = resp.ok ? await resp.json() : {};
-            if (data.success === true && typeof data.markdown === 'string' && data.markdown.trim()) {
-              liveMarkdown = data.markdown.trim();
-              wrap.append(renderLiveMarkdown(liveMarkdown));
-              title = 'DeepSeek 实时解析完成';
-              message = '下方是校级模型返回的实时解析。';
-              campusNetworkConnected = true;
-            } else {
-              campusNetworkConnected = false;
-            }
-          }
+          label.textContent = '正在生成实时解析';
+          liveMarkdown = await window.CampusModel.request([
+            { role: 'system', content: '你是校园错题学习助手。根据学生提供的完整题目，说明考点、分步推导、答案和易错点，并给出一道变式练习。条件不足或OCR符号有歧义时先指出并要求补充，不编造题意。数学公式使用LaTeX。' },
+            { role: 'user', content: inputVal }
+          ], { purpose: 'diagnosis', temperature: 0.2, maxTokens: 3500, timeoutMs: 60000 });
+          wrap.append(renderLiveMarkdown(liveMarkdown));
+          title = 'DeepSeek 实时解析完成';
+          message = '下方是校级模型返回的实时解析。';
+          campusNetworkConnected = true;
         }
       } catch (error) {
         console.warn('错题解析未完成:', error);
@@ -1561,7 +1536,7 @@
         liveMarkdown = '';
         wrap.replaceChildren();
         title = '实时诊断暂不可用';
-        message = '实时模型服务未返回解析。可稍后重试，或选择一题预置样题。';
+        message = error.modelConnection ? error.message : '模型连接发生异常，请检查设置后重试。';
       } finally {
         diagnosisPending = false;
       }
