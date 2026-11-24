@@ -9,6 +9,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <script src="lib/marked.min.js"></script>
+  <script src="diagnosis_ocr.js?v=1" defer></script>
   <style>
     :root {
       --bg-base: #f5f5f7;
@@ -913,6 +914,17 @@
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
     .sample-chip[aria-pressed="true"] { background: var(--green-tint); }
+    .ocr-panel { margin-top:16px; padding:16px; border:1px solid var(--line); border-radius:12px; }
+    .ocr-panel[hidden], .ocr-panel [hidden] { display:none !important; }
+    .ocr-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .ocr-panel button { min-height:44px; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--green); cursor:pointer; font:inherit; }
+    .ocr-panel button:disabled { opacity:.5; cursor:default; }
+    .ocr-panel .ocr-apply { background:var(--green); color:white; margin-top:8px; }
+    .ocr-preview { display:block; max-width:100%; max-height:240px; object-fit:contain; margin:12px auto; }
+    .ocr-panel p { margin:10px 0; line-height:1.6; overflow-wrap:anywhere; }
+    .ocr-hint { color:var(--muted); font-size:13px; }
+    .ocr-panel progress { width:100%; }
+    .ocr-panel textarea { min-height:140px; width:100%; box-sizing:border-box; }
   </style>
   <link rel="stylesheet" href="assets/site-theme.css?v=1">
 </head>
@@ -954,11 +966,25 @@
               <label class="mo-photo-btn">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h4l2-3h4l2 3h4v13H4z"/><circle cx="12" cy="13" r="3"/></svg>
                 <span>添加图片</span>
-                <input type="file" id="fileUpload" accept="image/*" onchange="handleFileSelect(event)">
+                <input type="file" id="fileUpload" accept="image/jpeg,image/png,image/webp,image/bmp" onchange="handleFileSelect(event)">
               </label>
               <button type="submit" class="mo-send" id="btnSend" disabled>查看解析</button>
             </div>
           </form>
+          <section id="ocrPanel" class="ocr-panel" aria-label="图片文字识别" hidden>
+            <div class="ocr-heading"><strong>图片识别</strong><button id="ocrRemove" type="button">移除图片</button></div>
+            <p id="ocrFilename" class="ocr-hint"></p>
+            <img id="ocrPreview" alt="待识别的题目图片" class="ocr-preview">
+            <p id="ocrStatus" role="status" aria-live="polite"></p>
+            <progress id="ocrProgress" max="1" aria-label="文字识别进度" hidden></progress>
+            <div id="ocrReview" hidden>
+              <label for="ocrText" class="lesson-field-label">识别文字（可修改）</label>
+              <textarea id="ocrText" class="mo-field" rows="6" spellcheck="false"></textarea>
+              <button id="ocrApply" class="ocr-apply" type="button" disabled>用校对后的文字替换题目</button>
+            </div>
+            <button id="ocrRetry" type="button" hidden>重新识别</button>
+            <p class="ocr-hint">图片仅在本机识别，不上传。适合清晰的中英文印刷文字；复杂公式、手写及图形可能漏识别，请补充完整条件。填入题目后，文字会交给现有模型接口解析。</p>
+          </section>
           <p class="upload-preview-tag" id="uploadTag" style="display:none"><span id="uploadFileName"></span></p>
           <p class="upload-preview-tag" id="campusNetBanner"><span id="campusNetBannerText">本地样题可直接查看</span></p>
         </div>
@@ -1369,7 +1395,7 @@
 
     function handleInputChange(val) {
       const btn = document.getElementById('btnSend');
-      btn.disabled = !val.trim() && !activeUploadFile;
+      btn.disabled = !val.trim() || Boolean(window.DiagnosisOCR?.blocksSubmit);
       if (activeSampleKey && val.trim() !== SAMPLES[activeSampleKey].prompt.trim()) {
         activeSampleKey = null;
       }
@@ -1379,28 +1405,15 @@
     }
 
     async function handleFileSelect(evt) {
-      const file = evt.target.files[0];
-      if (!file) return;
-      activeUploadFile = file;
+      if (!evt.target.files[0]) return;
       activeSampleKey = null;
-      const input = document.getElementById('promptInput');
-      const tag = document.getElementById('uploadFileName');
-      tag.textContent = '已附加图片：' + file.name + '。请在输入框补充题目文字。';
-      document.getElementById('uploadTag').style.display = 'inline-flex';
-
-      try {
-        const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
-        if (activeUploadFile !== file) return;
-        const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
-        if (hash === '656b2543687c5ff6bd7c5d667e1971be7f6580271aab0eaf4a4ffc71efe18984') {
-          loadSample('infinitesimal');
-          return;
-        }
-      } catch {}
-      if (activeUploadFile === file) handleInputChange(input.value);
+      activeUploadFile = null;
+      document.getElementById('uploadTag').style.display = 'none';
+      await window.DiagnosisOCR.select(evt.target.files[0]);
     }
 
     function loadSample(key) {
+      window.DiagnosisOCR?.reset();
       activeSampleKey = key;
       activeUploadFile = null;
       document.getElementById('fileUpload').value = '';
@@ -1488,7 +1501,7 @@
     async function handleFormSubmit(evt) {
       if (evt) evt.preventDefault();
       const inputVal = document.getElementById('promptInput').value.trim();
-      if (diagnosisPending || (!inputVal && !activeUploadFile)) return;
+      if (diagnosisPending || !inputVal || window.DiagnosisOCR?.blocksSubmit) return;
       diagnosisPending = true;
 
       document.getElementById('landingHero').hidden = true;
@@ -1513,7 +1526,7 @@
           message = '实时模型服务未返回解析。可稍后重试，或选择一题预置样题。';
           if (!inputVal) {
             title = '请补充题目文字';
-            message = '当前只支持实时解析文字题目。请补充题干、条件和选项。';
+            message = '请先校对识别文字，并补充完整题干、条件和选项。';
           } else {
             label.textContent = '正在生成实时解析';
             const resp = await fetch('api/anau/deepseek_diagnose', {
@@ -1685,6 +1698,7 @@
     }
 
     function resetMorphState() {
+      window.DiagnosisOCR?.reset();
       currentReportData = null;
       activeSampleKey = null;
       activeUploadFile = null;
