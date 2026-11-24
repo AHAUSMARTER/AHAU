@@ -1428,9 +1428,12 @@
     /* ─────────────────────────────────────────────────────────────
        4. Real-time Dynamic Math & Cognitive Diagnosis Engine
        ───────────────────────────────────────────────────────────── */
+    const isGitHubStaticPage = location.hostname.endsWith('.github.io');
+    const missingDiagnosisBackend = '当前 GitHub 网页仅提供图片识别和预置样题，尚未连接解题后端。即使手机已连校园网，也不能在这里调用校级 DeepSeek。实时解析需使用校园网内运行后端的演示地址。';
     let campusNetworkConnected = false;
 
     async function probeCampusNetwork() {
+      if (isGitHubStaticPage) { campusNetworkConnected = false; return; }
       try {
         const resp = await fetch('api/anau/campus_network_status', {
           signal: AbortSignal.timeout(5000), cache: 'no-store'
@@ -1446,10 +1449,12 @@
       const ready = campusNetworkConnected;
       document.getElementById('networkChipText').textContent = ready
         ? '校级 DeepSeek 可用 · 样题可离线阅读'
-        : '样题可用 · 实时服务暂不可用';
+        : (isGitHubStaticPage ? '图片识别可用 · 解题后端未连接' : '样题可用 · 实时服务暂不可用');
       document.getElementById('networkPulseDot').style.background = ready ? '#20543a' : '#81887f';
       document.getElementById('campusNetBanner').style.display = ready ? 'none' : '';
-      document.getElementById('campusNetBannerText').textContent = '预置样题可以直接查看。自定义题目需要可用的实时模型服务。';
+      document.getElementById('campusNetBannerText').textContent = isGitHubStaticPage
+        ? missingDiagnosisBackend
+        : '预置样题可以直接查看。自定义题目需要可用的实时模型服务。';
     }
 
     let originalReportHtml = null;
@@ -1524,7 +1529,10 @@
           wrap.replaceChildren();
           title = '实时诊断暂不可用';
           message = '实时模型服务未返回解析。可稍后重试，或选择一题预置样题。';
-          if (!inputVal) {
+          if (isGitHubStaticPage) {
+            title = '当前网页未连接解题后端';
+            message = missingDiagnosisBackend;
+          } else if (!inputVal) {
             title = '请补充题目文字';
             message = '请先校对识别文字，并补充完整题干、条件和选项。';
           } else {
