@@ -1553,7 +1553,7 @@ ${facultySummary}
 ${examSummary}
 4. 深度记忆与上下文指代：具备极强的多轮连贯性，对省略主语的追问（如“东门呢”、“那勤政楼呢”）紧扣上文回答。
 5. 语气与排版要求：严谨、专业、沉稳、清晰、求真务实；在回答涉及时间线规划、多维度分值核算、多校对比或师资列表等结构化信息时，充分利用 GFM Markdown 表格（| 列1 | 列2 |）与分级列表进行排版，保持清晰工业级质感！
-【排版与语气禁忌】：严禁在回答中使用任何 Emoji 表情符号（严禁出现各类小图标、装饰符号或表情，彻底杜绝轻浮的 AI 味）。保持高校官方、严谨、沉稳、专业的学术与公文答复风格！`;
+【排版与语气禁忌】：严禁在回答中使用任何 Emoji 表情符号（严禁出现各类小图标、装饰符号或表情，彻底杜绝轻浮的 AI 味）。用自然、简洁的中文直接回答，避免夸张赞美、口号、套话和过多感叹号；只有办理材料等场景使用公文语气。`;
 
       // 提取前序历史 (排除刚刚追加的当前用户消息，避免结尾重复)
       const previousHistory = history
@@ -3797,7 +3797,7 @@ ${examSummary}
     }
 
     if (digest === 'ffe0cd8073f1301e3379426c32a56ab6cbd909557a51b93e175eeff69857cf1d') {
-      return { text: '已匹配到内置参考照片「来福」。下方是它的校园资料卡。', widgetHtml: renderLaifuProfileCard() };
+      return { text: '照片与「来福」档案中的图片一致，下方是它的校园资料卡。', widgetHtml: renderLaifuProfileCard() };
     }
     if (digest === '656b2543687c5ff6bd7c5d667e1971be7f6580271aab0eaf4a4ffc71efe18984') {
       return {
@@ -4650,6 +4650,16 @@ ${examSummary}
         ${extraWidgetHtml ? extraWidgetHtml : ''}
       </div>
     `;
+    // Markdown正文已有过滤；资料卡等HTML回复也只清理文字，保留结构与图标。
+    const replyTextNodes = document.createTreeWalker(
+      msgDiv.querySelector('.chat-msg-bubble'), NodeFilter.SHOW_TEXT
+    );
+    let replyTextNode;
+    while ((replyTextNode = replyTextNodes.nextNode())) {
+      if (!replyTextNode.parentElement.closest('script, style, code, pre, svg, math, .katex')) {
+        replyTextNode.nodeValue = stripEmojis(replyTextNode.nodeValue);
+      }
+    }
     if (list.closest('.anau-lobby')) {
       if (session?.messages.at(-1) === message) {
         list.querySelectorAll('[data-retry-available="true"]').forEach(button => {
@@ -4726,7 +4736,8 @@ ${examSummary}
   function stripEmojis(text) {
     if (!text || typeof text !== 'string') return text;
     // 匹配常规 Emoji 及扩展符号，但严格保留标准五角星 ★ 与乘号 ✕
-    let cleaned = text.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{2604}\u{2606}-\u{26FF}\u{2700}-\u{2714}\u{2716}-\u{27BF}\u{1F100}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{20D0}-\u{20FF}\u{2300}-\u{23FF}\u{2B50}\u{2B55}\u{303D}\u{3297}\u{3299}]/gu, '');
+    let cleaned = text.replace(/[0-9#*]\uFE0F?\u20E3|\u200D/gu, '');
+    cleaned = cleaned.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{2604}\u{2606}-\u{26FF}\u{2700}-\u{2714}\u{2716}-\u{27BF}\u{1F100}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{20D0}-\u{20FF}\u{2300}-\u{23FF}\u{2B50}\u{2B55}\u{303D}\u{3297}\u{3299}]/gu, '');
     // 清理由于删除 emoji 产生的行首或列表首多余空格
     cleaned = cleaned.replace(/^[ \t]+(?=\S)/gm, '').replace(/([-\*]\s+)[ \t]+/g, '$1');
     return cleaned;
