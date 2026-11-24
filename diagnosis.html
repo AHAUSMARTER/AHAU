@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>AI 错题认知诊断与考点拓扑工坊 · 安农智办</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="lib/katex/katex.min.css">
+  <script defer src="lib/katex/katex.min.js"></script>
+  <script defer src="lib/katex/auto-render.min.js"></script>
   <script src="lib/marked.min.js"></script>
+  <script defer src="diagnosis_render.js?v=1"></script>
   <script src="campus_model.js?v=shared2" defer></script>
   <link rel="stylesheet" href="campus_model.css?v=shared2">
   <script src="diagnosis_ocr.js?v=1" defer></script>
@@ -930,6 +931,7 @@
     .ocr-panel textarea { min-height:140px; width:100%; box-sizing:border-box; }
   </style>
   <link rel="stylesheet" href="assets/site-theme.css?v=1">
+  <link rel="stylesheet" href="diagnosis_results.css?v=1">
 </head>
 <body>
 
@@ -1014,11 +1016,13 @@
     <p class="mo-status" id="moStatus" role="status" hidden><span id="statusLabel"></span></p>
     <section class="lesson-result-bar" id="moAnswer" tabindex="-1" aria-label="解析状态" hidden>
       <div>
-        <div class="mo-a-head"><span>错题解析</span></div>
+        <h1 class="mo-a-head"><span>错题解析</span></h1>
         <p class="mo-a-body" id="moAnswerBody"></p>
       </div>
-      <button type="button" class="mo-reset" id="btnReset" onclick="resetMorphState()">解析下一题</button>
+      <div class="result-actions"><button type="button" class="mo-reset" onclick="editCurrentQuestion()">修改题目</button><button type="button" class="mo-reset" id="btnReset" onclick="resetMorphState()">解析下一题</button></div>
     </section>
+
+    <details class="solution-question" id="resultQuestion" hidden><summary>查看本次题目</summary><p id="resultQuestionText"></p></details>
 
     <!-- DYNAMIC EXPLAINED REPORT CONTAINER (Revealed on-the-fly) -->
     <div class="detailed-report-wrap" id="reportWrap">
@@ -1452,46 +1456,19 @@
     let diagnosisPending = false;
 
     function renderLiveMarkdown(markdown) {
-      const card = document.createElement('article');
-      card.className = 'report-card';
-      const heading = document.createElement('h2');
-      heading.textContent = '校级 DeepSeek 实时解析';
-      card.append(heading);
+      return window.DiagnosisRender.buildReport(markdown, { document, marked:window.marked, katex:window.katex });
+    }
 
-      const content = document.createElement('div');
-      if (window.marked?.parse) {
-        const template = document.createElement('template');
-        template.innerHTML = window.marked.parse(markdown);
-        const tags = new Set('P H1 H2 H3 H4 H5 H6 BR OL UL LI BLOCKQUOTE CODE PRE B STRONG I EM TABLE THEAD TBODY TR TD TH HR'.split(' '));
-        function appendSafe(target, source) {
-          for (const child of source.childNodes) {
-            if (child.nodeType === Node.TEXT_NODE) {
-              target.append(document.createTextNode(child.textContent));
-            } else if (child.nodeType === Node.ELEMENT_NODE && tags.has(child.tagName)) {
-              const element = document.createElement(child.tagName);
-              appendSafe(element, child);
-              target.append(element);
-            } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName === 'A') {
-              appendSafe(target, child);
-            }
-          }
-        }
-        appendSafe(content, template.content);
-      } else {
-        content.style.whiteSpace = 'pre-wrap';
-        content.textContent = markdown;
-      }
-      card.append(content);
-      if (window.renderMathInElement) {
-        window.renderMathInElement(content, {
-          delimiters: [
-            { left: '$$', right: '$$', display: true },
-            { left: '$', right: '$', display: false }
-          ],
-          throwOnError: false
-        });
-      }
-      return card;
+    function editCurrentQuestion() {
+      document.getElementById('moAnswer').hidden = true;
+      document.getElementById('resultQuestion').hidden = true;
+      document.getElementById('reportWrap').classList.remove('show');
+      document.getElementById('landingHero').hidden = false;
+      document.getElementById('moStage').classList.remove('has-result');
+      const input = document.getElementById('promptInput');
+      handleInputChange(input.value);
+      input.focus({ preventScroll:true });
+      window.scrollTo({ top:0, behavior:'auto' });
     }
 
     async function handleFormSubmit(evt) {
@@ -1522,12 +1499,12 @@
           message = '实时模型服务未返回解析。可稍后重试，或选择一题预置样题。';
           label.textContent = '正在生成实时解析';
           liveMarkdown = await window.CampusModel.request([
-            { role: 'system', content: '你是校园错题学习助手。根据学生提供的完整题目，说明考点、分步推导、答案和易错点，并给出一道变式练习。条件不足或OCR符号有歧义时先指出并要求补充，不编造题意。数学公式使用LaTeX。' },
+            { role: 'system', content: '你是校园错题学习助手。根据学生提供的完整题目，说明考点、分步推导、答案和易错点，并给出一道变式练习。条件不足或OCR符号有歧义时先指出并要求补充，不编造题意。数学公式必须用LaTeX：行内公式使用\\( ... \\)，独立公式使用\\[ ... \\]；所有数学命令必须放在公式定界符内，不要用代码块包裹公式。章节依次为“考点”“解题步骤”“最终答案”“易错点”“巩固练习”，正文简洁，不使用装饰性图标。' },
             { role: 'user', content: inputVal }
           ], { purpose: 'diagnosis', temperature: 0.2, maxTokens: 3500, timeoutMs: 60000 });
           wrap.append(renderLiveMarkdown(liveMarkdown));
-          title = 'DeepSeek 实时解析完成';
-          message = '下方是校级模型返回的实时解析。';
+          title = '解题解析';
+          message = '校级 DeepSeek · 根据本次题目生成';
           campusNetworkConnected = true;
         }
       } catch (error) {
@@ -1552,6 +1529,9 @@
       document.getElementById('moAnswerBody').textContent = message;
       const resultBar = document.getElementById('moAnswer');
       resultBar.hidden = false;
+      document.getElementById('resultQuestionText').textContent = inputVal;
+      document.getElementById('resultQuestion').hidden = false;
+      document.getElementById('resultQuestion').open = false;
       updateCampusNetworkUI();
       wrap.classList.add('show');
       resultBar.focus({ preventScroll: true });
@@ -1691,6 +1671,7 @@
       wrap.classList.remove('show');
       wrap.innerHTML = originalReportHtml;
       document.getElementById('moAnswer').hidden = true;
+      document.getElementById('resultQuestion').hidden = true;
       document.getElementById('moStatus').hidden = true;
       document.getElementById('landingHero').hidden = false;
       const input = document.getElementById('promptInput');
@@ -1700,6 +1681,7 @@
       handleInputChange('');
       stage.classList.remove('has-result');
       stage.scrollTop = 0;
+      window.scrollTo({ top:0, behavior:'auto' });
       input.focus({ preventScroll: true });
     }
 

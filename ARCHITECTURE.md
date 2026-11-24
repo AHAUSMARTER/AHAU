@@ -123,3 +123,9 @@ GitHub Pages 只提供静态文件，不运行 Python。线上通知页读取带
 GitHub页面 → Netlify `/model/browser-config`（只取配置）→ 校园网浏览器直接请求学校网关。配置下发必须显式开启 `ALLOW_BROWSER_SHARED_KEY=true` 并存在 `SCHOOL_MODEL_KEY`；Key只从平台环境变量读取，不写GitHub源码，浏览器内存仍可被使用者检查提取。用户已明确接受此比赛临时共享边界，赛后须在学校API平台撤销Key。默认不展示“模型连接”按钮；调试设置通过 `?model_settings=1` 显示。
 
 云端代理 `/model/chat` 的网络探测未成功，不作为比赛默认推理通道。普通用户设备必须能够访问学校网关；配置服务可达、Key存在与模型成功是三个不同验收结果。地图密钥和安全密钥不受此次共享授权影响。
+
+## 错题解析排版管线
+
+模型原始Markdown → `DiagnosisRender.protectMath`（保留TeX占位）→ marked → DOM标签白名单 → 将占位符替换为同源KaTeX数学DOM → 以模型标题组织 `solution-section`。公式不会先经过Markdown反斜杠转义，输出不信任TeX扩展；无效公式保留源码，代码块不强行转数学。
+
+`diagnosis_results.css` 仅覆盖错题页阅读布局；本地KaTeX资源包含字体及自动排版扩展，供原有样题继续使用。题目详情用textContent展示，修改题目保留原输入及OCR状态，另起一题才清空。模型接口、共享Key与地图无变更。
