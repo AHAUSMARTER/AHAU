@@ -1,4 +1,4 @@
-/* Browser-only printed-text OCR. Images never leave this device. */
+/* Local text OCR stays on-device; the explicit school-image button sends the image to the school gateway. */
 (() => {
   'use strict';
   const base = new URL('lib/ocr/', document.currentScript.src);
