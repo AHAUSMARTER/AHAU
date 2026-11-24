@@ -48,3 +48,8 @@
 - 用户 iPhone 页面提示 `Load failed` 并回退到校园原图；同一手机访问当前代理 `/health` 返回 `Sorry, you have been blocked / You are unable to access chatgpt.site`。确认该手机访问代理托管域名被拦截，不能以本机或桌面窄屏检查替代真实手机直连验收。
 - 线上代理服务器自身健康及 CORS 检查正常，不代表用户网络可达。地图加载、定位与在线路线在该手机网络下当前不可用；尚未修复。
 - 已将代理地址提取到 `campus_map_config.json`，补充阶段错误提示与重试入口；`deployment/map-proxy/server.mjs` 是无依赖 Node.js 部署适配器。国内云服务尚未开通、未产生新部署地址，迁移待完成。
+
+## 免费托管候选（2026-11-24）
+
+- 用户手机关闭VPN可访问 Netlify 官方边缘函数演示页，完成网络初筛；不代表本项目已迁移。
+- 已新增 `deployment/map-proxy/netlify.toml` 与 Edge Function 适配器，复用固定只读代理。Netlify Free 查阅时为每月300 credits硬上限，耗尽暂停；尚未注册/创建本项目、未上传密钥、未切换线上入口，手机在线地图故障仍未修复。阿里云保持未开通。

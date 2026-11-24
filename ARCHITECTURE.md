@@ -89,3 +89,5 @@ GitHub Pages 只提供静态文件，不运行 Python。线上通知页读取带
 ### 手机网络故障与可迁移代理
 
 2026-11-24 用户手机访问原 Sites 代理域名被拦截，当前部署未通过该手机普通网络可用性验收。代理服务器正常不等同用户可达。前端从同源 `campus_map_config.json` 加载 `proxy_base_url`，为迁移保留配置入口；配置、校园边界、代理连接、地图脚本各阶段提供独立错误提示。`deployment/map-proxy/server.mjs` 把固定只读 Worker 逻辑适配至 Node.js HTTP 服务，可用于后续云函数 / 公网服务部署。现有 `chatgpt.site` 地址仍未被替换，国内部署依赖用户开通云账号或老师提供公开 HTTPS 服务。
+
+Netlify Free 作为后续候选：适配文件位于 `deployment/map-proxy/netlify/edge-functions/`，代理复用原 Worker，只匹配三类查询路径，环境变量由 `Netlify.env.get` 读取；发布目录独立为 `public/`，不发布服务端源码与凭据。用户手机已通过官方演示页网络初筛；实际部署、密钥配置与线上切换尚未进行。操作步骤及计费边界见 `deployment/map-proxy/NETLIFY.md`。

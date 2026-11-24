@@ -14,7 +14,7 @@
 `server.mjs` 用 Node.js 标准库适配 `worker.mjs`，无 npm 依赖。
 可在支持 Node.js 自定义启动命令 / HTTP Web 函数的平台运行。
 
-- Node.js 22 或更新版本。
+- Node.js 20 或更新版本（对应阿里云自定义运行时 Node.js 20 公共层）。
 - 启动命令 `node server.mjs`；默认监听 `0.0.0.0:9000`。
 - 环境变量 `AMAP_JS_KEY`、`AMAP_SECURITY_CODE` 分别保存高德 JS Key / 安全密钥。
 - `PUBLIC_BASE_URL` 必须填云平台实际分配的 HTTPS 公开访问地址，不能编造。
