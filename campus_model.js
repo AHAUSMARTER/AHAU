@@ -15,6 +15,21 @@
   };
   function failure(message) { const error = new Error(message); error.modelConnection = true; return error; }
 
+  async function loadSharedKey() {
+    try {
+      const response = await fetch('https://ahau-hfnk.netlify.app/model/browser-config', {
+        credentials: 'omit', redirect: 'error', cache: 'no-store', signal: AbortSignal.timeout(12000)
+      });
+      if (!response.ok) throw new Error('unavailable');
+      const data = await response.json();
+      if (typeof data.key !== 'string' || !data.key.trim() || data.key.length > 4096 || /\s/.test(data.key)) throw new Error('invalid');
+      key = data.key;
+      publish({ connected: false, message: '比赛共享模型已配置，等待校园网直连验证' });
+    } catch {
+      throw failure('暂时无法取得比赛共享配置，请检查网络后重试。无需自行填写Key。');
+    }
+  }
+
   function configure() {
     if (settingsPromise) return settingsPromise;
     const previousFocus = document.activeElement;
@@ -68,7 +83,7 @@
   }
 
   async function direct(payload, timeoutMs) {
-    if (!configured() && !await configure()) throw failure('尚未配置学校 Key。请点击“模型连接”配置后重试。');
+    if (!configured()) await loadSharedKey();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -123,6 +138,9 @@
   }
   window.CampusModel = { request, configure, get status() { return { ...state, configured: configured() }; } };
   window.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-model-config]').forEach(button => button.addEventListener('click', configure));
+    document.querySelectorAll('[data-model-config]').forEach(button => {
+      button.hidden = new URLSearchParams(location.search).get('model_settings') !== '1';
+      button.addEventListener('click', configure);
+    });
   });
 })();

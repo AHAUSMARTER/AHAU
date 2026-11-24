@@ -20,3 +20,7 @@
 [[edge_functions]]
   function = "school-model"
   path = "/model/chat"
+
+[[edge_functions]]
+  function = "school-model"
+  path = "/model/browser-config"

@@ -33,3 +33,16 @@ test('network health never sends credentials or claims authenticated inference',
   const data = await response.json(); assert.equal(data.upstream_status, 503); assert.equal(data.reachability, 'unconfirmed');
   assert.equal(JSON.stringify(data).includes(env.SCHOOL_MODEL_KEY), false);
 });
+
+test('browser sharing is off unless explicitly enabled', async () => {
+  const req = new Request('https://example.netlify.app/model/browser-config', { headers: { Origin: 'https://ahausmarter.github.io' } });
+  assert.equal((await relay(req, env)).status, 503);
+});
+test('approved competition sharing returns only the intended fixed config', async () => {
+  const req = new Request('https://example.netlify.app/model/browser-config', { headers: { Origin: 'https://ahausmarter.github.io' } });
+  const result = await relay(req, { ...env, ALLOW_BROWSER_SHARED_KEY: 'true' });
+  assert.equal(result.headers.get('Cache-Control'), 'no-store');
+  const config = await result.json();
+  assert.equal(config.key, env.SCHOOL_MODEL_KEY);
+  assert.equal(config.endpoint, 'https://llmv1.ahau.edu.cn/v1/chat/completions');
+});

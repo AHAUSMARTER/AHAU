@@ -8,7 +8,7 @@ function client(hostname, fetch, stored = 'test-key-not-real') {
   const storage = { getItem: () => stored, removeItem() {}, setItem() {} };
   const window = { dispatchEvent(event) { events.push(event.detail); }, addEventListener() {} };
   vm.runInNewContext(source, { window, location: { hostname }, sessionStorage: storage,
-    localStorage: storage, fetch, AbortController, setTimeout, clearTimeout,
+    localStorage: storage, fetch, AbortController, AbortSignal, URLSearchParams, setTimeout, clearTimeout,
     CustomEvent: class { constructor(name, { detail }) { this.detail = detail; } } });
   return { client: window.CampusModel, events };
 }
@@ -75,4 +75,21 @@ test('direct requests abort at deadline and report timeout', async () => {
     options.signal.addEventListener('abort', () => { const error = new Error('aborted'); error.name = 'AbortError'; reject(error); });
   }));
   await assert.rejects(api.request([], { timeoutMs: 5 }), /响应超时/);
+});
+
+test('ordinary user loads competition config and calls school without any key dialog', async () => {
+  const calls = [];
+  const { client: api } = client('ahausmarter.github.io', async (url, options) => {
+    calls.push(url);
+    if (calls.length === 1) return { ok: true, json: async () => ({ key: 'shared-test-key' }) };
+    assert.equal(options.headers.Authorization, 'Bearer shared-test-key');
+    return answer('shared school answer');
+  }, '');
+  assert.equal(await api.request([{ role: 'user', content: 'hello' }]), 'shared school answer');
+  assert.equal(calls[0], 'https://ahau-hfnk.netlify.app/model/browser-config');
+  assert.equal(calls[1], 'https://llmv1.ahau.edu.cn/v1/chat/completions');
+});
+test('shared config failure never asks every user for a key', async () => {
+  const { client: api } = client('ahausmarter.github.io', async () => ({ ok: false }), '');
+  await assert.rejects(api.request([]), /无需自行填写Key/);
 });

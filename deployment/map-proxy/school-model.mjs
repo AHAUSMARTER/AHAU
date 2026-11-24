@@ -28,6 +28,15 @@ export default async function schoolModel(request, env, clientIP = 'unknown', up
   }
   if (!accepted) return reply({ error: '来源未获授权' }, 403);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
+  if (url.pathname === '/model/browser-config') {
+    if (request.method !== 'GET') return reply({ error: '仅支持GET' }, 405);
+    if (env.ALLOW_BROWSER_SHARED_KEY !== 'true' || !env.SCHOOL_MODEL_KEY) {
+      return reply({ error: '比赛共享配置尚未启用' }, 503);
+    }
+    // Explicitly approved temporary competition sharing: this Key is browser-visible.
+    // Revocation must happen at the school provider, not just by deleting this route.
+    return reply({ key: env.SCHOOL_MODEL_KEY, model: MODEL, endpoint: TARGET });
+  }
   if (url.pathname !== '/model/chat') return reply({ error: '未知接口' }, 404);
   if (request.method !== 'POST') return reply({ error: '仅支持POST' }, 405);
   if (!env.SCHOOL_MODEL_KEY) return reply({ error: '共享模型代理尚未配置' }, 503);

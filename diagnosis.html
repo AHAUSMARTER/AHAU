@@ -9,8 +9,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <script src="lib/marked.min.js"></script>
-  <script src="campus_model.js?v=1" defer></script>
-  <link rel="stylesheet" href="campus_model.css?v=1">
+  <script src="campus_model.js?v=shared2" defer></script>
+  <link rel="stylesheet" href="campus_model.css?v=shared2">
   <script src="diagnosis_ocr.js?v=1" defer></script>
   <style>
     :root {
@@ -947,7 +947,7 @@
       </div>
     </div>
     <div class="header-right">
-      <button type="button" class="model-connect-button" data-model-config>模型连接</button>
+      <button type="button" class="model-connect-button" data-model-config hidden>模型连接</button>
       <div class="model-chip" id="networkChip">
         <span class="pulse-dot" id="networkPulseDot"></span>
         <span id="networkChipText">正在检查实时服务</span>
@@ -1440,11 +1440,11 @@
       const state = window.CampusModel.status;
       campusNetworkConnected = state.connected;
       document.getElementById('networkChipText').textContent = state.connected
-        ? '校级 DeepSeek 可用' : (state.configured ? '学校直连已配置' : '模型连接待配置');
+        ? '校级 DeepSeek 可用' : (state.configured ? '比赛共享模型已配置' : '比赛共享模型 · 无需填Key');
       document.getElementById('networkPulseDot').style.background = state.connected ? '#20543a' : '#81887f';
       document.getElementById('campusNetBanner').style.display = state.connected ? 'none' : '';
       document.getElementById('campusNetBannerText').textContent = state.configured
-        ? state.message : 'GitHub 页面支持校园网直连学校模型。点击“模型连接”填写学校 Key；本地后端可用时也可直接解析。图片识别和预置样题无需 Key。';
+        ? state.message : '比赛期间统一使用项目模型配置，无需填写Key。实时解题需要本设备能够访问学校网关；图片识别和预置样题不受影响。';
     }
     window.addEventListener('campus-model-status', updateCampusNetworkUI);
 
