@@ -56,3 +56,9 @@ https://docs.netlify.com/manage/domains/secure-domains-with-https/https-ssl/
 - 用户手机关闭VPN确认健康检查成功。服务端实际地点、坐标转换和704米步行路线成功，GitHub来源跨域通过。
 - 地图前端入口配置已切换；整体手机地图及设备定位仍需用户端验证。
 - 当前只用 Free，不升级或自动充值。GitHub后续仅改前端时，按Base目录变更检测跳过不必要的代理构建；修改代理目录仍会重新部署并消耗额度。
+
+## 比赛共享模型配置（用户授权的浏览器可见例外）
+
+模型配置与地图安全密钥分离：`SCHOOL_MODEL_KEY` 与 `ALLOW_BROWSER_SHARED_KEY=true` 已按用户明确要求配置于Live app。`/model/browser-config` 给GitHub页面下发临时共享Key，校园网用户设备自己直连学校API。Key不写GitHub源码，但启用下发后可被浏览器使用者提取，不宣称保密。不会公开高德安全密钥。
+
+赛后操作：先在学校模型API管理处撤销/轮换本Key，再把共享开关关闭并重新部署；仅关闭配置接口不能撤销已分发的Key。`/model/chat` 为先前准备的云端推理代理，学校网关云端连通未通过，不是当前比赛默认调用路径。配置、校园网可达性与真实推理各自验证。

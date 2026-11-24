@@ -1,4 +1,4 @@
-// Fixed school-only model relay. Credentials never appear in responses or logs.
+// Fixed school-only relay. Browser config may disclose the Key only under the explicit competition-sharing flag; never log it.
 const TARGET = 'https://llmv1.ahau.edu.cn/v1/chat/completions';
 const MODEL = 'Deepseek-V4.1-Flash-SS';
 const ORIGINS = new Set(['https://ahausmarter.github.io', 'http://localhost:8088', 'http://localhost:8093']);
