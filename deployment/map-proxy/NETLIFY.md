@@ -40,3 +40,10 @@ https://docs.netlify.com/manage/domains/secure-domains-with-https/https-ssl/
 `public/` 仅发布静态服务说明，不包含代理源码、环境文件或安全密钥。
 三个显式路径匹配 `/health`、`/config`、`/_AMapService/*`，不拦截所有静态资源。
 限流使用平台提供的客户 IP，只用于演示级请求限流，不作为用户定位或身份认证。
+
+## 2026-11-24 部署进行中
+
+- 已创建用户自己的 Free 项目 `ahau-hfnk`（项目 ID `eab04195-6932-488f-85b0-e88289c33793`）。
+- 控制台 Base directory 已设为 `deployment/map-proxy`，Publish directory 为 `public`。
+- 经用户明确授权，已把两项高德配置设为 Secret，仅为 Live app 提供值；版本、分支、Agent runs、本地上下文不提供值。Free 计划不支持细选 scope，保留平台默认的服务端 scope，没有升级套餐。
+- 当前还需重新构建并验证 Edge Function 及公开访问，尚未切换地图页面的代理入口。
