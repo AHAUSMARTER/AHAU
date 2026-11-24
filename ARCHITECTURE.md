@@ -71,7 +71,7 @@ GitHub Pages 只提供静态文件，不运行 Python。线上通知页读取带
 ## 校园地图模块（竞赛演示）
 
 - `campus_map.html` / `campus_map.css` / `campus_map.js` 为独立原生页面，首页校园工具入口直达；查询参数 `?q=图书馆` 可直接发起地点查询。
-- GitHub Pages 前端向 `https://anau-campus-map-proxy.jaderook8.chatgpt.site/config` 获取公开 JS API Key 与代理地址；高德 JS API 2.0 用 `serviceHost` 经独立 Worker 代理读取高德地点/步行路线服务。安全密钥仅在托管环境变量，不进入前端或 Git。
+- GitHub Pages 前端通过同源 `campus_map_config.json` 选择代理，当前向 `https://ahau-hfnk.netlify.app/config` 获取公开 JS API Key 与代理地址；高德 JS API 2.0 用 `serviceHost` 经独立 Worker 代理读取高德地点/步行路线服务。安全密钥仅在托管环境变量，不进入前端或 Git。
 - 独立代理无学校系统、模型或数据库访问权限。固定上游 HTTPS 域名、GET 路由白名单、来源限制、响应大小限制与演示级 IP 限流；浏览器 SDK Key 在请求中可见，应配合高德域名白名单。源码及维护说明见 `deployment/map-proxy/`。
 - 使用高德返回的 GCJ-02 地点，搜索限定合肥并按 `campus_map/campus_boundary.json` 校园参考多边形过滤。该范围来自 OpenStreetMap way 498810020，采集于 2026-11-24，经高德 GPS→GCJ-02 转换，非学校测绘范围；页面披露来源及 ODbL 归属。定位需主动点击授权，使用设备 Geolocation，禁用 IP 定位替代；WGS-84 坐标经高德转换后才绘制蓝点及精度圈。项目不持久化用户坐标，托管平台可能有请求日志。
 - 步行路线和时间只展示高德返回值，失败不生成替代路线。实时导航通过外链交给高德；网页不提供语音转向引导。
@@ -91,3 +91,11 @@ GitHub Pages 只提供静态文件，不运行 Python。线上通知页读取带
 2026-11-24 用户手机访问原 Sites 代理域名被拦截，当前部署未通过该手机普通网络可用性验收。代理服务器正常不等同用户可达。前端从同源 `campus_map_config.json` 加载 `proxy_base_url`，为迁移保留配置入口；配置、校园边界、代理连接、地图脚本各阶段提供独立错误提示。`deployment/map-proxy/server.mjs` 把固定只读 Worker 逻辑适配至 Node.js HTTP 服务，可用于后续云函数 / 公网服务部署。现有 `chatgpt.site` 地址仍未被替换，国内部署依赖用户开通云账号或老师提供公开 HTTPS 服务。
 
 Netlify Free 作为后续候选：适配文件位于 `deployment/map-proxy/netlify/edge-functions/`，代理复用原 Worker，只匹配三类查询路径，环境变量由 `Netlify.env.get` 读取；发布目录独立为 `public/`，不发布服务端源码与凭据。用户手机已通过官方演示页网络初筛；实际部署、密钥配置与线上切换尚未进行。操作步骤及计费边界见 `deployment/map-proxy/NETLIFY.md`。
+
+### 当前代理入口：Netlify Free（2026-11-24）
+
+- 已部署项目 `ahau-hfnk`（ID `eab04195-6932-488f-85b0-e88289c33793`），生产公开、部署预览私有；基础目录 `deployment/map-proxy`，发布目录 `public`，按目录变更触发构建。
+- 高德两项配置已按用户授权保存为 Netlify Secret。只给 Live app 配置值；版本预览、分支、Agent runs、本地上下文不提供值。Free 不支持细选 scope，平台默认服务端 scope 未升级。
+- 用户手机普通网络关闭VPN后确认 `https://ahau-hfnk.netlify.app/health` 返回 `configured:true`。公开配置、真实地点、坐标转换、步行查询及 GitHub 来源 CORS 检查通过。
+- 当前配置文件已切换至 Netlify；这是对旧 Sites 域名手机被拦截问题的迁移。旧地址仅作历史记录与暂时回滚，不作为当前前端依赖。完整手机地图、系统定位权限与校园实地导航仍需终端核实。
+- Free 控制台确认300 credits/月；无升级、绑卡、充值操作。额度是托管用量，不是高德配额；用尽会暂停服务。

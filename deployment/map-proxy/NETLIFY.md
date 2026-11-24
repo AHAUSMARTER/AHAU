@@ -5,7 +5,7 @@
 用户手机关闭 VPN 后，成功打开官方演示
 https://edge-functions-examples.netlify.app/ ，显示“Edge Functions on Netlify”。
 这是域名/网络初筛，不能替代本项目的真实部署、跨域、地图、定位和路线验收。
-目前还未创建 Netlify 项目、未向 Netlify 上传高德密钥、没有新代理 URL。
+现已创建项目、配置服务端 Secret 并部署至 `https://ahau-hfnk.netlify.app`，用户手机普通网络已确认健康接口可访问。详见文末结果。
 阿里云函数计算按用户要求保持未开通。
 
 ## 免费范围
@@ -47,3 +47,12 @@ https://docs.netlify.com/manage/domains/secure-domains-with-https/https-ssl/
 - 控制台 Base directory 已设为 `deployment/map-proxy`，Publish directory 为 `public`。
 - 经用户明确授权，已把两项高德配置设为 Secret，仅为 Live app 提供值；版本、分支、Agent runs、本地上下文不提供值。Free 计划不支持细选 scope，保留平台默认的服务端 scope，没有升级套餐。
 - 当前还需重新构建并验证 Edge Function 及公开访问，尚未切换地图页面的代理入口。
+
+## 已部署结果
+
+- 生产地址 `https://ahau-hfnk.netlify.app`；预览继续私有，生产对外公开。
+- 环境变量仅 Live app 提供值，且两项均保存为 Secret；临时导入文件已清理。
+- Base 与 Publish 已生效，`netlify.toml` 的三类路径确实运行 Edge Function。
+- 用户手机关闭VPN确认健康检查成功。服务端实际地点、坐标转换和704米步行路线成功，GitHub来源跨域通过。
+- 地图前端入口配置已切换；整体手机地图及设备定位仍需用户端验证。
+- 当前只用 Free，不升级或自动充值。GitHub后续仅改前端时，按Base目录变更检测跳过不必要的代理构建；修改代理目录仍会重新部署并消耗额度。

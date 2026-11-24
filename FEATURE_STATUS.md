@@ -53,3 +53,10 @@
 
 - 用户手机关闭VPN可访问 Netlify 官方边缘函数演示页，完成网络初筛；不代表本项目已迁移。
 - 已新增 `deployment/map-proxy/netlify.toml` 与 Edge Function 适配器，复用固定只读代理。Netlify Free 查阅时为每月300 credits硬上限，耗尽暂停；尚未注册/创建本项目、未上传密钥、未切换线上入口，手机在线地图故障仍未修复。阿里云保持未开通。
+
+## Netlify 免费代理部署结果（2026-11-24）
+
+- 已创建并部署用户自己的 `https://ahau-hfnk.netlify.app`，当前 Free；高德配置保存为 Secret，生产公开，预览私有。
+- 用户手机关闭VPN成功访问新代理 `/health` 并看到 `configured:true`。实际配置、图书馆地点查询、坐标转换、勤学楼南门至图书馆步行查询均返回成功。
+- `campus_map_config.json` 已改用新地址；旧 `chatgpt.site` 不再是当前前端依赖。手机整页显示、真实GPS与实地通行不可仅凭健康检查标为验收完成。
+- 阿里云函数计算仍未开通；没有切换付费套餐、绑卡或充值。
